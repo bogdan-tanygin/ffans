@@ -46,15 +46,15 @@ mf_color4f_t v_col;
 void mf_mgr_draw_vector(mf_vect_t r, mf_vect_t v)
 {
     long double x1,y1,z1;
-	long double xc,yc,zc; //center of the pyramid basis
-	long double xe,ye,ze; //top of pyramid
+    long double xc,yc,zc; //center of the pyramid basis
+    long double xe,ye,ze; //top of pyramid
     long double dx,dy,dz;
     long double v_mod;
     mf_vect_t t, b, r2;
     long double t_mod, b_mod;
-	long double v_diam;
+    long double v_diam;
 
-	v_diam = v_len / 5.0;
+    v_diam = v_len / 5.0;
     
     v_mod = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     
@@ -66,13 +66,13 @@ void mf_mgr_draw_vector(mf_vect_t r, mf_vect_t v)
     
     t_mod = sqrt(t.x * t.x + t.y * t.y + t.z * t.z);
 
-	x1 = xc = r.x - 0.5 * v_len * v.x / v_mod;
-	y1 = yc = r.y - 0.5 * v_len * v.y / v_mod;
-	z1 = zc = r.z - 0.5 * v_len * v.z / v_mod;
+    x1 = xc = r.x - 0.5 * v_len * v.x / v_mod;
+    y1 = yc = r.y - 0.5 * v_len * v.y / v_mod;
+    z1 = zc = r.z - 0.5 * v_len * v.z / v_mod;
 
-	xe = r.x + 0.5 * v_len * v.x / v_mod;
-	ye = r.y + 0.5 * v_len * v.y / v_mod;
-	ze = r.z + 0.5 * v_len * v.z / v_mod;
+    xe = r.x + 0.5 * v_len * v.x / v_mod;
+    ye = r.y + 0.5 * v_len * v.y / v_mod;
+    ze = r.z + 0.5 * v_len * v.z / v_mod;
     
     dx = 0.5 * v_diam * t.x / t_mod;
     dy = 0.5 * v_diam * t.y / t_mod;
@@ -93,27 +93,27 @@ void mf_mgr_draw_vector(mf_vect_t r, mf_vect_t v)
     r2.z = - t.z * v_diam * 0.25 / t_mod + b.z * v_diam * 0.5 / b_mod;
     
     glBegin(GL_LINE_STRIP);
-	//glBegin(GL_TRIANGLE_STRIP);
-	
+    //glBegin(GL_TRIANGLE_STRIP);
+    
     glColor4f( v_col.r,  v_col.g,  v_col.b,  v_col.a);
     
     glVertex3d(x1, y1, z1);
-	glVertex3d(x1 + r2.x, y1 + r2.y, z1 + r2.z);
+    glVertex3d(x1 + r2.x, y1 + r2.y, z1 + r2.z);
     glVertex3d(xc + r2.x, yc + r2.y, zc + r2.z);
     glVertex3d(xc - dx, yc - dy, zc - dz);
     glVertex3d(xc - dx - r2.x, yc - dy - r2.y, zc - dz - r2.z);
     glVertex3d(xc - r2.x, yc - r2.y, zc - r2.z);
     glVertex3d(x1, y1, z1);
 
-	glVertex3d(xe, ye, ze);
-	glVertex3d(x1 + r2.x, y1 + r2.y, z1 + r2.z);
-	glVertex3d(xe, ye, ze);
+    glVertex3d(xe, ye, ze);
+    glVertex3d(x1 + r2.x, y1 + r2.y, z1 + r2.z);
+    glVertex3d(xe, ye, ze);
     glVertex3d(xc + r2.x, yc + r2.y, zc + r2.z);
-	glVertex3d(xe, ye, ze);
+    glVertex3d(xe, ye, ze);
     glVertex3d(xc - dx, yc - dy, zc - dz);
-	glVertex3d(xe, ye, ze);
+    glVertex3d(xe, ye, ze);
     glVertex3d(xc - dx - r2.x, yc - dy - r2.y, zc - dz - r2.z);
-	glVertex3d(xe, ye, ze);
+    glVertex3d(xe, ye, ze);
     glVertex3d(xc - r2.x, yc - r2.y, zc - r2.z);
 
     glEnd();
@@ -121,8 +121,8 @@ void mf_mgr_draw_vector(mf_vect_t r, mf_vect_t v)
 
 void mf_mgr_set_m_vector(void)
 {
-	long double k = 0.2;
-	
+    long double k = 0.2;
+    
     v_len = k / 10.0;
     //v_diam = k / 50.0;
     
@@ -139,7 +139,7 @@ void mf_mgr_set_bext_vector(void) //should be proportional to the field
     v_len  = (50 / 10.0) * fabs(kB * B0 / Bself);
     //v_diam = (50 / 50.0) * fabs(kB * B0 / Bself);
 
-	/*v_len  = 1 / 10.0;
+    /*v_len  = 1 / 10.0;
     v_diam = 1 / 50.0;*/
     
     v_col.r = 0;
@@ -152,7 +152,7 @@ void mf_mgr_set_bext_vector(void) //should be proportional to the field
 
 /*void mf_mgr_set_b_vector(long p) //should be proportional to the field
 {
-	long double k = 0.2;
+    long double k = 0.2;
 
     v_len  = (k / 10.0) * sqrt(MUL(B[p],B[p])) / Bself;
     //v_diam = (k / 50.0) * sqrt(MUL(B[p],B[p])) / Bself;
@@ -181,104 +181,104 @@ void mf_mgr_set_bext_vector(void) //should be proportional to the field
 void mf_mgr_show_next_step()
 {
     mf_vect_t r0, r1, v1;
-	long double theta, phi;
-	long double tmag;
-	long double kvec;
-	
-	step++;
-	//if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
+    long double theta, phi;
+    long double tmag;
+    long double kvec;
+    
+    step++;
+    //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
 
 
-	glBegin(GL_LINE_STRIP);
+    glBegin(GL_LINE_STRIP);
 
     glColor3f(kExtra * 0.0, kExtra * 0.0, kExtra * 0.0);
     glVertex3d(-kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d( kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d( kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d( kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d( kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d( kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
-	glVertex3d( kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
-	glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
-	
-	
+    glVertex3d( kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d( kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d( kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d( kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d( kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d( kExtra * 0.5,  kExtra * 0.5,  kExtra * 0.5);
+    glVertex3d( kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5,  kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5, -kExtra * 0.5, -kExtra * 0.5);
+    glVertex3d(-kExtra * 0.5, -kExtra * 0.5,  kExtra * 0.5);
+    
+    
 
     glEnd();
 
     
 
-	for (long p = 1; p <= pN; p++)
+    for (long p = 1; p <= pN; p++)
     {
         //glEnable(GL_ALPHA_TEST);
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		/*if (transp) glColor4f(0.5, 0.5, 0.5, 0.8);
-		else*/ glColor4f(0.5, 0.5, 0.5, 1);
+        /*if (transp) glColor4f(0.5, 0.5, 0.5, 0.8);
+        else*/ glColor4f(0.5, 0.5, 0.5, 1);
 
-		r1.x = kExtra * r[p].x / Lx;
-		r1.y = kExtra * r[p].y / Ly;
-		r1.z = kExtra * r[p].z / Lz;
+        r1.x = kExtra * r[p].x / Lx;
+        r1.y = kExtra * r[p].y / Ly;
+        r1.z = kExtra * r[p].z / Lz;
 
-		//if (show_sphere) DisplaySphere(kExtra * r[p].x / Lx, kExtra * r[p].y / Ly, kExtra * r[p].z / Lz, texture[0]);
-		glTranslatef(r1.x, r1.y, r1.z);
-		if (show_sphere) gluSphere(g_quad, 0.01, 20, 20);
-		glTranslatef(-r1.x, -r1.y, -r1.z);
+        //if (show_sphere) DisplaySphere(kExtra * r[p].x / Lx, kExtra * r[p].y / Ly, kExtra * r[p].z / Lz, texture[0]);
+        glTranslatef(r1.x, r1.y, r1.z);
+        if (show_sphere) gluSphere(g_quad, 0.01, 20, 20);
+        glTranslatef(-r1.x, -r1.y, -r1.z);
 
-		//glDisable(GL_BLEND);
-		//glDisable(GL_ALPHA_TEST);
+        //glDisable(GL_BLEND);
+        //glDisable(GL_ALPHA_TEST);
 
-		
+        
         if (show_m)
         {
-			kvec = 2;
+            kvec = 2;
 
             r1.x = kExtra * r[p].x / Lx;
-			r1.y = kExtra * r[p].y / Ly;
-			r1.z = kExtra * r[p].z / Lz;
+            r1.y = kExtra * r[p].y / Ly;
+            r1.z = kExtra * r[p].z / Lz;
 
-			tmag = sqrt(m[p].x * m[p].x + m[p].y * m[p].y) + 0.00000001;
-			
-			theta = acos(m[p].z / m0);
-			/*if (m[p].x != 0) phi = atan(m[p].y / m[p].x);
-			else phi = 0.5 * pi * m[p].y / (fabs(m[p].y) + 0.00000000001);
-			if (m[p].x < 0) phi += pi;*/
+            tmag = sqrt(m[p].x * m[p].x + m[p].y * m[p].y) + 0.00000001;
+            
+            theta = acos(m[p].z / m0);
+            /*if (m[p].x != 0) phi = atan(m[p].y / m[p].x);
+            else phi = 0.5 * pi * m[p].y / (fabs(m[p].y) + 0.00000000001);
+            if (m[p].x < 0) phi += pi;*/
 
 
-			glTranslatef(r1.x, r1.y, r1.z);
-			glRotatef(theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
- 			
-			glutSolidCone(0.002 * kvec, 0.01, 20, 20);
-			glRotatef(180, 1, 0, 0);
-			gluDisk(g_quad, 0, 0.002 * kvec, 20, 20);
-			glRotatef(-180, 1, 0, 0);
-			
-			glTranslatef(0, 0, -0.01);
-			gluCylinder(g_quad, 0.0005 * kvec * 2, 0.0005 * kvec * 2, 0.01, 20, 20);
-			glRotatef(180, 1, 0, 0);
-			gluDisk(g_quad, 0, 0.0005 * kvec * 2, 20, 20);
-			glRotatef(-180, 1, 0, 0);
-			glTranslatef(0, 0,  0.01);
-			
-			glRotatef(-theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
-			glTranslatef(-r1.x, -r1.y, -r1.z);
+            glTranslatef(r1.x, r1.y, r1.z);
+            glRotatef(theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
+             
+            glutSolidCone(0.002 * kvec, 0.01, 20, 20);
+            glRotatef(180, 1, 0, 0);
+            gluDisk(g_quad, 0, 0.002 * kvec, 20, 20);
+            glRotatef(-180, 1, 0, 0);
+            
+            glTranslatef(0, 0, -0.01);
+            gluCylinder(g_quad, 0.0005 * kvec * 2, 0.0005 * kvec * 2, 0.01, 20, 20);
+            glRotatef(180, 1, 0, 0);
+            gluDisk(g_quad, 0, 0.0005 * kvec * 2, 20, 20);
+            glRotatef(-180, 1, 0, 0);
+            glTranslatef(0, 0,  0.01);
+            
+            glRotatef(-theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
+            glTranslatef(-r1.x, -r1.y, -r1.z);
 
-			/*mf_mgr_set_m_vector();
-			r1.x = kExtra * r[p].x / Lx;
-			r1.y = kExtra * r[p].y / Ly;
-			r1.z = kExtra * r[p].z / Lz;
+            /*mf_mgr_set_m_vector();
+            r1.x = kExtra * r[p].x / Lx;
+            r1.y = kExtra * r[p].y / Ly;
+            r1.z = kExtra * r[p].z / Lz;
             mf_mgr_draw_vector(r1, m[p]);*/
 
         }
@@ -286,19 +286,19 @@ void mf_mgr_show_next_step()
         /*if (show_b)
         {
             mf_mgr_set_b_vector(p);
-			r1.x = kExtra * r[p].x / Lx;
-			r1.y = kExtra * r[p].y / Ly;
-			r1.z = kExtra * r[p].z / Lz;
+            r1.x = kExtra * r[p].x / Lx;
+            r1.y = kExtra * r[p].y / Ly;
+            r1.z = kExtra * r[p].z / Lz;
             mf_mgr_draw_vector(r1, B[p]);
         }*/
     }
-	if (show_bext)
+    if (show_bext)
     {
-		r0.x = - 0.6;
-		r0.y = 0;
-		r0.z = 0;
+        r0.x = - 0.6;
+        r0.y = 0;
+        r0.z = 0;
         mf_mgr_set_bext_vector();
-		v1 = Bext();
+        v1 = Bext();
         mf_mgr_draw_vector(r0, v1);
     }
 }
@@ -306,12 +306,12 @@ void mf_mgr_show_next_step()
 void mf_mgr_print_info()
 {
     char buf[80];
-	int shift = -1;
+    int shift = -1;
 
-	glColor4f(0,1,0.1,0.75);
+    glColor4f(0,1,0.1,0.75);
     sprintf(buf,"step = %d", step);
 
-	glRasterPos2i(6,0);
+    glRasterPos2i(6,0);
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
     
     /*glColor4f(0.9,0.2,0.2,0.75);
@@ -324,95 +324,95 @@ void mf_mgr_print_info()
     sprintf(buf,"Ek = %5.3e J (%5.3e K)", Ek, Ek * 2 / (3.0 * kb));
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
-	glColor4f(0.0,1.0,0.0,0.75);
+    glColor4f(0.0,1.0,0.0,0.75);
     sprintf(buf,"dt = %5.3e s", dt);
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	///////////
-	glColor4f(1.0,1.0,1.0,0.75);
+    ///////////
+    glColor4f(1.0,1.0,1.0,0.75);
     sprintf(buf,"t = %5.3e s", t);
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	///////////
-	glColor4f(0.0,1.0,0.0,0.75);
+    ///////////
+    glColor4f(0.0,1.0,0.0,0.75);
     sprintf(buf,"slow_steps = %d", slow_steps);
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0.0,1.0,0.0,0.75);
+    glColor4f(0.0,1.0,0.0,0.75);
     sprintf(buf,"Hysteresis mode = %d", hyst_mode);
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 
-	// Macroscopic
-	///////////
-	glColor4f(1.0,0.0,0.0,0.75);
+    // Macroscopic
+    ///////////
+    glColor4f(1.0,0.0,0.0,0.75);
     sprintf(buf,"---> Macro Data <---");
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_18,buf);
 
-	///////////
-	/*glColor4f(0.0,1.0,1.0,0.75);
+    ///////////
+    /*glColor4f(0.0,1.0,1.0,0.75);
     sprintf(buf,"Average Concentration = %5.3e m^-3", pN / (Lx * Ly * Lz));
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
-	///////////
-	glColor4f(0.0,1.0,1.0,0.75);
+    ///////////
+    glColor4f(0.0,1.0,1.0,0.75);
     sprintf(buf,"External field B0z = %5.3e T", Bext().z);
 
     glRasterPos2i(6, shift * 20);
-	shift--;
+    shift--;
     mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	///////////
-	if (step > glob_start_step)
-	{
-		glColor4f(0.0,1.0,1.0,0.75);
-		sprintf(buf,"Total magnetization Mz = %5.3e A / m", mz_glob / (Vtot * (step - glob_start_step)));
-	
-		glRasterPos2i(6, shift * 20);
-		shift--;
-		mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-	}
+    ///////////
+    if (step > glob_start_step)
+    {
+        glColor4f(0.0,1.0,1.0,0.75);
+        sprintf(buf,"Total magnetization Mz = %5.3e A / m", mz_glob / (Vtot * (step - glob_start_step)));
+    
+        glRasterPos2i(6, shift * 20);
+        shift--;
+        mf_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    }
 }
 
 void mf_mgr_init()
 {
     glPointSize(4);
 
-	transp = 0;
-	show_sphere = 1;
+    transp = 0;
+    show_sphere = 1;
 
-	show_m    = 0;
-	show_b    = 0;
-	show_bext = 0;
+    show_m    = 0;
+    show_b    = 0;
+    show_bext = 0;
 
-	y_rot = 30.0f;
-	x_rot = -60.0f;
-	z_off = -0.5f;
+    y_rot = 30.0f;
+    x_rot = -60.0f;
+    z_off = -0.5f;
 
-	glCullFace(GL_BACK);
+    glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
 
-	g_quad = gluNewQuadric();
+    g_quad = gluNewQuadric();
 }

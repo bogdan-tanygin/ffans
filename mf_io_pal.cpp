@@ -103,7 +103,7 @@ void cbSpecialKeyPressed(int key, int x, int y)
 ///  keysetting
 void cbKeyPressed(unsigned char key, int x, int y)
 {
-	int tmp;
+    int tmp;
     switch (key) {
     case 'Q': case 'q': case 27: // Q (Escape) - We're outta here.
         glutDestroyWindow(window_id);
@@ -118,25 +118,25 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_b = show_b?0:1;
         break;
 
-	case '[':
+    case '[':
         smooth_r *= 0.9;
-		m_h_eff_tol *= 0.9;
+        m_h_eff_tol *= 0.9;
         break;
 
-	case ']':
+    case ']':
         smooth_r *= 1.1;
-		m_h_eff_tol *= 1.1;
+        m_h_eff_tol *= 1.1;
         break;
 
-	case 'L': case 'l':
+    case 'L': case 'l':
         mf_io_load();
         break;
 
-	case 'T': case 't':
+    case 'T': case 't':
         transp = transp?0:1;
         break;
 
-	case 'S': case 's':
+    case 'S': case 's':
         show_sphere = show_sphere?0:1;
         break;
 
@@ -144,19 +144,19 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_bext = show_bext?0:1;
         break;
 
-	case 'h':
+    case 'h':
         hyst_mode++;
-		tmp = 0;
-		if (hyst_mode == 21) {hyst_mode = 5; tmp = 1;}
-		mf_model_upgrade_ext_field();
-		if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
+        tmp = 0;
+        if (hyst_mode == 21) {hyst_mode = 5; tmp = 1;}
+        mf_model_upgrade_ext_field();
+        if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
-		mf_io_save_hyst();
+        mf_io_save_hyst();
 
-		mz_glob = 0;
-		glob_start_step = step;
+        mz_glob = 0;
+        glob_start_step = step;
 
-		break;
+        break;
         
     case ' ':  // F (Space) - Freeze Rotation!
         time_go = time_go?0:1;
@@ -171,152 +171,152 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 void mf_io_save_hyst(void)
 {
-	FILE* file;
-	char s[100];
+    FILE* file;
+    char s[100];
 
-	if (g_hyst_start_line)
-	{
-		file = fopen("start_hyst.dat", "a");
-		B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
-		B_hyst_n[hyst_mode] ++;
+    if (g_hyst_start_line)
+    {
+        file = fopen("start_hyst.dat", "a");
+        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
+        B_hyst_n[hyst_mode] ++;
 
-		Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-		Mz_hyst_n[hyst_mode] ++;
+        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+        Mz_hyst_n[hyst_mode] ++;
 
-		fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-		fclose(file);
-	}
+        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+        fclose(file);
+    }
 
-	if (g_hyst_up_line)
-	{
-		if (hyst_mode == 5)
-		{
-			remove("up_hyst_old.dat");
-			rename("up_hyst.dat", "up_hyst_old.dat");
-			file = fopen("up_hyst.dat", "w");
-		}
-		else file = fopen("up_hyst.dat", "a");
+    if (g_hyst_up_line)
+    {
+        if (hyst_mode == 5)
+        {
+            remove("up_hyst_old.dat");
+            rename("up_hyst.dat", "up_hyst_old.dat");
+            file = fopen("up_hyst.dat", "w");
+        }
+        else file = fopen("up_hyst.dat", "a");
 
-		B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
-		B_hyst_n[hyst_mode] ++;
+        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
+        B_hyst_n[hyst_mode] ++;
 
-		Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-		Mz_hyst_n[hyst_mode] ++;
+        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+        Mz_hyst_n[hyst_mode] ++;
 
-		fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-		fclose(file);
-	}
+        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+        fclose(file);
+    }
 
-	if (g_hyst_bottom_line)
-	{
-		if (hyst_mode == 13)
-		{
-			remove("bottom_hyst_old.dat");
-			rename("bottom_hyst.dat", "bottom_hyst_old.dat");
-			file = fopen("bottom_hyst.dat", "w");
-		}
-		else file = fopen("bottom_hyst.dat", "a");
+    if (g_hyst_bottom_line)
+    {
+        if (hyst_mode == 13)
+        {
+            remove("bottom_hyst_old.dat");
+            rename("bottom_hyst.dat", "bottom_hyst_old.dat");
+            file = fopen("bottom_hyst.dat", "w");
+        }
+        else file = fopen("bottom_hyst.dat", "a");
 
-		B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
-		B_hyst_n[hyst_mode] ++;
+        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext().z);
+        B_hyst_n[hyst_mode] ++;
 
-		Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-		Mz_hyst_n[hyst_mode] ++;
+        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+        Mz_hyst_n[hyst_mode] ++;
 
-		fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-		fclose(file);
-	}
+        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+        fclose(file);
+    }
 }
 
 void mf_io_save_setting(mf_vect_t m_tot,long double I)
 {
-	FILE* file, *file1;
+    FILE* file, *file1;
 
-	file  = fopen("setting_M.dat", "a");
-	file1 = fopen("setting_I.dat", "a");
+    file  = fopen("setting_M.dat", "a");
+    file1 = fopen("setting_I.dat", "a");
 
-	fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
-	fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
+    fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
+    fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
 
-	fclose(file);
-	fclose(file1);
+    fclose(file);
+    fclose(file1);
 
 }
 
 void mf_io_autosave(void)
 {
-	FILE* file;
-	char str[50];
+    FILE* file;
+    char str[50];
 
-	sprintf(str, "%d.dat", step);
+    sprintf(str, "%d.dat", step);
 
-	file  = fopen(str, "a");
+    file  = fopen(str, "a");
 
-	fprintf(file,  "%5.3e ", t);
-	
-	for(long p = 1; p <= pN; p++)
-	{
-		fprintf(file, "%d ", p);
-		
-		fprintf(file,  "%5.3e ", r[p].x);
-		fprintf(file,  "%5.3e ", r[p].y);
-		fprintf(file,  "%5.3e ", r[p].z);
+    fprintf(file,  "%5.3e ", t);
+    
+    for(long p = 1; p <= pN; p++)
+    {
+        fprintf(file, "%d ", p);
+        
+        fprintf(file,  "%5.3e ", r[p].x);
+        fprintf(file,  "%5.3e ", r[p].y);
+        fprintf(file,  "%5.3e ", r[p].z);
 
-		fprintf(file,  "%5.3e ", v[p].x);
-		fprintf(file,  "%5.3e ", v[p].y);
-		fprintf(file,  "%5.3e ", v[p].z);
+        fprintf(file,  "%5.3e ", v[p].x);
+        fprintf(file,  "%5.3e ", v[p].y);
+        fprintf(file,  "%5.3e ", v[p].z);
 
-		fprintf(file,  "%5.3e ", m[p].x);
-		fprintf(file,  "%5.3e ", m[p].y);
-		fprintf(file,  "%5.3e ", m[p].z);
-	}
+        fprintf(file,  "%5.3e ", m[p].x);
+        fprintf(file,  "%5.3e ", m[p].y);
+        fprintf(file,  "%5.3e ", m[p].z);
+    }
 
-	fclose(file);
+    fclose(file);
 }
 
 void mf_io_load(void)
 {
-	FILE* file;
-	long tstep, tstep1;
-	float tmp;
-	char str[50];
-	long p;
+    FILE* file;
+    long tstep, tstep1;
+    float tmp;
+    char str[50];
+    long p;
 
-	printf("Step = ");
-	scanf("%d", &tstep);
-	sprintf(str, "%d.dat", tstep);
+    printf("Step = ");
+    scanf("%d", &tstep);
+    sprintf(str, "%d.dat", tstep);
 
-	file  = fopen(str, "r");
+    file  = fopen(str, "r");
 
-	fscanf(file, "%f", &tmp);
-	t = tmp;
+    fscanf(file, "%f", &tmp);
+    t = tmp;
 
-	do
-	{
-		fscanf(file,"%d", &p);
+    do
+    {
+        fscanf(file,"%d", &p);
 
-		fscanf(file, "%f", &tmp);
-		r[p].x = tmp;
-		fscanf(file, "%f", &tmp);
-		r[p].y = tmp;
-		fscanf(file, "%f", &tmp);
-		r[p].z = tmp;
+        fscanf(file, "%f", &tmp);
+        r[p].x = tmp;
+        fscanf(file, "%f", &tmp);
+        r[p].y = tmp;
+        fscanf(file, "%f", &tmp);
+        r[p].z = tmp;
 
-		fscanf(file, "%f", &tmp);
-		v[p].x = tmp;
-		fscanf(file, "%f", &tmp);
-		v[p].y = tmp;
-		fscanf(file, "%f", &tmp);
-		v[p].z = tmp;
+        fscanf(file, "%f", &tmp);
+        v[p].x = tmp;
+        fscanf(file, "%f", &tmp);
+        v[p].y = tmp;
+        fscanf(file, "%f", &tmp);
+        v[p].z = tmp;
 
-		fscanf(file, "%f", &tmp);
-		m[p].x = tmp;
-		fscanf(file, "%f", &tmp);
-		m[p].y = tmp;
-		fscanf(file, "%f", &tmp);
-		m[p].z = tmp;
-	}
-	while(!feof(file));
+        fscanf(file, "%f", &tmp);
+        m[p].x = tmp;
+        fscanf(file, "%f", &tmp);
+        m[p].y = tmp;
+        fscanf(file, "%f", &tmp);
+        m[p].z = tmp;
+    }
+    while(!feof(file));
 
-	fclose(file);
+    fclose(file);
 }
