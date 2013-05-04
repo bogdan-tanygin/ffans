@@ -54,7 +54,7 @@ static void do_fps();
 void cbRenderScene(void)
 {
     //glDisable(GL_TEXTURE_2D);
-	glEnable( GL_TEXTURE_2D );
+    glEnable( GL_TEXTURE_2D );
 
     glEnable(GL_LIGHTING);
 
@@ -99,7 +99,7 @@ void cbRenderScene(void)
 
     // Lit or textured text looks awful.
     //glDisable(GL_TEXTURE_2D);
-	glEnable( GL_TEXTURE_2D );
+    glEnable( GL_TEXTURE_2D );
 
     glEnable(GL_LIGHTING);
 
@@ -163,13 +163,13 @@ void graph_init(int width, int height)
 {
     // Color to clear color buffer to.
     //glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-	// white layout
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    // white layout
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
     // Depth to clear depth buffer to; type of test.
     glClearDepth(1.0);
     //glDepthFunc(GL_LESS); 
-	glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
 
     // Enables Smooth Color Shading; try GL_FLAT for (lack of) fun.
     glShadeModel(GL_SMOOTH);
@@ -207,11 +207,11 @@ void mf_gr_print(void *font, char *str)
 void mf_gr_init(int argc, char **argv)
 {
     x_rot   = 0.0f;
-	y_rot   = 0.0f;
-	x_speed = 0.0000f;
-	y_speed = 0.0000f;
-	rotating  = 1;
-	z_off   =-2.0f;
+    y_rot   = 0.0f;
+    x_speed = 0.0000f;
+    y_speed = 0.0000f;
+    rotating  = 1;
+    z_off   =-2.0f;
 
     glutInit(&argc, argv);
     SetConsoleTitle( PROGRAM_TITLE );
