@@ -1,5 +1,0 @@
-#summary Installation Notes.
-
-= 1. System requirements =
-
- * Support of OpenGL ES 2.0 or higher
