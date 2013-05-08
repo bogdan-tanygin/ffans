@@ -2,12 +2,11 @@ VPATH += ../shared
 INCLUDEPATH += ../shared
 
 HEADERS       = glwidget.h \
-                window.h \
                 mainwindow.h \
                 qtlogo.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
-                window.cpp \
+                mainwindow.cpp \
                 qtlogo.cpp
 QT           += opengl widgets
 
