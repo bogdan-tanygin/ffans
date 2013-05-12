@@ -1,6 +1,0 @@
-#summary Implementation roadmap.
-#labels Phase-Design,Phase-Implementation
-
-== Phase 1 ==
-
- * Implement separate threads for process calculation and graphics. Reuse Qt capabilities
