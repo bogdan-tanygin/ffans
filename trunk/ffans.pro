@@ -11,7 +11,7 @@ SOURCES       = glwidget.cpp \
 QT           += opengl widgets
 
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/opengl/ffans
+target.path = $$[QT_INSTALL_EXAMPLES]/opengl/ffans 
 INSTALLS += target
 
 
