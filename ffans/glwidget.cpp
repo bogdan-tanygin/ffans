@@ -44,7 +44,7 @@
 #include <math.h>
 
 #include "glwidget.h"
-#include "qtlogo.h"
+#include "modelgraph.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -81,7 +81,7 @@ QSize GLWidget::minimumSizeHint() const
 QSize GLWidget::sizeHint() const
 //! [3] //! [4]
 {
-    return QSize(400, 400);
+    return QSize(4000, 4000);
 }
 //! [4]
 
@@ -130,7 +130,7 @@ void GLWidget::initializeGL()
 {
     qglClearColor(qtPurple.dark());
 
-    logo = new QtLogo(this, 64);
+    logo = new ModelGraph(this, 64);
     logo->setColor(qtGreen.dark());
 
     glEnable(GL_DEPTH_TEST);
@@ -157,7 +157,6 @@ void GLWidget::paintGL()
 }
 //! [7]
 
-//! [8]
 void GLWidget::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
@@ -172,7 +171,6 @@ void GLWidget::resizeGL(int width, int height)
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
-//! [8]
 
 //! [9]
 void GLWidget::mousePressEvent(QMouseEvent *event)
