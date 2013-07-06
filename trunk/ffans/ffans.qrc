@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/res/ffans">
+        <file>temp.html</file>
+        <file>bg1.jpg</file>
+    </qresource>
+</RCC>

@@ -38,7 +38,9 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#include "modelwindow.h"
+#include "glwidget.h"
+#include "controlwidget.h"
 
 #include <QApplication>
 #include <QtWidgets>
@@ -46,17 +48,31 @@
 #include <QGroupBox>
 #include <QGridLayout>
 
-#include "glwidget.h"
-//#include "window.h"
-
-//! [0]
-MainWindow::MainWindow()
+ModelWindow::ModelWindow()
 {
+    // Control part
+    // ------------
+    controlWidget = new ControlWidget(0);
+    //QStyle *arthurStyle = new ArthurStyle();
+    //controlWidget->setStyle(arthurStyle);
+
+    QList<QWidget *> widgets = controlWidget->findChildren<QWidget *>();
+    foreach (QWidget *w, widgets) {
+        //w->setStyle(arthurStyle);
+        w->setAttribute(Qt::WA_AcceptTouchEvents);
+    }
+
+    // GL part
+    // -------
     glWidget = new GLWidget;
 
     xSlider = createSlider();
     ySlider = createSlider();
     zSlider = createSlider();
+
+    xSlider->setValue(15 * 16);
+    ySlider->setValue(345 * 16);
+    zSlider->setValue(0 * 16);
 
     connect(xSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setXRotation(int)));
     connect(glWidget, SIGNAL(xRotationChanged(int)), xSlider, SLOT(setValue(int)));
@@ -64,35 +80,40 @@ MainWindow::MainWindow()
     connect(glWidget, SIGNAL(yRotationChanged(int)), ySlider, SLOT(setValue(int)));
     connect(zSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setZRotation(int)));
     connect(glWidget, SIGNAL(zRotationChanged(int)), zSlider, SLOT(setValue(int)));
-//! [0]
 
-//! [1]
-    QGroupBox * groupBox = new QGroupBox(this);
-    setCentralWidget(groupBox);
-    groupBox->setTitle("OpenGL ES Example");
+    // Main window
+    // -----------
+    setWindowTitle(tr("Hello GL"));
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(groupBox);
-    mainLayout->addWidget(glWidget);
+    QGroupBox * groupBoxMain = new QGroupBox(this);
+    setCentralWidget(groupBoxMain);
+
+    QGroupBox * groupBoxGL = new QGroupBox(groupBoxMain);
+    groupBoxGL->setTitle(tr("Model"));
+    QHBoxLayout *layoutGL = new QHBoxLayout(groupBoxGL);
+    layoutGL->addWidget(glWidget);
+    //layoutGL->setStretchFactor(groupBoxMain,1);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout(groupBoxMain);
+    //mainLayout->addWidget(glWidget);
+    mainLayout->addWidget(groupBoxGL);
+    mainLayout->addSpacing(1);
     mainLayout->addWidget(xSlider);
     mainLayout->addWidget(ySlider);
     mainLayout->addWidget(zSlider);
-    groupBox->setLayout(mainLayout);
+    mainLayout->addWidget(controlWidget);
+    groupBoxMain->setLayout(mainLayout);
 
-    xSlider->setValue(15 * 16);
-    ySlider->setValue(345 * 16);
-    zSlider->setValue(0 * 16);
-    setWindowTitle(tr("Hello GL"));
-
+    // Menu bar
+    // --------
     QMenu *helpMenu = new QMenu("Help");
     menuBar()->addMenu(helpMenu);
     QAction *aboutQt = new QAction("AboutQt", helpMenu);
     helpMenu->addAction(aboutQt);
     connect(aboutQt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
 }
-//! [1]
 
-//! [2]
-QSlider *MainWindow::createSlider()
+QSlider *ModelWindow::createSlider()
 {
     QSlider *slider = new QSlider(Qt::Vertical);
     slider->setRange(0, 360 * 16);
@@ -104,7 +125,7 @@ QSlider *MainWindow::createSlider()
 }
 //! [2]
 
-void MainWindow::keyPressEvent(QKeyEvent *e)
+void ModelWindow::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Escape)
         close();

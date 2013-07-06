@@ -38,29 +38,37 @@
 **
 ****************************************************************************/
 
-#ifndef QTLOGO_H
-#define QTLOGO_H
+#ifndef MODELWINDOW_H
+#define MODELWINDOW_H
 
-#include <QObject>
-#include <QColor>
+#include <QMainWindow>
+#include <QWidget>
 
-class Patch;
-struct Geometry;
-
+QT_BEGIN_NAMESPACE
+class QSlider;
+QT_END_NAMESPACE
 //! [0]
-class QtLogo : public QObject
+class GLWidget;
+class ControlWidget;
+
+class ModelWindow : public QMainWindow
 {
+    Q_OBJECT
+
 public:
-    explicit QtLogo(QObject *parent, int d = 64, qreal s = 1.0);
-    ~QtLogo();
-    void setColor(QColor c);
-    void draw() const;
+    ModelWindow();
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 private:
-    void buildGeometry(int d, qreal s);
+    QSlider *createSlider();
 
-    QList<Patch *> parts;
-    Geometry *geom;
+    GLWidget *glWidget;
+    ControlWidget *controlWidget;
+    QSlider *xSlider;
+    QSlider *ySlider;
+    QSlider *zSlider;
 };
-//! [0]
 
-#endif // QTLOGO_H
+#endif // MODELWINDOW_H

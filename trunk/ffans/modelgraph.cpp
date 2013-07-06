@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "qtlogo.h"
+#include "modelgraph.h"
 
 #include <QGLWidget>
 #include <QMatrix4x4>
@@ -328,27 +328,27 @@ RectTorus::RectTorus(Geometry *g, qreal iRad, qreal oRad, qreal depth, int k)
     parts << front << back << is << os;
 }
 
-QtLogo::QtLogo(QObject *parent, int divisions, qreal scale)
+ModelGraph::ModelGraph(QObject *parent, int divisions, qreal scale)
     : QObject(parent)
     , geom(new Geometry())
 {
     buildGeometry(divisions, scale);
 }
 
-QtLogo::~QtLogo()
+ModelGraph::~ModelGraph()
 {
     qDeleteAll(parts);
     delete geom;
 }
 
-void QtLogo::setColor(QColor c)
+void ModelGraph::setColor(QColor c)
 {
     for (int i = 0; i < parts.count(); ++i)
         qSetColor(parts[i]->faceColor, c);
 }
 
 //! [3]
-void QtLogo::buildGeometry(int divisions, qreal scale)
+void ModelGraph::buildGeometry(int divisions, qreal scale)
 {
     qreal cw = cross_width * scale;
     qreal bt = bar_thickness * scale;
@@ -374,7 +374,7 @@ void QtLogo::buildGeometry(int divisions, qreal scale)
 //! [3]
 
 //! [4]
-void QtLogo::draw() const
+void ModelGraph::draw() const
 {
     geom->loadArrays();
 
