@@ -42,8 +42,9 @@
 #ifndef ControlView_H
 #define ControlView_H
 
-#include "arthurwidgets.h"
+//#include "arthurwidgets.h"
 
+#include <QtWidgets>
 #include <QBasicTimer>
 #include <QPolygonF>
 
@@ -53,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QLineEdit;
 QT_END_NAMESPACE
 
-class ControlView : public ArthurFrame
+class ControlView : public QWidget
 {
 public:
     Q_OBJECT

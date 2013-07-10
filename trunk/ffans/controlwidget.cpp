@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "controlwidget.h"
-#include "hoverpoints.h"
 
 #include <QLayout>
 #include <QPainter>
@@ -49,7 +48,7 @@
 const int alpha = 155;
 
 ControlView::ControlView(QWidget *parent)
-    : ArthurFrame(parent)
+: QWidget(parent)
 {
     setAttribute(Qt::WA_MouseTracking);
     m_type = VectorType;
@@ -57,19 +56,6 @@ ControlView::ControlView(QWidget *parent)
     m_scale = 1.0;
     m_shear = 0.0;
 
-    m_pixmap = QPixmap(":res/ffans/bg1.jpg");
-    pts = new HoverPoints(this, HoverPoints::CircleShape);
-    pts->setConnectionType(HoverPoints::LineConnection);
-    pts->setEditable(false);
-    pts->setPointSize(QSize(15, 15));
-    pts->setShapeBrush(QBrush(QColor(151, 0, 0, alpha)));
-    pts->setShapePen(QPen(QColor(255, 100, 50, alpha)));
-    pts->setConnectionPen(QPen(QColor(151, 0, 0, 50)));
-    pts->setBoundingRect(QRectF(0, 0, 500, 500));
-    ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
-    pts->setPoints(ctrlPoints);
-    connect(pts, SIGNAL(pointsChanged(QPolygonF)),
-            this, SLOT(updateCtrlPoints(QPolygonF)));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
@@ -108,13 +94,13 @@ void ControlView::setType(ControlType t)
 
 void ControlView::mousePressEvent(QMouseEvent *)
 {
-    setDescriptionEnabled(false);
+    //setDescriptionEnabled(false);
 }
 
 void ControlView::resizeEvent(QResizeEvent *e)
 {
-    pts->setBoundingRect(rect());
-    ArthurFrame::resizeEvent(e);
+    //pts->setBoundingRect(rect());
+    QWidget::resizeEvent(e);
 }
 
 void ControlView::paint(QPainter *p)
@@ -213,17 +199,7 @@ void ControlView::setScale(qreal s)
 
 void ControlView::setRotation(qreal r)
 {
-    qreal old_rot = m_rotation;
-    m_rotation = r;
 
-    QPointF center(pts->points().at(0));
-    QMatrix m;
-    m.translate(center.x(), center.y());
-    m.rotate(m_rotation - old_rot);
-    m.translate(-center.x(), -center.y());
-    pts->setPoints(pts->points() * m);
-
-    update();
 }
 
 void ControlView::timerEvent(QTimerEvent *e)
@@ -265,10 +241,6 @@ void ControlView::reset()
     emit rotationChanged(0);
     emit scaleChanged(1000);
     emit shearChanged(0);
-    ctrlPoints = QPolygonF();
-    ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
-    pts->setPoints(ctrlPoints);
-    pts->firePointChange();
 }
 
 /*void ControlView::drawPixmapType(QPainter *painter)
@@ -829,8 +801,8 @@ ControlWidget::ControlWidget(QWidget *parent)
     enableOpenGLButton->setText(tr("Use OpenGL"));
     enableOpenGLButton->setCheckable(true);
     //enableOpenGLButton->setChecked(view->usesOpenGL());
-    if (!QGLFormat::hasOpenGL())
-        enableOpenGLButton->hide();
+    //if (!QGLFormat::hasOpenGL())
+    //    enableOpenGLButton->hide();
 #endif
     QPushButton *whatsThisButton = new QPushButton(mainGroup);
     whatsThisButton->setText(tr("What's This?"));

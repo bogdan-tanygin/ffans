@@ -39,55 +39,50 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QDesktopWidget>
+#ifndef ControlView_H
+#define ControlView_H
 
-#include "modelwindow.h"
-#include "controlwidget.h"
-#include "modelsimcore.h"
+//#include "arthurwidgets.h"
 
-int main(int argc, char **argv)
+#include <QtWidgets>
+
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+QT_END_NAMESPACE
+
+class ControlView : public QWidget
 {
-    //Q_INIT_RESOURCE(ffans);
+public:
+    Q_OBJECT
 
-    QApplication app(argc, argv);
+public:
+    ControlView(QWidget *parent);
+    QSize sizeHint() const { return QSize(500, 500); }
 
-    // Model window
-    // ------------
-    ModelWindow modelWindow;
-    int desktop_w = QApplication::desktop()->width();
-    int desktop_h = QApplication::desktop()->height();
+    void mousePressEvent(QMouseEvent *e);
+    void resizeEvent(QResizeEvent *e);
 
-    modelWindow.resize(modelWindow.sizeHint() * 0.8);
-    int desktopArea = desktop_w * desktop_h;
-    int widgetArea = modelWindow.width() * modelWindow.height();
-    if (((float)widgetArea / (float)desktopArea) < 0.75f)
-        modelWindow.show();
-    else
-    {
-        modelWindow.resize(desktop_w * 0.8, desktop_h * 0.8);
-        modelWindow.show();
-        //modelWindow.showMaximized();
-    }
-    // Model Data Analysis window
-    // --------------
-    /*ControlWidget controlWidget(0);
-    QStyle *arthurStyle = new ArthurStyle();
-    controlWidget.setStyle(arthurStyle);
+public slots:
 
-    QList<QWidget *> widgets = controlWidget.findChildren<QWidget *>();
-    foreach (QWidget *w, widgets) {
-        w->setStyle(arthurStyle);
-        w->setAttribute(Qt::WA_AcceptTouchEvents);
-    }
+signals:
 
-    controlWidget.show();*/
+protected:
+#ifndef QT_NO_WHEELEVENT
+    void wheelEvent(QWheelEvent *);
+#endif
 
-    // Simultion thread controller init
-    // --------------------------------
-    SimController* simController = new SimController;
-    simController->operate("stub");
+private:
+};
 
-    return app.exec();
-}
+class ControlWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    ControlWidget(QWidget *parent);
+
+private:
+    ControlView *view;
+    QLineEdit *textEditor;
+};
+
+#endif // ControlView_H
