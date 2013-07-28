@@ -392,6 +392,7 @@ void ModelGraph::draw() const
 
     // ---------
 
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINE_STRIP);
 
     GLdouble space_k = 1.0;
@@ -399,38 +400,29 @@ void ModelGraph::draw() const
     GLdouble Ly = 1.0;
     GLdouble Lz = 1.0;
 
-    //glColor3f(1.0, 1.0, 1.0);
+    glColor3f(0.0, 0.0, 0.0);
 
-    GLfloat cartesianSystemColor2[4];
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
 
-    cartesianSystemColor2[0] = cartesianSystemColor.redF();
-    cartesianSystemColor2[1] = cartesianSystemColor.greenF();
-    cartesianSystemColor2[2] = cartesianSystemColor.blueF();
-    cartesianSystemColor2[3] = cartesianSystemColor.alphaF();
-
-    qSetColor(cartesianSystemColor2, cartesianSystemColor);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, cartesianSystemColor2);
-
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-
-        glEnd();
+    glEnd();
+    glEnable(GL_LIGHTING);
 }
 //! [4]
