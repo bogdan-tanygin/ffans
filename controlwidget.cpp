@@ -87,7 +87,7 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     QGroupBox *mainGroup = new QGroupBox(this);
     mainGroup->setFixedWidth(180);
-    mainGroup->setTitle(tr("Simulation Control"));
+    mainGroup->setTitle(tr("Control"));
 
     QGroupBox *rotateGroup = new QGroupBox(mainGroup);
     rotateGroup->setTitle(tr("Rotate"));

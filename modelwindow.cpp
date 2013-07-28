@@ -68,18 +68,19 @@ ModelWindow::ModelWindow()
 
     //xSlider = createSlider();
     //ySlider = createSlider();
-    //zSlider = createSlider();
+    //zoomSlider = createSlider();
 
     //xSlider->setValue(15 * 16);
     //ySlider->setValue(345 * 16);
-    //zSlider->setValue(0 * 16);
+    //zoomSlider->setValue(0 * 16);
 
     /*connect(xSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setXRotation(int)));
     connect(glWidget, SIGNAL(xRotationChanged(int)), xSlider, SLOT(setValue(int)));
     connect(ySlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setYRotation(int)));
-    connect(glWidget, SIGNAL(yRotationChanged(int)), ySlider, SLOT(setValue(int)));
-    connect(zSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setZRotation(int)));
-    connect(glWidget, SIGNAL(zRotationChanged(int)), zSlider, SLOT(setValue(int)));*/
+    connect(glWidget, SIGNAL(yRotationChanged(int)), ySlider, SLOT(setValue(int)));*/
+
+    //connect(zoomSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setZoom(int)));
+    //connect(glWidget, SIGNAL(zRotationChanged(int)), zSlider, SLOT(setValue(int)));
 
     // Main window
     // -----------
@@ -89,7 +90,7 @@ ModelWindow::ModelWindow()
     setCentralWidget(groupBoxMain);
 
     QGroupBox * groupBoxGL = new QGroupBox(groupBoxMain);
-    groupBoxGL->setTitle(tr("Model"));
+    groupBoxGL->setTitle(tr("Model View"));
 
     QGroupBox * groupBoxProjection = new QGroupBox(groupBoxGL);
     groupBoxProjection->setTitle(tr("Projection"));
@@ -101,6 +102,8 @@ ModelWindow::ModelWindow()
     QVBoxLayout *layoutProjection = new QVBoxLayout(groupBoxProjection);
     layoutProjection->addWidget(orthographicProjection);
     layoutProjection->addWidget(perspectiveProjection);
+    connect(orthographicProjection, SIGNAL(clicked()), glWidget, SLOT(setOrthographicProjection()));
+    connect(perspectiveProjection, SIGNAL(clicked()), glWidget, SLOT(setPerspectiveProjection()));
 
     QVBoxLayout *layoutGL = new QVBoxLayout(groupBoxGL);
     layoutGL->addWidget(glWidget);
@@ -108,13 +111,19 @@ ModelWindow::ModelWindow()
 
     //layoutGL->setStretchFactor(groupBoxMain,1);
 
+    /*QGroupBox *zoomBox = new QGroupBox(groupBoxGL);
+    zoomBox->setTitle(tr("Zoom"));
+    zoomValueEdit = new QLineEdit();*/
+
+    //connect(textType, SIGNAL(toggled(bool)), textEditor, SLOT(setEnabled(bool)));
+    //connect(textEditor, SIGNAL(textChanged(QString)), view, SLOT(setText(QString)));
+
     QHBoxLayout *mainLayout = new QHBoxLayout(groupBoxMain);
     //mainLayout->addWidget(glWidget);
     mainLayout->addWidget(groupBoxGL);
     mainLayout->addSpacing(1);
     /*mainLayout->addWidget(xSlider);
-    mainLayout->addWidget(ySlider);
-    mainLayout->addWidget(zSlider);*/
+    mainLayout->addWidget(ySlider);*/
     mainLayout->addWidget(controlWidget);
     groupBoxMain->setLayout(mainLayout);
 

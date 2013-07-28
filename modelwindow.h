@@ -71,7 +71,8 @@ private:
     QRadioButton *perspectiveProjection;
     //QSlider *xSlider;
     //QSlider *ySlider;
-    //QSlider *zSlider;
+    //QSlider *zoomSlider;
+    //QLineEdit *zoomValueEdit;
 };
 
 #endif // MODELWINDOW_H
