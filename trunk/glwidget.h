@@ -60,6 +60,8 @@ public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
     void setZRotation(int angle);
+    void setOrthographicProjection(void);
+    void setPerspectiveProjection(void);
 
 signals:
     void xRotationChanged(int angle);
@@ -74,13 +76,17 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
-    ModelGraph *logo;
+    ModelGraph *modelGraph;
     int xRot;
     int yRot;
     int zRot;
+    GLdouble nearVal;
+    GLdouble farVal;
+    GLfloat zView;
     QPoint lastPos;
     QColor qtGreen;
     QColor qtPurple;
+    int projectionType; // 0 is an orthographic projection
 };
 
 #endif // GLWIDGET_H

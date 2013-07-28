@@ -44,7 +44,7 @@
 #include <math.h>
 
 #include "glwidget.h"
-#include "modelgraph.h"
+#include "modelgraphics.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -54,7 +54,7 @@
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    logo = 0;
+    modelGraph = 0;
     xRot = 0;
     yRot = 0;
     zRot = 0;
@@ -125,13 +125,12 @@ void GLWidget::setZRotation(int angle)
     }
 }
 
-//! [6]
 void GLWidget::initializeGL()
 {
     qglClearColor(qtPurple.dark());
 
-    logo = new ModelGraph(this, 64);
-    logo->setColor(qtGreen.dark());
+    modelGraph = new ModelGraph(this, 64);
+    modelGraph->setColor(qtGreen.dark());
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -141,21 +140,23 @@ void GLWidget::initializeGL()
     glEnable(GL_MULTISAMPLE);
     static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-}
-//! [6]
 
-//! [7]
+    projectionType = 0;
+    nearVal = 4;
+    farVal = 15;
+    zView = -10;
+}
+
 void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0.0, 0.0, -10.0);
+    glTranslatef(0.0, 0.0, zView);
     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
-    logo->draw();
+    modelGraph->draw();
 }
-//! [7]
 
 void GLWidget::resizeGL(int width, int height)
 {
@@ -165,9 +166,12 @@ void GLWidget::resizeGL(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 #ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    glOrthof(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
 #else
-    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
+    if (projectionType == 0)
+        glOrtho(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
+    else
+        glFrustum(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
@@ -195,3 +199,17 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     lastPos = event->pos();
 }
 //! [10]
+
+void GLWidget::setOrthographicProjection(void)
+{
+    projectionType = 0;
+    this->resizeGL(this->width(),this->height());
+    updateGL();
+}
+
+void GLWidget::setPerspectiveProjection(void)
+{
+    projectionType = 1;
+    this->resizeGL(this->width(),this->height());
+    updateGL();
+}

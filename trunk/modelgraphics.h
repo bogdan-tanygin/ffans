@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QColor>
+//#include <QGLWidget>
 
 class Patch;
 struct Geometry;
@@ -20,6 +21,8 @@ private:
 
     QList<Patch *> parts;
     Geometry *geom;
+
+    QColor cartesianSystemColor;
 };
 //! [0]
 
