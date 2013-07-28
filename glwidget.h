@@ -77,12 +77,18 @@ protected:
 
 private:
     ModelGraph *modelGraph;
+
+    //Camera position
+    GLfloat xView; // TODO
+    GLfloat yView; // TODO
+    GLfloat zView;
     int xRot;
     int yRot;
     int zRot;
-    GLdouble nearVal;
+
+    GLdouble clippingMagnitude;
+    GLdouble nearVal; // distances to the nearer and farther depth clipping planes
     GLdouble farVal;
-    GLfloat zView;
     QPoint lastPos;
     QColor qtGreen;
     QColor qtPurple;

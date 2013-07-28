@@ -142,9 +142,10 @@ void GLWidget::initializeGL()
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     projectionType = 0;
-    nearVal = 4;
-    farVal = 15;
-    zView = -10;
+    clippingMagnitude = 0.5 * sqrt(2.0);
+    nearVal = 4.0;
+    farVal = 15.0;
+    zView = -5.0;
 }
 
 void GLWidget::paintGL()
@@ -166,12 +167,12 @@ void GLWidget::resizeGL(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 #ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
+    glOrthof(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
 #else
     if (projectionType == 0)
-        glOrtho(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
+        glOrtho(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
     else
-        glFrustum(-0.5, +0.5, -0.5, +0.5, nearVal, farVal);
+        glFrustum(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
 #endif
     glMatrixMode(GL_MODELVIEW);
 }

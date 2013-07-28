@@ -120,11 +120,11 @@ ModelWindow::ModelWindow()
 
     QHBoxLayout *mainLayout = new QHBoxLayout(groupBoxMain);
     //mainLayout->addWidget(glWidget);
-    mainLayout->addWidget(groupBoxGL);
+    mainLayout->addWidget(controlWidget);
     mainLayout->addSpacing(1);
+    mainLayout->addWidget(groupBoxGL);
     /*mainLayout->addWidget(xSlider);
     mainLayout->addWidget(ySlider);*/
-    mainLayout->addWidget(controlWidget);
     groupBoxMain->setLayout(mainLayout);
 
     // Menu bar
