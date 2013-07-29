@@ -4,10 +4,8 @@ SOURCES += \
     modelwindow.cpp \
     modeldb.cpp \
     modelsimcore.cpp \
-    modeldataanalysis.cpp \
     settingswindow.cpp \
     settingsxml.cpp \
-    modeldataanalysiswindow.cpp \
     modelparameterswindow.cpp \
     modelparameters.cpp \
     controlwidget.cpp \
@@ -19,10 +17,8 @@ HEADERS += \
     controlwidget.h \
     modeldb.h \
     modelsimcore.h \
-    modeldataanalysis.h \
     settingswindow.h \
     settingsxml.h \
-    modeldataanalysiswindow.h \
     modelparameterswindow.h \
     modelparameters.h \
     modelgraphics.h
