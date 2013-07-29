@@ -9,7 +9,8 @@ SOURCES += \
     modelparameterswindow.cpp \
     modelparameters.cpp \
     controlwidget.cpp \
-    modelgraphics.cpp
+    modelgraphics.cpp \
+    modeldataanalysis.cpp
 HEADERS += \
     glwidget.h \
     main.h \
@@ -21,7 +22,8 @@ HEADERS += \
     settingsxml.h \
     modelparameterswindow.h \
     modelparameters.h \
-    modelgraphics.h
+    modelgraphics.h \
+    modeldataanalysis.h
 
 qtHaveModule(opengl) {
 	DEFINES += QT_OPENGL_SUPPORT
