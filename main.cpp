@@ -43,6 +43,7 @@
 #include <QMainWindow>
 #include <QDesktopWidget>
 
+#include "apptools.h"
 #include "modelwindow.h"
 #include "controlwidget.h"
 #include "modelsimcore.h"
@@ -52,6 +53,7 @@ int main(int argc, char **argv)
     //Q_INIT_RESOURCE(ffans);
 
     QApplication app(argc, argv);
+    // AppTools *appTools = new AppTools;
 
     // Model window
     // ------------
@@ -70,19 +72,6 @@ int main(int argc, char **argv)
         modelWindow.show();
         //modelWindow.showMaximized();
     }
-    // Model Data Analysis window
-    // --------------
-    /*ControlWidget controlWidget(0);
-    QStyle *arthurStyle = new ArthurStyle();
-    controlWidget.setStyle(arthurStyle);
-
-    QList<QWidget *> widgets = controlWidget.findChildren<QWidget *>();
-    foreach (QWidget *w, widgets) {
-        w->setStyle(arthurStyle);
-        w->setAttribute(Qt::WA_AcceptTouchEvents);
-    }
-
-    controlWidget.show();*/
 
     // Simultion thread controller init
     // --------------------------------
