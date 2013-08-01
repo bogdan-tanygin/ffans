@@ -129,9 +129,32 @@ ModelWindow::ModelWindow()
 
     // Menu bar
     // --------
+
+    // File menu
+    QMenu *fileMenu = new QMenu("File");
+    menuBar()->addMenu(fileMenu);
+
+    QAction *newFile = new QAction("New...", fileMenu);
+    fileMenu->addAction(newFile);
+    connect(newFile, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
+
+    QAction *openFile = new QAction("Open...", fileMenu);
+    fileMenu->addAction(openFile);
+    connect(openFile, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
+
+    QAction *saveFile = new QAction("Save", fileMenu);
+    fileMenu->addAction(saveFile);
+    connect(saveFile, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
+
+    QAction *saveFileAs = new QAction("Save As...", fileMenu);
+    fileMenu->addAction(saveFileAs);
+    connect(saveFileAs, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
+
+    // Help menu
     QMenu *helpMenu = new QMenu("Help");
     menuBar()->addMenu(helpMenu);
-    QAction *aboutQt = new QAction("AboutQt", helpMenu);
+
+    QAction *aboutQt = new QAction("About...", helpMenu);
     helpMenu->addAction(aboutQt);
     connect(aboutQt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
 }
@@ -154,4 +177,10 @@ void ModelWindow::keyPressEvent(QKeyEvent *e)
         close();
     else
         QWidget::keyPressEvent(e);
+}
+
+void ModelWindow::closeEvent(QCloseEvent * e)
+{
+    //This function does nothing if QT_NO_DEBUG_OUTPUT was defined during compilation.
+    qDebug() << "Close event" << __FUNCTION__;
 }
