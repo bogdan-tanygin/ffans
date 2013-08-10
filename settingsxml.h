@@ -7,4 +7,4 @@ public:
     SettingsXML();
 };
 
-#endif // SETTINGSXML_H
+#endif // SETTINGSXML_H 
