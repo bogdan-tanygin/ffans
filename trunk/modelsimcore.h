@@ -34,6 +34,7 @@ class ModelSimCore
 {
 public:
     ModelSimCore();
+    void modelSimInit(void);
 };
 
 #endif // MODELSIMCORE_H

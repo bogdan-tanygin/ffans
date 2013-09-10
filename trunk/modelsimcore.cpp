@@ -1,4 +1,5 @@
 #include "modelsimcore.h"
+#include "modelparameters.h"
 
 #include <QObject>
 #include <QThread>
@@ -20,4 +21,15 @@ SimController::SimController() {
 
 ModelSimCore::ModelSimCore()
 {
+}
+
+void ModelSimCore::modelSimInit(void)
+{
+    qDebug() << "Check fundamental constants init";
+    qDebug() << "--------------------------------";
+    qDebug() << "pi = " << pi;
+    qDebug() << "mu0 = " << mu0;
+    qDebug() << "Na = " << Na;
+    qDebug() << "kb = " << kb;
+    qDebug() << "R = " << R;
 }

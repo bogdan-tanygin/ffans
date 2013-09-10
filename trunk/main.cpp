@@ -73,8 +73,11 @@ int main(int argc, char **argv)
         //modelWindow.showMaximized();
     }
 
-    // Simultion thread controller init
-    // --------------------------------
+    // Simultion run
+    // -------------
+    ModelSimCore* modelSimCore = new ModelSimCore;
+    modelSimCore->modelSimInit();
+
     SimController* simController = new SimController;
     simController->operate("stub");
 
