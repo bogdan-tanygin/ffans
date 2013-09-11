@@ -3,11 +3,11 @@
 
 #include <math.h>
 
-extern double pi;
-extern double mu0;
-extern double Na;
-extern double kb;
-extern double R;
+extern const double pi;
+extern const double mu0;
+extern const double Na;
+extern const double kb;
+extern const double R;
 
 class ModelParameters
 {
