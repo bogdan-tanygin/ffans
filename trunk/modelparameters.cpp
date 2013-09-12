@@ -11,7 +11,10 @@ const double pi = acos(-1.0); // []
 // 2.1. Electrodynamics
 
 // Vacuum permeability
-const double mu0 = 4 * pi * 1E-7; // [V·s/(A·m)]
+const double mu0 = 4 * pi * 1E-7; // [V s(A m)-1]
+
+// Bohr magneton
+const double muB = 9.27400968 * 1E-24; // [J T−1]
 
 // 2.2. Thermodynamics
 
