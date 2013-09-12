@@ -53,4 +53,27 @@ void ModelSimCore::modelSimInit(void)
     double B2 = parameters.value("Field/B2", "0").toDouble();
     qDebug() << "B1 =" << B1;
     qDebug() << "B2 =" << B2;
+
+    double d_mean = parameters.value("Fluid/d_mean", "0").toDouble();
+    qDebug() << "d_mean =" << d_mean;
+    double m_mol_rel = parameters.value("Nanoparticle/m_mol_rel", "0").toDouble();
+    qDebug() << "m_mol_rel =" << m_mol_rel;
+    double s_mol = parameters.value("Nanoparticle/s_mol", "0").toDouble();
+    qDebug() << "s_mol =" << s_mol;
+    double rho = parameters.value("Nanoparticle/rho", "0").toDouble();
+    qDebug() << "rho =" << rho;
+
+    qDebug() << "";
+    qDebug() << "Analysis";
+    qDebug() << "--------------------------------";
+
+    double V_particle = pi * pow(d_mean, 3) / 6.0;
+    double m_mean_temp = rho * V_particle;
+    double m_mol = m_mol_rel * 1E-3 / Na;
+
+    double s_particle = muB * s_mol * m_mean_temp / m_mol;
+    qDebug() << "s_particle =" << s_particle;
+    double M_particle = s_particle / V_particle;
+    qDebug() << "M_particle =" << M_particle;
+    qDebug() << "relation of M #1 =" << M_particle / 46000;
 }
