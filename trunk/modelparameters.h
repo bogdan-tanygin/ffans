@@ -7,6 +7,7 @@
 extern const double pi;
 extern const double mu0;
 extern const double muB;
+extern const double ta0;
 extern const double Na;
 extern const double kb;
 extern const double R;
