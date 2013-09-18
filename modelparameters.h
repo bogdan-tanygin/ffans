@@ -5,6 +5,7 @@
 #include <QString>
 
 extern const double pi;
+extern const double n_dense_packing;
 extern const double mu0;
 extern const double muB;
 extern const double ta0;
