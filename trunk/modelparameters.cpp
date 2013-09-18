@@ -8,6 +8,7 @@
 
 // 1. Math and geometry
 const double pi = acos(-1.0); // []
+const double n_dense_packing = pi / sqrt(18.0); // []
 
 // 2. Physics
 
@@ -38,6 +39,7 @@ ModelParameters::ModelParameters(QString fileName)
     qDebug() << "I. Fundamental constants init";
     qDebug() << "=================================";
     PWRITE(pi)
+    PWRITE(n_dense_packing)
     PWRITE(mu0)
     PWRITE(Na)
     PWRITE(kb)
@@ -120,8 +122,21 @@ ModelParameters::ModelParameters(QString fileName)
     qDebug() << "---";
     qDebug() << "Model of Lennard-Jones fluid - critical  parameters";
 
-    double Tc =sqrt(1.3 / 3.0) * (mu0 / (4.0 * pi)) * pow(s_mean, 2) / (kb * pow(d_mean, 3));
-    PWRITE(Tc)
+    qDebug() << "Primary aggregate diameter estimation";
+
+    double d_mean_primary = 285 * 1E-9;
+    PWRITE(d_mean_primary)
+    double N_p_primary = n_dense_packing * pow(d_mean_primary, 3) / pow(d_mean, 3);
+    PWRITE(N_p_primary)
+    double ks_primary = N_p_primary * 0.75 / 100.0; // [my original]
+    if (ks_primary < 1.0) ks_primary = 1.0; // [Dzyan]
+    PWRITE(ks_primary)
+
+    double tc = ta0 + sqrt(1.3 / 3.0) * (mu0 / (4.0 * pi)) *
+            pow(ks_primary * s_mean, 2) / (kb * pow(d_mean_primary, 3));
+    PWRITE(tc)
+
+    qDebug() << "Different particles diameter estimation";
 
     qDebug() << "--------------------------------";
 }
