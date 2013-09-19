@@ -66,6 +66,7 @@ ModelParameters::ModelParameters(QString fileName)
     PREAD(Ferrofluid, d_mean, 1E-9) // [nm]
     PREAD(Ferrofluid, s_mean, 1) // [A m2]
     PREAD(Ferrofluid, n_p, 1) // [m-3]
+    PREAD(Ferrofluid, t_vap_ldc, 1) // [°C]
 
     PREAD(Nanoparticle, m_mol_rel, 1) // []
     PREAD(Nanoparticle, rho_p, 1) // [kg m-3]
@@ -101,7 +102,7 @@ ModelParameters::ModelParameters(QString fileName)
     qDebug() << "Estimation of dipole-dipole interaction value";
 
     qDebug() << "Mean distance between nanoparticles. Simple packing. In case of cubic packing, we will have larger distance.";
-    double l = 1 / pow(n_p, 1/3.0);
+    double l = 1 / pow(n_p, 1 / 3.0);
     PWRITE(l)
     double Wdd_order = (mu0 / (4.0 * pi)) * pow(s_mean, 2) / pow(l, 3);
     PWRITE(Wdd_order)
@@ -122,9 +123,10 @@ ModelParameters::ModelParameters(QString fileName)
     qDebug() << "---";
     qDebug() << "Model of Lennard-Jones fluid - critical  parameters";
 
-    qDebug() << "Primary aggregate diameter estimation";
+    qDebug() << "[Hypothesis] Primary aggregate diameter estimation";
 
     double d_mean_primary = 285 * 1E-9;
+    //double d_mean_primary = 11.5 * 1E-9;
     PWRITE(d_mean_primary)
     double N_p_primary = n_dense_packing * pow(d_mean_primary, 3) / pow(d_mean, 3);
     PWRITE(N_p_primary)
@@ -136,7 +138,12 @@ ModelParameters::ModelParameters(QString fileName)
             pow(ks_primary * s_mean, 2) / (kb * pow(d_mean_primary, 3));
     PWRITE(tc)
 
-    qDebug() << "Different particles diameter estimation";
+    qDebug() << "[Hypothesis] Different particles diameter estimation";
+
+    //t_vap_ldc = 419.3663;
+    double d_mean_estimate = pow( ((4.0 * pi) / mu0) * kb * (t_vap_ldc - ta0) *
+            pow(m_mol_rel / (pi * rho_p * Na * s_mol), 2), 1 / 3.0) * pow(pow(6.0,5) / 2.6, 1 / 6.0) * 1E-2;
+    PWRITE(d_mean_estimate)
 
     qDebug() << "--------------------------------";
 }
