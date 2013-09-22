@@ -57,7 +57,6 @@ ff_vect_t dvt[pN + 1];
 
 double Rp[pN + 1];
 double m0p[pN + 1];
-double m0start_agg_p[pN + 1];
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 double r0modp[pN + 1];
 double Vselfp[pN + 1];
@@ -636,24 +635,6 @@ void ff_model_m_setting(void)
         //	while(max_eps > m_h_eff_tol);
 }
 
-/*void ff_model_pp_phagocyt(long p1, long p2)
-{
-long size_new, size_old; // size [number of primary aggregates inside]
-
-size_old = exist_p[p1];
-size_new = exist_p[p1] += exist_p[p2];
-exist_p[p2] = 0;
-
-Rp[p1] = Rp[p1] * pow(size_new / size_old, 1 / 3.0);
-m[p1].x = m[p1].x * size_new / size_old;
-m[p1].y = m[p1].y * size_new / size_old;
-m[p1].z = m[p1].z * size_new / size_old;
-m0p[p1] = m0p[p1] * size_new / size_old;
-m0start_agg_p[p1] *= size_new / size_old;
-r0modp[p1] *= pow(size_new / size_old, - 1 / 6.0);
-
-Vselfp[p1] *= size_new / size_old;
-}*/
 
 ff_vect_t ff_model_nonloc_force(long p)
 {
@@ -1304,7 +1285,7 @@ void ff_model_init(void)
 
     t = 0; // time
 
-    //printf("\n %e", m0);
+    printf("\n m0 = %e, N = %d", m0, pN);
     //printf("\n %e", M0);
     glob_start_t = start_t;
 
@@ -1352,6 +1333,10 @@ again:
         m[p].x = m0 * sin(theta) * cos(phi);
         m[p].y = m0 * sin(theta) * sin(phi);
         m[p].z = m0 * cos(theta);
+
+		Rp[p] = R0; // TODO: replace in all logic !
+        exist_p[p] = 1;
+        m0p[p] = m0; // TODO: replace in all logic !
 
 		//m_freeze[p] = 0;
         m_sat[p] = 0;

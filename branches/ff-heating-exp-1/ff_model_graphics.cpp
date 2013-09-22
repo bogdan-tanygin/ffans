@@ -447,7 +447,7 @@ void ff_mgr_init()
 
     y_rot = 30.0f;
     x_rot = -60.0f;
-    z_off = -35.0f;
+    z_off = -1.0f;
 
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);

@@ -34,7 +34,7 @@ double kb = 1.38 * (1E-23);
 // Space
 
 double scale = 0.4;
-double Lx = 60 * 1E-6 * scale, Ly = 30 * 1E-6 * scale, Lz = 5 * 1E-6 * scale; //meters
+double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
