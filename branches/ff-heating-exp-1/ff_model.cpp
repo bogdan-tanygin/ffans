@@ -859,6 +859,7 @@ ff_vect_t ff_model_force(long p)
 
     // Random Gaussian process
     if (brownian_force) tddF = ff_model_brownian_force(p);
+	//printf("\n tddF.x / tF.x  = %e", tddF.x / tF.x);
     tF.x += tddF.x;
     tF.y += tddF.y;
     tF.z += tddF.z;
@@ -961,8 +962,8 @@ void ff_model_next_step(void)
 
     if (time_go)
     {
-        printf("\n ============================", step);
-        printf("\n Step %d", step);
+        //printf("\n ============================", step);
+        //printf("\n Step %d", step);
 
         ff_model_m_setting();
 
@@ -1049,7 +1050,7 @@ void ff_model_next_step(void)
                         mz_tot_n++;
                     } // end of loop for dv
 
-                    printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
+                    //printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
 
                     // TODO: need the number of existing (exist_p) particles ! 
                     r0.x /= pN;

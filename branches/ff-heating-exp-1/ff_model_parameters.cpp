@@ -33,7 +33,7 @@ double kb = 1.38 * (1E-23);
 
 // Space
 
-double scale = 0.4;
+double scale = 0.15;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -43,11 +43,11 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 double dt = 1E-1; //s
 long slow_steps;
 //double smooth_v = 10; // disabled in code
-double smooth_r = 0.1;
+double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double R00 = 10 * (1E-9); // Radius of the nanoparticle [m]
-double R0 = 12 * (1E-9); // Radius including the acid sphere [m]
+double R00 = 0.5 * 1.150000E-08; // Radius of the nanoparticle [m]
+double R0 = R00 + 2E-9; // Radius including the acid sphere [m]
 double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 double rop = 0.5 * (4.9 + 5.2) * (1E+3); // mass density [kg / m^3]
@@ -56,7 +56,7 @@ double M0 = Vself * rop;  // mass [kg]
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
-double Ch = 1E-8; // adhesion / magnetic relation
+double Ch = 0.01; // adhesion / magnetic relation
 
 int load_at_start = 0; // the best method of loading
 int auto_save = 1;
@@ -64,7 +64,7 @@ int manual_field_control = 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ con
 int ext_field_is_homo = 1;
 int auto_reversal = 0;
 
-int setting_plot = 0; // cluster creation plot m_tot / m0 and I.
+int setting_plot = 1; // cluster creation plot m_tot / m0 and I.
 
 double start_t =30 /* [micro_s] */ * (1E-6); // [s]
 double T_ext = 0.2 * (1E6); // [micro_s] // external field period
