@@ -73,7 +73,7 @@ void cbRenderScene(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     ff_model_next_step();
-
+	
     glLoadIdentity();
 
     glMatrixMode(GL_PROJECTION);
@@ -87,7 +87,7 @@ void cbRenderScene(void)
 
     glEnable(GL_LIGHTING);
 
-    glDisable(GL_DEPTH_TEST); 
+    glDisable(GL_DEPTH_TEST);
 
     glColor4f(0.6,1.0,0.6,.75);
 

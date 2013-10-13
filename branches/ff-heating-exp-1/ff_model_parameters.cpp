@@ -33,7 +33,7 @@ double kb = 1.38 * (1E-23);
 
 // Space
 
-double scale = 0.15;
+double scale = 0.2;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -48,7 +48,7 @@ long slow_steps = 0;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 5; // K
+double T = 300; // K
 double R00 = 0.5 * 9.0E-9; // Radius of the nanoparticle [m]
 double R0 = R00 + 2.0E-9; // Radius including the acid sphere [m]
 double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
