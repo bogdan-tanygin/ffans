@@ -1362,9 +1362,9 @@ void ff_model_effective_random_force_update(long p)
 	dy = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
 	dz = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
 
-	Px = (gamma * dx - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
-	Py = (gamma * dy - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
-	Pz = (gamma * dz - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].z) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Px = (gamma * dx - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Py = (gamma * dy - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Pz = (gamma * dz - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].z) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
 
 	P[p].x = Px;
 	P[p].y = Py;

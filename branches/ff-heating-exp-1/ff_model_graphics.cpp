@@ -306,6 +306,7 @@ void ff_mgr_print_info()
     int shift = -1;
 
 	glDisable(GL_LIGHTING);
+	//--------------------
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"step = %d", step);
@@ -349,16 +350,12 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Hysteresis mode = %d", hyst_mode);
 
     glRasterPos2i(6, shift * 20);
     shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-
-    // Macroscopic
-    ///////////
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     glRasterPos2i(6, shift * 20);
     shift--;
@@ -372,7 +369,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     ///////////
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Mx = %5.3e A / m", m_tot.x / Vtot);
 
     glRasterPos2i(6, shift * 20);
@@ -416,8 +413,27 @@ void ff_mgr_print_info()
     glRasterPos2i(6, shift * 20);
     shift--;
     shift--;
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
+
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"Lx = %e m", Lx);
+
+    glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"Ek = %e J", Ek);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"dT = %e K", dT);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+	
+	// ------------------
 	glEnable(GL_LIGHTING);
 }
 
