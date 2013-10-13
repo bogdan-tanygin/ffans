@@ -46,6 +46,7 @@ ff_vect_t m[pN + 1];  //particles magnetic moment direction
 int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
+ff_vect_t P[pN + 1];
 
 ff_vect_t v[pN + 1];
 
@@ -379,7 +380,8 @@ ret_f = (Ct / (exp(Ct) - exp(-Ct))) * exp(Ct * cos(theta)) * sin(theta) * dtheta
 return ret_f;
 }*/
 
-void ff_model_set_rand_dir(long p)
+/*
+void __deprecated__ff_model_set_rand_dir(long p)
 {
     long i;
     double dtheta; // step in [R]andom long
@@ -407,7 +409,7 @@ void ff_model_set_rand_dir(long p)
     theta = (i - 0.5) * dtheta;
     break;
     }
-    */
+    *//*
     phi = 2 * pi * rand() / 32768.0;
     theta = pi * rand() / 32768.0;
 
@@ -433,7 +435,7 @@ void ff_model_set_rand_dir(long p)
     drt[p].x += r0modp[p] * sqrt(dt) * (Ft.x * cos(theta) / Fmag + t.x * sin(theta) * cos(phi) / tmag + b.x * sin(theta) * sin(phi) / bmag);
     drt[p].y += r0modp[p] * sqrt(dt) * (Ft.y * cos(theta) / Fmag + t.y * sin(theta) * cos(phi) / tmag + b.y * sin(theta) * sin(phi) / bmag);
     drt[p].z += r0modp[p] * sqrt(dt) * (Ft.z * cos(theta) / Fmag + t.z * sin(theta) * cos(phi) / tmag + b.z * sin(theta) * sin(phi) / bmag);
-}
+}*/
 
 /*void ff_model_set_m(long p)
 {
@@ -821,23 +823,6 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
-ff_vect_t ff_model_brownian_force(long p)
-{
-    double theta, phi;
-    double Fmag;
-    ff_vect_t tF;
-
-    Fmag = (*var_nor)();
-    phi = 2 * pi * rand() / 32768.0;
-    theta = pi * rand() / 32768.0;
-
-    tF.x = Fmag * sin(theta) * cos(phi);
-    tF.y = Fmag * sin(theta) * sin(phi);
-    tF.z = Fmag * cos(theta);
-
-    return tF;
-}
-
 ff_vect_t ff_model_force(long p)
 {
     ff_vect_t tF;
@@ -857,12 +842,9 @@ ff_vect_t ff_model_force(long p)
     // Buoyancy force
     tF.z +=   C6;
 
-    // Random Gaussian process
-    if (brownian_force) tddF = ff_model_brownian_force(p);
-	//printf("\n tddF.x / tF.x  = %e", tddF.x / tF.x);
-    tF.x += tddF.x;
-    tF.y += tddF.y;
-    tF.z += tddF.z;
+    tF.x += P[p].x;
+    tF.y += P[p].y;
+    tF.z += P[p].z;
 
     return tF;
 }
@@ -965,12 +947,17 @@ void ff_model_next_step(void)
         //printf("\n ============================", step);
         //printf("\n Step %d", step);
 
-        ff_model_m_setting();
+        k_bm_inst++;
+		if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
+
+		ff_model_m_setting();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                f = ff_model_force(p);
+                if (k_bm_inst == 1) ff_model_effective_random_force_update(p);
+				
+				f = ff_model_force(p);
                 F[p] = f;
 
                 if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
@@ -994,7 +981,7 @@ void ff_model_next_step(void)
                     drt[p].z = F[p].z * dt / C2 +		 
                         (v[p].z - F[p].z / C2) * (1 - exp(- C2 * dt / M0)) * M0 / C2;
 
-                    if (brownian_shifts) ff_model_set_rand_dir(p);
+                    //if (brownian_shifts) ff_model_set_rand_dir(p);
 
                     r[p].x += drt[p].x;
                     r[p].y += drt[p].y;
@@ -1004,7 +991,7 @@ void ff_model_next_step(void)
                     if (v[p].y != v[p].y) printf("\n DEBUG 1.9 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (v[p].z != v[p].z) printf("\n DEBUG 1.9 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
-                    ff_model_check_walls(p);
+                    // ff_model_check_walls(p);
 
                     if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
                     if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
@@ -1269,9 +1256,11 @@ void ff_model_init(void)
     double sigma;
     long i,j;
 
-    // Brownian motion - random force parameters
-    ////////////////////////////////////////////
-    sigma = sqrt(18 * kb * T * pi * eta * 2 * R0);
+    // Brownian motion -  parameters
+    ///////////////////////////////////////////////////
+	
+	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
+    sigma = 1;
 
     srand( (unsigned)time( NULL ) );
     rng.seed(static_cast<unsigned int>(std::time(0)));
@@ -1351,4 +1340,24 @@ again:
 
 
 
+}
+
+// Update of the effective instantiated random force
+void ff_model_effective_random_force_update(long p)
+{
+	double Px, Py, Pz; // instantiated effective random force
+	double dx, dy, dz; // instantiated displacements for time dt * k_bm_inst_max 
+    
+	// instantiation
+    dx = (*var_nor)() * sqrt(2 * D * dt);
+	dy = (*var_nor)() * sqrt(2 * D * dt);
+	dz = (*var_nor)() * sqrt(2 * D * dt);
+
+	Px = (gamma * dx - M0 * (1 - exp(- gamma * dt / M0)) * v[p].x) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
+	Py = (gamma * dy - M0 * (1 - exp(- gamma * dt / M0)) * v[p].y) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
+	Pz = (gamma * dz - M0 * (1 - exp(- gamma * dt / M0)) * v[p].z) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
+
+	P[p].x = Px;
+	P[p].y = Py;
+	P[p].z = Pz;
 }

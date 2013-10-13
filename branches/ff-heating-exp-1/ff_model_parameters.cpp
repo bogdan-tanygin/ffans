@@ -40,13 +40,15 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1E-1; //s
-long slow_steps;
+double dt = 1E-1; // s
+long k_bm_inst_max = 10; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
+long k_bm_inst = 0;
+long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 300; // K
+double T = 50; // K
 double R00 = 0.5 * 9.0E-9; // Radius of the nanoparticle [m]
 double R0 = R00 + 2.0E-9; // Radius including the acid sphere [m]
 double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
@@ -75,8 +77,8 @@ double start_ideal = 1; // start chaos (ideal superparam. gas)
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta = 0.00164; //Pa * s //kerosene
 
-int brownian_shifts = 0;
-int brownian_force = 1;
+//int __deprecated__brownian_shifts = 0;
+//int __deprecated__brownian_force = 1;
 
 //default order of magnitude of the external field but exact function is hardcoded 
 double B0 = 100 /*Oe*/ * 79.577 * mu0; // Tesla
@@ -86,6 +88,7 @@ double C1 = 3 * mu0 / (4 * pi);
 double C2 = 6 * pi * eta * R0;
 double C3 = M0 * g;
 double D = R * T / (6 * Na * pi * R0 * eta);
+double gamma = 6 * pi * R0 * eta;
 //double r0 = sqrt(3 * 2 * D * dt);
 double r0mod = sqrt(3 * 2 * D); // needs extra * dt^(1/2.0)
 //double C4 = r0;

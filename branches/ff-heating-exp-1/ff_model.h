@@ -36,8 +36,9 @@ ff_vect_t Bext(double x, double y, double z);
 ////////////////////
 extern ff_vect_t r[];  //particles positions
 extern ff_vect_t m[];  //particles magneitc moment direction
-
 extern ff_vect_t v[];
+
+extern ff_vect_t P[];  // effective instantiated random force
 
 //extern ff_vect_t F0[];
 
@@ -81,3 +82,6 @@ extern ff_vect_t m_tot;
 
 extern int exist_p[];
 extern double Rp[];
+
+// Update of the effective instantiated random force
+void ff_model_effective_random_force_update(long p);

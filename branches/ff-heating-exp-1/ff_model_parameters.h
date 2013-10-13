@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 25 // number of the particles
+#define pN 100 // number of the particles
 
 // Math constants
 extern double pi;
@@ -39,6 +39,8 @@ extern double Lx, Ly, Lz; //meters
 
 // Basic physical model parameters
 extern double dt;
+extern long k_bm_inst_max;
+extern long k_bm_inst;
 extern long slow_steps;
 extern double smooth_v;
 extern double smooth_r;
@@ -60,8 +62,8 @@ extern double nu_ext;
 extern double start_ideal;
 extern double start_sediment;
 
-extern int brownian_shifts;
-extern int brownian_force;
+//extern int __deprecated__brownian_shifts;
+//extern int __deprecated__brownian_force;
 
 //extern double gap;
 
@@ -80,6 +82,7 @@ extern double B0; // Tesla
 extern double C2;
 extern double C3;
 extern double D;
+extern double gamma;
 //extern double r0;
 extern double r0mod;
 //extern double C4;
