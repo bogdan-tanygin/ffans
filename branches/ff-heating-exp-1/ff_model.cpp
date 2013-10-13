@@ -70,7 +70,8 @@ double B_hyst_n[21];
 double Mz_hyst_n[21];
 
 double t; // time
-double Ek;
+double dT = 0;
+double Ek = 0;
 double g_Bz_prev;
 long step = 0;
 
@@ -952,6 +953,13 @@ void ff_model_next_step(void)
 
 		ff_model_m_setting();
 
+		for (p = 1; p <= pN; p++) if (exist_p[p])
+		{
+			Ek += M0 * MUL(v[p],v[p]) / 2.0;
+		}
+
+		ff_model_update_dT();
+
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
@@ -997,8 +1005,6 @@ void ff_model_next_step(void)
                     if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
-                    Ek += M0 * MUL(v[p],v[p]) / 2.0;
-
                     chk = ff_model_check_smooth_dr(p);
                     if ( chk == 0) goto t_end;
                 } // end of loop for dr
@@ -1006,7 +1012,7 @@ void ff_model_next_step(void)
                 //ff_model_check_overlapp();
 
                 r0.x = r0.y = r0.z = 0;
-
+				
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
@@ -1352,9 +1358,9 @@ void ff_model_effective_random_force_update(long p)
 	dt0 = dt * k_bm_inst_max;
 
 	// instantiation
-    dx = (*var_nor)() * sqrt(2 * D * dt0);
-	dy = (*var_nor)() * sqrt(2 * D * dt0);
-	dz = (*var_nor)() * sqrt(2 * D * dt0);
+    dx = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
+	dy = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
+	dz = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
 
 	Px = (gamma * dx - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
 	Py = (gamma * dy - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
@@ -1363,4 +1369,16 @@ void ff_model_effective_random_force_update(long p)
 	P[p].x = Px;
 	P[p].y = Py;
 	P[p].z = Pz;
+}
+
+void ff_model_update_dT(void)
+{
+	double T_basic = 0;
+	T_basic = (2 / 3.0) * Ek / (kb * pN);
+	dT = T - T_basic;
+	if (dT < 0)
+	{
+		printf("\n WARNING: dT < 0");
+		dT = 0;
+	}
 }

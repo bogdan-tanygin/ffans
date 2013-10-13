@@ -51,6 +51,7 @@ extern double Mz_hyst_n[];
 
 extern long step;
 extern double t;
+extern double dT;
 
 extern double Ek;
 
@@ -85,3 +86,4 @@ extern double Rp[];
 
 // Update of the effective instantiated random force
 void ff_model_effective_random_force_update(long p);
+void ff_model_update_dT(void);
