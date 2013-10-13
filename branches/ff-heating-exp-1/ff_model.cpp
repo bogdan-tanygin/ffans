@@ -991,7 +991,7 @@ void ff_model_next_step(void)
                     if (v[p].y != v[p].y) printf("\n DEBUG 1.9 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (v[p].z != v[p].z) printf("\n DEBUG 1.9 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
-                    // ff_model_check_walls(p);
+                    ff_model_check_walls(p);
 
                     if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
                     if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
@@ -1346,16 +1346,19 @@ again:
 void ff_model_effective_random_force_update(long p)
 {
 	double Px, Py, Pz; // instantiated effective random force
-	double dx, dy, dz; // instantiated displacements for time dt * k_bm_inst_max 
+	double dx, dy, dz; // instantiated displacements for time dt * k_bm_inst_max
+	double dt0;
     
-	// instantiation
-    dx = (*var_nor)() * sqrt(2 * D * dt);
-	dy = (*var_nor)() * sqrt(2 * D * dt);
-	dz = (*var_nor)() * sqrt(2 * D * dt);
+	dt0 = dt * k_bm_inst_max;
 
-	Px = (gamma * dx - M0 * (1 - exp(- gamma * dt / M0)) * v[p].x) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
-	Py = (gamma * dy - M0 * (1 - exp(- gamma * dt / M0)) * v[p].y) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
-	Pz = (gamma * dz - M0 * (1 - exp(- gamma * dt / M0)) * v[p].z) / (dt - M0 * exp(- gamma * dt / M0) / gamma);
+	// instantiation
+    dx = (*var_nor)() * sqrt(2 * D * dt0);
+	dy = (*var_nor)() * sqrt(2 * D * dt0);
+	dz = (*var_nor)() * sqrt(2 * D * dt0);
+
+	Px = (gamma * dx - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Py = (gamma * dy - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Pz = (gamma * dz - M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].z) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
 
 	P[p].x = Px;
 	P[p].y = Py;
