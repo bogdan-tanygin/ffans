@@ -46,8 +46,9 @@ long slow_steps;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double R00 = 0.5 * 1.150000E-08; // Radius of the nanoparticle [m]
-double R0 = R00 + 2E-9; // Radius including the acid sphere [m]
+double T = 300; // K
+double R00 = 0.5 * 9.0E-9; // Radius of the nanoparticle [m]
+double R0 = R00 + 2.0E-9; // Radius including the acid sphere [m]
 double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 double rop = 0.5 * (4.9 + 5.2) * (1E+3); // mass density [kg / m^3]
@@ -76,8 +77,6 @@ double eta = 0.00164; //Pa * s //kerosene
 
 int brownian_shifts = 0;
 int brownian_force = 1;
-
-double T = 300; // K
 
 //default order of magnitude of the external field but exact function is hardcoded 
 double B0 = 100 /*Oe*/ * 79.577 * mu0; // Tesla

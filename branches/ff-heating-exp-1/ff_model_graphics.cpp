@@ -248,7 +248,8 @@ void ff_mgr_show_next_step()
 
             //if (show_sphere) DisplaySphere(space_k * r[p].x / Lx, space_k * r[p].y / Ly, space_k * r[p].z / Lz, texture[0]);
             glTranslatef(r1.x, r1.y, r1.z);
-            if (show_sphere) gluSphere(g_quad, 0.01 * kSecondary * Rp[p] / R0, 20, 20);
+            //if (show_sphere) gluSphere(g_quad, 0.01 * kSecondary * Rp[p] / R0, 20, 20);
+			if (show_sphere) gluSphere(g_quad, space_k * Rp[p], 20, 20);
             glTranslatef(-r1.x, -r1.y, -r1.z);
 
             //glDisable(GL_BLEND);
