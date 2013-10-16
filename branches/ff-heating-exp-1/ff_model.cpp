@@ -953,10 +953,7 @@ void ff_model_next_step(void)
         //printf("\n ============================", step);
         //printf("\n Step %d", step);
 
-        k_bm_inst++;
-		if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
-
-		ff_model_m_setting();
+        ff_model_m_setting();
 
 		ff_model_update_dT();
 
@@ -1004,9 +1001,16 @@ void ff_model_next_step(void)
                     if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
                     chk = ff_model_check_smooth_dr(p);
-					if ( chk == 0) goto t_end;
+					if ( chk == 0)
+						{
+							k_bm_inst = 1;
+							goto t_end;
+						}
 
 					ff_model_check_walls(p);
+					
+					k_bm_inst++;
+					if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
                 } // end of loop for dr
 
                 //ff_model_check_overlapp();
