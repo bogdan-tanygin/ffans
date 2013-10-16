@@ -943,6 +943,11 @@ void ff_model_next_step(void)
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
 
+	for (p = 1; p <= pN; p++) if (exist_p[p])
+		{
+			Ek += M0 * MUL(v[p],v[p]) / 2.0;
+		};
+
     if (time_go)
     {
         //printf("\n ============================", step);
@@ -952,11 +957,6 @@ void ff_model_next_step(void)
 		if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
 
 		ff_model_m_setting();
-
-		for (p = 1; p <= pN; p++) if (exist_p[p])
-		{
-			Ek += M0 * MUL(v[p],v[p]) / 2.0;
-		}
 
 		ff_model_update_dT();
 
@@ -999,14 +999,14 @@ void ff_model_next_step(void)
                     if (v[p].y != v[p].y) printf("\n DEBUG 1.9 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (v[p].z != v[p].z) printf("\n DEBUG 1.9 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
-                    ff_model_check_walls(p);
-
                     if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
                     if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
                     chk = ff_model_check_smooth_dr(p);
-                    if ( chk == 0) goto t_end;
+					if ( chk == 0) goto t_end;
+
+					ff_model_check_walls(p);
                 } // end of loop for dr
 
                 //ff_model_check_overlapp();
