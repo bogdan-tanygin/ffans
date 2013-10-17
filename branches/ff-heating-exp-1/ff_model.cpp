@@ -96,6 +96,8 @@ double BmanZ = 0;
 
 ff_vect_t m_tot;
 
+ff_vect_t dir110[13];
+
 void ff_model_upgrade_ext_field(void)
 {
     g_Bz_prev = Bext(0,0,0).z;
@@ -1155,12 +1157,12 @@ ff_vect_t Bext(double x, double y, double z)
     return tBext;
 }
 
-/*void ff_model_init_sediment(void)
+void ff_model_init_sediment(void)
 {
 long i, j, k;
 ff_vect_t r0, r1, rb; //rb - basic; we build sphere around it
 long n;
-double a = (2 + gap) * R0;
+double a = (2 + 0.1) * R0;
 long p, pb;
 int res;
 long pt;
@@ -1185,9 +1187,9 @@ while (p <= pN)
 {
 jdir++;
 
-r1.x = rb.x + a * dir110[jdir].x / sqrt(2);
-r1.y = rb.y + a * dir110[jdir].y / sqrt(2);
-r1.z = rb.z + a * dir110[jdir].z / sqrt(2);
+r1.x = rb.x + a * dir110[jdir].x / sqrt(2.0);
+r1.y = rb.y + a * dir110[jdir].y / sqrt(2.0);
+r1.z = rb.z + a * dir110[jdir].z / sqrt(2.0);
 
 if ((fabs(r1.x) > Lx / 2.0)||(fabs(r1.y) > Ly / 2.0)||(fabs(r1.z) > Lz / 2.0))
 {res = 0; goto m1;}
@@ -1219,9 +1221,9 @@ rb.y = r[pb].y;
 rb.z = r[pb].z;
 }
 } // p for
-}*/
+}
 
-/*void ff_model_dir_init(void)
+void ff_model_dir_init(void)
 {
 
 long i;
@@ -1255,7 +1257,7 @@ dir110[i].x = 1; dir110[i].y =  0; dir110[i].z = -1;
 i++;
 dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 
-}*/
+}
 
 void ff_model_init(void)
 {
@@ -1281,7 +1283,7 @@ void ff_model_init(void)
     //boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, *nd);
     var_nor = new boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > (rng, *nd);
 
-    //ff_model_dir_init();
+    ff_model_dir_init();
 
     t = 0; // time
 
@@ -1346,7 +1348,7 @@ again:
 
     if (load_at_start) ff_io_load();
 
-    //	if (start_sediment) ff_model_init_sediment();
+    if (start_sediment) ff_model_init_sediment();
 
 
 
@@ -1366,9 +1368,12 @@ void ff_model_effective_random_force_update(long p)
 	dy = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
 	dz = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
 
-	Px = (gamma * dx - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
-	Py = (gamma * dy - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
-	Pz = (gamma * dz - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].z) / (dt0 - M0 * exp(- gamma * dt0 / M0) / gamma);
+	Px = (gamma * dx - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].x) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+	Py = (gamma * dy - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].y) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+	Pz = (gamma * dz - 0 * M0 * (1 - exp(- gamma * dt0 / M0)) * v[p].z) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+
+	//printf("\n %e", gamma * dt0 / M0);
+	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
 	P[p].x = Px;
 	P[p].y = Py;
