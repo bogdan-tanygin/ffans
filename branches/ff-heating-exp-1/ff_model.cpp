@@ -1469,8 +1469,12 @@ void ff_model_size_dispersion_init(void)
 	for (p = 1; p <= pN; p++)
 	{
 		random_value = (*var_uni)();
-		Rp[p] = 0.5 * d[1] + delta; // default
-		m0p[p] = ff_model_magnetic_moment_calc(Rp[p],p); // default
+		
+		if (random_value <= random_points[1])
+		{
+			Rp[p] = 0.5 * d[1] + delta;
+			m0p[p] = ff_model_magnetic_moment_calc(Rp[p],p);
+		}
 		for (i = 1; i <= imax - 1; i++)
 		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
 		{
