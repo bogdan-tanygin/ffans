@@ -246,13 +246,12 @@ void ff_mgr_show_next_step()
                 //r1.y = space_k * r[p].y / Ly;
                 //r1.z = space_k * r[p].z / Lz;
 
-                tmag = sqrt(m[p].x * m[p].x + m[p].y * m[p].y) + 0.00000001;
+                tmag = sqrt(m[p].x * m[p].x + m[p].y * m[p].y);
 
                 theta = acos(m[p].z / sqrt(MUL(m[p],m[p])));
                 /*if (m[p].x != 0) phi = atan(m[p].y / m[p].x);
                 else phi = 0.5 * pi * m[p].y / (fabs(m[p].y) + 0.00000000001);
                 if (m[p].x < 0) phi += pi;*/
-
 
                 glTranslatef(r1.x, r1.y, r1.z);
                 glRotatef(theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);

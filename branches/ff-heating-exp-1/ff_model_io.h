@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-void ff_io_save_hyst(void);
+//void ff_io_save_hyst(void);
 void ff_io_save_setting(ff_vect_t m_tot,double I);
 void ff_io_autosave(void);
 void ff_io_load(void);
-void ff_io_save_susceptX(void);
+/*void ff_io_save_susceptX(void);
 void ff_io_save_susceptY(void);
-void ff_io_save_susceptZ(void);
+void ff_io_save_susceptZ(void);*/
 
 extern void cbMouseInput(int button, int state, int x, int y);
 extern void cbMouseMove(int x, int y);

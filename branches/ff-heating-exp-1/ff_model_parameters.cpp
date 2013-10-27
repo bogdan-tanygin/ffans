@@ -26,10 +26,11 @@ double pi = acos(-1.0);
 
 // Physics constants
 double mu0 = 4 * pi * 1E-7;
+const double muB = 9.27400968 * 1E-24; // Bohr magneton
 double R = 8.31;
 double Na = 6.02214179 * 1E23;
 double g = 9.81;
-double kb = 1.38 * (1E-23);
+const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
@@ -48,16 +49,17 @@ long slow_steps = 0;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 350; // K
-double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
-double R0 = R00 + 2.0E-9; // Radius including the acid sphere [m]
-double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
+double T = 300; // K
+//double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
+double delta = 2.0E-9;
+//double R0 = R00 + delta; // Radius including the acid sphere [m]
+//double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
-double rop = 0.5 * (4.9 + 5.2) * (1E+3); // mass density [kg / m^3]
-double M0 = Vself * rop;  // mass [kg]
+double rop = 5240; // mass density [kg / m^3]
+//double M0 = Vself * rop;  // mass [kg]
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
-double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
+//double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // adhesion / magnetic relation
 
@@ -73,8 +75,8 @@ double start_t =30 /* [micro_s] */ * (1E-6); // [s]
 double T_ext = 0.2 * (1E6); // [micro_s] // external field period
 double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
 
-double start_ideal = 0; // start chaos (ideal superparam. gas)
-double start_sediment = 1;
+double start_ideal = 1; // start chaos (ideal superparam. gas)
+double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta = 0.00164; //Pa * s //kerosene
 
@@ -86,12 +88,12 @@ double B0 = 100 /*Oe*/ * 79.577 * mu0; // Tesla
 
 // Derived parameters
 double C1 = 3 * mu0 / (4 * pi);
-double C2 = 6 * pi * eta * R0;
-double C3 = M0 * g;
-double D = R * T / (6 * Na * pi * R0 * eta);
-double gamma = 6 * pi * R0 * eta;
+//double C2 = 6 * pi * eta * R0;
+//double C3 = M0 * g;
+//double D = R * T / (6 * Na * pi * R0 * eta);
+//double gamma = 6 * pi * R0 * eta;
 //double r0 = sqrt(3 * 2 * D * dt);
-double r0mod = sqrt(3 * 2 * D); // needs extra * dt^(1/2.0)
+//double r0mod = sqrt(3 * 2 * D); // needs extra * dt^(1/2.0)
 //double C4 = r0;
 double C5 = mu0 / (4 * pi);
 
@@ -102,9 +104,9 @@ double C5 = mu0 / (4 * pi);
 
 // 0.740 is atomic packing factor of the fcc lattice
 // total mean total vol. of the clusters
-double Vtot = (4 / 3.0) * pi * pow(R0, 3) * (1 / 0.740) * pN;
+//double Vtot = (4 / 3.0) * pi * pow(R0, 3) * (1 / 0.740) * pN;
 
-double C6 = ro0 * Vself * g;
+//double C6 = ro0 * Vself * g;
 
 //double gamma_e = 1.7609 * (1E11); //s^-1 T^-1
 //double alpha   = 0.05; //magnetization dynamic damping

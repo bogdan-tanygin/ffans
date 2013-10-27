@@ -156,7 +156,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         ff_model_upgrade_ext_field();
         if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
-        ff_io_save_hyst();
+//        ff_io_save_hyst();
 
         mz_glob = 0;
         glob_start_step = step;
@@ -170,34 +170,34 @@ void cbKeyPressed(unsigned char key, int x, int y)
     case '1':
         if (manual_field_control)
         {
-            ff_io_save_susceptX(); // save previous point
+            /*ff_io_save_susceptX(); // save previous point
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
             glob_start_step_susc = step;
-            BmanX += 10 /*Oe*/;
+            BmanX += 10 */
         }
         break;
     case '2':
         if (manual_field_control)
         {
-            ff_io_save_susceptY();
+            /*ff_io_save_susceptY();
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
             glob_start_step_susc = step;
-            BmanY += 10 /*Oe*/;
+            BmanY += 10 ;*/
         }
         break;
     case '3':
         if (manual_field_control)
         {
-            ff_io_save_susceptZ();
+            /*ff_io_save_susceptZ();
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
             glob_start_step_susc = step;
-            BmanZ += 10 /*Oe*/;
+            BmanZ += 10 ; */
         }
         break;
 
@@ -213,7 +213,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
     }
 }
 
-void ff_io_save_hyst(void)
+/*void ff_io_save_hyst(void)
 {
     FILE* file;
     char s[100];
@@ -270,7 +270,7 @@ void ff_io_save_hyst(void)
         fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
         fclose(file);
     }
-}
+}*/
 
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
@@ -279,8 +279,10 @@ void ff_io_save_setting(ff_vect_t m_tot,double I)
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
 
-    fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
-    fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
+    //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
+    //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
+	fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
+    fprintf(file1, "%5.3e %5.3e \n", t, I);
 
     fclose(file);
     fclose(file1);
@@ -372,7 +374,7 @@ void ff_io_load(void)
     } //tstep > 0
 }
 
-void ff_io_save_susceptX(void) // different susceptibility terms from the Bext.x
+/*void ff_io_save_susceptX(void) // different susceptibility terms from the Bext.x
 {
     FILE* file;
     double Mx, My, Mz; // time-average
@@ -451,4 +453,4 @@ void ff_io_save_susceptZ(void) // different susceptibility terms from the Bext.x
     file  = fopen("susceptZZ.dat", "a");
     fprintf(file, "%5.3e %5.3e \n", Hz, Mz);
     fclose(file);
-}
+}*/

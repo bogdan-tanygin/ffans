@@ -40,6 +40,8 @@
 boost::mt19937 rng;
 boost::normal_distribution<>* nd; // TODO need delete
 boost::variate_generator<boost::mt19937&, boost::normal_distribution<> >* var_nor;
+boost::uniform_01<>* ud;
+boost::variate_generator<boost::mt19937&, boost::uniform_01<> >* var_uni;
 
 ff_vect_t r[pN + 1];  //particles positions
 ff_vect_t m[pN + 1];  //particles magnetic moment direction
@@ -58,6 +60,7 @@ ff_vect_t dvt[pN + 1];
 
 double Rp[pN + 1];
 double m0p[pN + 1];
+double M0p[pN + 1];
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 double r0modp[pN + 1];
 double Vselfp[pN + 1];
@@ -262,7 +265,7 @@ void ff_model_auto_hyst(void)
         ff_model_upgrade_ext_field();
         if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
-        ff_io_save_hyst();
+ //       ff_io_save_hyst();
 
         mz_glob = 0;
         glob_start_t = t;
@@ -278,7 +281,7 @@ int ff_model_check_smooth_dr(long p)
     int res = 1;
 
     dr = sqrt(MUL(drt[p], drt[p]));
-    rmod = 2 * R0;
+    rmod = 2 * Rp[p];
 
     if (rmod > 0)
         if (dr / rmod > smooth_r)
@@ -626,9 +629,9 @@ void ff_model_m_setting(void)
                     else if (eps > max_eps) max_eps = eps;*/
 
 #ifndef SECONDARY
-                    m[p].x = m0 * tBx / tBmag;
-                    m[p].y = m0 * tBy / tBmag;
-                    m[p].z = m0 * tBz / tBmag;
+                    m[p].x = m0p[p] * tBx / tBmag;
+                    m[p].y = m0p[p] * tBy / tBmag;
+                    m[p].z = m0p[p] * tBz / tBmag;
 #endif
 
                     if (m[p].x != m[p].x) printf("\n DEBUG 11 p = %d m[p].x = %e", p, m[p].x);
@@ -650,8 +653,8 @@ ff_vect_t ff_model_nonloc_force(long p)
     double dR, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
     //double R1 = 0.3 * R0;
     double Cmod;
-    double Cmod1 = Ch * m0 * m0;
-    double Cmod1_repulsion = 5 * m0 * m0;
+    //double Cmod1 = Ch * m0 * m0;
+    //double Cmod1_repulsion = 5 * m0 * m0;
     double dx, dy, dz;
     double tk;
     double sec_pow;
@@ -751,12 +754,12 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
                 // acid elasticity (repulsion)
 #ifndef SECONDARY
-                if (dR <= 2 * R0 ) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
+                if (dR <= Rp[p] + Rp[ps]) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
                 {
                     if (Ch > 5)
-                        Cmod = Cmod1 * (C1 / dR5);
+                        Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
                     else
-                        Cmod = Cmod1_repulsion * (C1 / dR5);
+                        Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
 
                     tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
@@ -766,9 +769,9 @@ ff_vect_t ff_model_nonloc_force(long p)
 
 #ifndef SECONDARY
                 // attraction
-                if ((dR > 2 * R0 )&&(dR < 3 * R0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
+                if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
                 {
-                    Cmod = Cmod1 * (C1 / dR5);
+                    Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
                     tFx += dx * Cmod;
                     tFy += dy * Cmod;
@@ -840,10 +843,10 @@ ff_vect_t ff_model_force(long p)
     tF.z += tddF.z;
 
     // Gravitation
-    tF.z += - C3;
+    //tF.z += - C3;
 
     // Buoyancy force
-    tF.z +=   C6;
+    //tF.z +=   C6;
 
     tF.x += P[p].x;
     tF.y += P[p].y;
@@ -939,6 +942,7 @@ void ff_model_next_step(void)
     int chk;
     long mz_tot_n;
     ff_vect_t r0;
+	double C2, M0;
 
     Ek = 0;
     mz_tot = 0;
@@ -947,7 +951,7 @@ void ff_model_next_step(void)
 
 	for (p = 1; p <= pN; p++) if (exist_p[p])
 		{
-			Ek += M0 * MUL(v[p],v[p]) / 2.0;
+			Ek += M0p[p] * MUL(v[p],v[p]) / 2.0;
 		};
 
     if (time_go)
@@ -979,7 +983,9 @@ void ff_model_next_step(void)
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
-                    drt[p].x = F[p].x * dt / C2 +		 
+                    C2 = 6 * pi * eta * Rp[p];
+					M0 = M0p[p];
+					drt[p].x = F[p].x * dt / C2 +		 
                         (v[p].x - F[p].x / C2) * (1 - exp(- C2 * dt / M0)) * M0 / C2;
 
                     drt[p].y = F[p].y * dt / C2 +		 
@@ -1022,7 +1028,9 @@ void ff_model_next_step(void)
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-                        // C2 is a friction
+                        C2 = 6 * pi * eta * Rp[p];
+						M0 = M0p[p];
+						// C2 is a friction
                         dvt[p].x = (F[p].x / C2) + (v[p].x - F[p].x / C2) * exp(- C2 * dt / M0) - v[p].x;
                         dvt[p].y = (F[p].y / C2) + (v[p].y - F[p].y / C2) * exp(- C2 * dt / M0) - v[p].y;
                         dvt[p].z = (F[p].z / C2) + (v[p].z - F[p].z / C2) * exp(- C2 * dt / M0) - v[p].z;
@@ -1157,7 +1165,7 @@ ff_vect_t Bext(double x, double y, double z)
     return tBext;
 }
 
-void ff_model_init_sediment(void)
+/*void ff_model_init_sediment(void)
 {
 long i, j, k;
 ff_vect_t r0, r1, rb; //rb - basic; we build sphere around it
@@ -1257,7 +1265,7 @@ dir110[i].x = 1; dir110[i].y =  0; dir110[i].z = -1;
 i++;
 dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 
-}
+}*/
 
 void ff_model_init(void)
 {
@@ -1279,15 +1287,17 @@ void ff_model_init(void)
 
     //boost::normal_distribution<> nd(0.0, 1.0);
     nd = new boost::normal_distribution<> (0.0, sigma);
+	ud = new boost::uniform_01<> ();
 
     //boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, *nd);
     var_nor = new boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > (rng, *nd);
+	var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
 
-    ff_model_dir_init();
+    //ff_model_dir_init();
 
     t = 0; // time
 
-    printf("\n m0 = %e, N = %d", m0, pN);
+    //printf("\n m0 = %e, N = %d", m0, pN);
     //printf("\n %e", M0);
     glob_start_t = start_t;
 
@@ -1298,7 +1308,8 @@ void ff_model_init(void)
         B_hyst[h] = B_hyst_n[h] = Mz_hyst[h] = Mz_hyst_n[h] = 0;
     }
 
-    p = 1;
+    ff_model_size_dispersion_init();
+	p = 1;
     while (p <= pN)
     {
 again:
@@ -1320,25 +1331,21 @@ again:
 
                 dR = sqrt(MUL(dr,dr));
 
-                if (dR <= 4 * R0) goto again;
+                if (dR <= Rp[p] + Rp[tp]) goto again;
             }
         } // start_ideal
 
         // 4 means that <|v|> must be ~ heat speed
-        v[p].x =  4 * sqrt(8 * kb * 300 / (pi * M0)) * (rand() / 32768.0 - 0.5);
-        v[p].y =  4 * sqrt(8 * kb * 300 / (pi * M0)) * (rand() / 32768.0 - 0.5);
-        v[p].z =  4 * sqrt(8 * kb * 300 / (pi * M0)) * (rand() / 32768.0 - 0.5);
+        v[p].x = v[p].y = v[p].z = 0;
 
         theta = pi * rand() / 32768.0;
         phi = 2 * pi * rand() / 32768.0;
 
-        m[p].x = m0 * sin(theta) * cos(phi);
-        m[p].y = m0 * sin(theta) * sin(phi);
-        m[p].z = m0 * cos(theta);
+        m[p].x = m0p[p] * sin(theta) * cos(phi);
+        m[p].y = m0p[p] * sin(theta) * sin(phi);
+        m[p].z = m0p[p] * cos(theta);
 
-		Rp[p] = R0; // TODO: replace in all logic !
-        exist_p[p] = 1;
-        m0p[p] = m0; // TODO: replace in all logic !
+		exist_p[p] = 1;
 
 		//m_freeze[p] = 0;
         m_sat[p] = 0;
@@ -1348,10 +1355,7 @@ again:
 
     if (load_at_start) ff_io_load();
 
-    if (start_sediment) ff_model_init_sediment();
-
-
-
+    //if (start_sediment) ff_model_init_sediment();
 }
 
 // Update of the effective instantiated random force
@@ -1360,8 +1364,13 @@ void ff_model_effective_random_force_update(long p)
 	double Px, Py, Pz; // instantiated effective random force
 	double dx, dy, dz; // instantiated displacements for time dt * k_bm_inst_max
 	double dt0;
+	double D, gamma;
+	double M0;
     
 	dt0 = dt * k_bm_inst_max;
+	gamma = 6 * pi * eta * Rp[p];
+	D = kb * T / gamma;
+	M0 = M0p[p];
 
 	// instantiation
     dx = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
@@ -1390,4 +1399,98 @@ void ff_model_update_dT(void)
 		printf("\n WARNING: dT < 0");
 		dT = 0;
 	}
+}
+
+void ff_model_size_dispersion_init(void)
+{
+	double d[14 + 1];
+	double F[14 + 1];
+	long i, p;
+	long imax = 14;
+	double Ftot;
+	double random_points[14 + 1];
+	double random_value;
+
+	d[1] = 33.33333;
+	F[1] = 0.0108843537;
+
+	d[2] = 50;
+	F[2] = 0.0795918367;
+
+	d[3] = 66.6666;
+	F[3] = 0.1850340136;
+
+	d[4] = 83.333;
+	F[4] = 0.1972789116;
+
+	d[5] = 100;
+	F[5] = 0.1925170068;
+
+	d[6] = 116.66666;
+	F[6] = 0.1217687075;
+
+	d[7] = 133.3333;
+	F[7] = 0.1006802721;
+
+	d[8] = 150;
+	F[8] = 0.074829932;
+
+	d[9] = 166.666666;
+	F[9] = 0.056462585;
+
+	d[10] = 183.33333;
+	F[10] = 0.0394557823;
+
+	d[11] = 200;
+	F[11] = 0.0278911565;
+
+	d[12] = 216.66666;
+	F[12] = 0.019047619;
+
+	d[13] = 233.33333;
+	F[13] = 0.0115646259;
+
+	d[14] = 250;
+	F[14] = 0.006122449;
+	
+	Ftot = 0;
+	for (i = 1; i <= imax; i++)
+	{
+		d[i] *= 1E-10; // metric system
+		Ftot += F[i];
+	}
+
+	for (i = 1; i <= imax; i++)
+	{
+		random_points[i] = F[i] / Ftot;
+        if (i > 1) random_points[i] += random_points[i - 1];
+	}
+
+	for (p = 1; p <= pN; p++)
+	{
+		random_value = (*var_uni)();
+		Rp[p] = 0.5 * d[1] + delta; // default
+		for (i = 1; i <= imax - 1; i++)
+		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
+		{
+			Rp[p] = 0.5 * d[i + 1] + delta;
+			m0p[p] = ff_model_magnetic_moment_calc(Rp[p],p);
+			break;
+		}
+	}
+}
+
+double ff_model_magnetic_moment_calc(double R, long p)
+{
+	double d;
+	d = 2 * R;
+	double V = pi * pow(d, 3) / 6.0;
+	double m = rop * V;
+	M0p[p] = m;
+	double m_mol_rel = 231.6;
+    double m_mol = m_mol_rel * 1E-3 / Na;
+    double N_mol = m / m_mol;
+	double s_mol = 4.1 * muB;
+    double s = s_mol * N_mol;
+	return s;
 }

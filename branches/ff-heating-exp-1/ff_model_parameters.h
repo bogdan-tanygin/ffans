@@ -27,10 +27,11 @@ extern double pi;
 
 // Physics constants
 extern double mu0;
+extern const double muB;
 extern double R;
 extern double Na;
 extern double g;
-extern double kb;
+extern const double kb;
 
 extern double C1;
 
@@ -67,24 +68,26 @@ extern double start_sediment;
 
 //extern double gap;
 
-extern double R00; // Radius of the nanoparticle [m]
-extern double R0; // Radius including the acid sphere [m]
-extern double M0; // mass [kg]
-extern double m0; // Magnetic moment [J / T]
+//extern double R00; // Radius of the nanoparticle [m]
+extern double delta;
+//extern double R0; // Radius including the acid sphere [m]
+//extern double M0; // mass [kg]
+//extern double m0; // Magnetic moment [J / T]
 
 extern double T;
+extern double rop;
 extern double eta;
 
 //order of magnitude of the external field but exact function is hardcoded 
 extern double B0; // Tesla
 
 // Derived parameters
-extern double C2;
-extern double C3;
-extern double D;
-extern double gamma;
+//extern double C2;
+//extern double C3;
+//extern double D;
+//extern double gamma;
 //extern double r0;
-extern double r0mod;
+//extern double r0mod;
 //extern double C4;
 extern double C5;
 
@@ -94,9 +97,9 @@ extern double Vself;
 //extern double Hself;
 //extern double Bself;
 
-extern double Vtot;
+//extern double Vtot;
 
-extern double C6;
+//extern double C6;
 
 extern double gamma_e;
 extern double alpha;
