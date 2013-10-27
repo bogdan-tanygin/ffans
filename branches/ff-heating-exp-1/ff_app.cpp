@@ -36,6 +36,14 @@ int main(int argc, char **argv)
     ff_gr_params = new ff_gr_params_t;
     ff_mgr_params = new ff_mgr_params_t;
     ff_model_params = new ff_model_params_t;*/
+
+	FILE* file, *file1;
+
+    file  = fopen("setting_M.dat", "w");
+    file1 = fopen("setting_I.dat", "w");
+
+	fclose(file);
+    fclose(file1);
     
     // system graphics init
     ff_gr_init(argc, argv);
