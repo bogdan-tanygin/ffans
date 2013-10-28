@@ -49,19 +49,22 @@ int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
 ff_vect_t P[pN + 1];
+ff_vect_t tau[pN + 1]; // torque
+ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
+ff_vect_t w[pN + 1]; // angular velocity vector
 
 ff_vect_t drt[pN + 1];
-
 ff_vect_t dvt[pN + 1];
 
 //ff_vect_t dir110[13];
 
+int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 double Rp[pN + 1];
 double m0p[pN + 1];
 double M0p[pN + 1];
-int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
+double I0p[pN + 1]; // particle moment of inertia
 double r0modp[pN + 1];
 double Vselfp[pN + 1];
 
