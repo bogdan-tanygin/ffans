@@ -187,7 +187,7 @@ void ff_mgr_show_next_step()
     long kSecondary = 1;
     
 
-    step++;
+    //step++;
     //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
     glBegin(GL_LINE_STRIP);

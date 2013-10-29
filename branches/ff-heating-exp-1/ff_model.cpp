@@ -959,7 +959,8 @@ void ff_model_next_step(void)
 
     if (time_go)
     {
-        //printf("\n ============================", step);
+        step++;
+		//printf("\n ============================", step);
         //printf("\n Step %d", step);
 
         ff_model_m_setting();
@@ -974,7 +975,7 @@ void ff_model_next_step(void)
 				f = ff_model_force(p);
                 F[p] = f;
 
-                if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
+                if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e Rp[p] = %e", p, f.x, Rp[p]);
                 if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
                 if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
 
