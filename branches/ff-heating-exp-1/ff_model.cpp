@@ -1323,6 +1323,8 @@ again:
             r[p].y = -0.4999 * Ly + 0.99 * Ly * rand() / 32768.0;
             r[p].z = -0.4999 * Lz + 0.99 * Lz * rand() / 32768.0;
 
+			w[p].x = w[p].y = w[p].z = 0;
+
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
@@ -1476,29 +1478,33 @@ void ff_model_size_dispersion_init(void)
 		if (random_value <= random_points[1])
 		{
 			Rp[p] = 0.5 * d[1] + delta;
-			m0p[p] = ff_model_magnetic_moment_calc(Rp[p],p);
+			ff_model_size_dispersion_param_calc(Rp[p],p);
 		}
 		for (i = 1; i <= imax - 1; i++)
 		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
 		{
 			Rp[p] = 0.5 * d[i + 1] + delta;
-			m0p[p] = ff_model_magnetic_moment_calc(Rp[p],p);
+			ff_model_size_dispersion_param_calc(Rp[p],p);
 			break;
 		}
 	}
 }
 
-double ff_model_magnetic_moment_calc(double R, long p)
+void ff_model_size_dispersion_param_calc(double R, long p)
 {
 	double d;
 	d = 2 * R;
 	double V = pi * pow(d, 3) / 6.0;
 	double m = rop * V;
+	
 	M0p[p] = m;
+	I0p[p] = (2 / 5.0) * M0p[p] * R * R;
+
 	double m_mol_rel = 231.6;
     double m_mol = m_mol_rel * 1E-3 / Na;
     double N_mol = m / m_mol;
 	double s_mol = 4.1 * muB;
     double s = s_mol * N_mol;
-	return s;
+
+	m0p[p] = s;
 }

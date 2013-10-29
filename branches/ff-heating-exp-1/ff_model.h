@@ -89,4 +89,4 @@ void ff_model_effective_random_force_update(long p);
 void ff_model_update_dT(void);
 
 void ff_model_size_dispersion_init(void);
-double ff_model_magnetic_moment_calc(double,long);
+void ff_model_size_dispersion_param_calc(double,long);
