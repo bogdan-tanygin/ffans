@@ -1084,7 +1084,9 @@ void ff_model_next_step(void)
                     t += dt;
 
                     if (auto_reversal) ff_model_auto_hyst();
-                    if ((auto_save)&&(step%10000 == 0)) ff_io_autosave();
+                    if (step % 10000 == 0) ff_io_autosave();
+					else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
+					else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
 
                     if (setting_plot)
                     {

@@ -294,9 +294,12 @@ void ff_io_autosave(void)
     FILE* file;
     char str[50];
 
+	if (auto_save)
+	{
+
     sprintf(str, "%d.dat", step);
 
-    file  = fopen(str, "a");
+    file  = fopen(str, "w");
 
     fprintf(file,  "%5.3e ", t);
 
@@ -304,20 +307,27 @@ void ff_io_autosave(void)
     {
         fprintf(file, "%d ", p);
 
-        fprintf(file,  "%5.3e ", r[p].x);
+        fprintf(file,  "%5.3e ", Rp[p]);
+		
+		fprintf(file,  "%5.3e ", r[p].x);
         fprintf(file,  "%5.3e ", r[p].y);
         fprintf(file,  "%5.3e ", r[p].z);
+
+		fprintf(file,  "%5.3e ", m[p].x);
+        fprintf(file,  "%5.3e ", m[p].y);
+        fprintf(file,  "%5.3e ", m[p].z);
 
         fprintf(file,  "%5.3e ", v[p].x);
         fprintf(file,  "%5.3e ", v[p].y);
         fprintf(file,  "%5.3e ", v[p].z);
 
-        fprintf(file,  "%5.3e ", m[p].x);
-        fprintf(file,  "%5.3e ", m[p].y);
-        fprintf(file,  "%5.3e ", m[p].z);
+		fprintf(file,  "%5.3e ", w[p].x);
+        fprintf(file,  "%5.3e ", w[p].y);
+        fprintf(file,  "%5.3e ", w[p].z);
     }
 
     fclose(file);
+	} // end of if (auto_save)
 }
 
 void ff_io_load(void)
@@ -330,6 +340,7 @@ void ff_io_load(void)
 
     glob_start_step = step;
     glob_start_step_susc = step;
+	k_bm_inst = 1;
 
     printf("Step to load (must be > 0) = ");
     scanf("%d", &tstep);
@@ -346,13 +357,24 @@ void ff_io_load(void)
         do
         {
             fscanf(file,"%d", &p);
+			// -------------------
 
             fscanf(file, "%f", &tmp);
+            Rp[p] = tmp;
+			
+			fscanf(file, "%f", &tmp);
             r[p].x = tmp;
             fscanf(file, "%f", &tmp);
             r[p].y = tmp;
             fscanf(file, "%f", &tmp);
             r[p].z = tmp;
+
+            fscanf(file, "%f", &tmp);
+            m[p].x = tmp;
+            fscanf(file, "%f", &tmp);
+            m[p].y = tmp;
+            fscanf(file, "%f", &tmp);
+            m[p].z = tmp;
 
             fscanf(file, "%f", &tmp);
             v[p].x = tmp;
@@ -361,12 +383,14 @@ void ff_io_load(void)
             fscanf(file, "%f", &tmp);
             v[p].z = tmp;
 
+			fscanf(file, "%f", &tmp);
+            w[p].x = tmp;
             fscanf(file, "%f", &tmp);
-            m[p].x = tmp;
+            w[p].y = tmp;
             fscanf(file, "%f", &tmp);
-            m[p].y = tmp;
-            fscanf(file, "%f", &tmp);
-            m[p].z = tmp;
+            w[p].z = tmp;
+
+			ff_model_size_dispersion_param_calc(Rp[p], p);
         }
         while(!feof(file));
 
