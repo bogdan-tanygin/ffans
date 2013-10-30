@@ -24,6 +24,10 @@ typedef struct {
     double x,y,z;
 } ff_vect_t;
 
+typedef struct {
+    double phi,theta;
+} ff_euler_t;
+
 void ff_model_init(void);
 void ff_model_next_step(void);
 void ff_model_check_collisions(long);
@@ -88,8 +92,10 @@ extern int exist_p[];
 extern double Rp[];
 
 // Update of the effective instantiated random force
-void ff_model_effective_random_force_update(long p);
+void ff_model_effective_random_force_update(long);
 void ff_model_update_dT(void);
 
 void ff_model_size_dispersion_init(void);
 void ff_model_size_dispersion_param_calc(double,long);
+
+int ff_model_check_walls(long);
