@@ -49,7 +49,7 @@ long slow_steps = 0;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 300; // K
+double T = 200; // K
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]

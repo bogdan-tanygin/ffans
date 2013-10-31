@@ -24,10 +24,6 @@ typedef struct {
     double x,y,z;
 } ff_vect_t;
 
-typedef struct {
-    double phi,theta;
-} ff_euler_t;
-
 void ff_model_init(void);
 void ff_model_next_step(void);
 void ff_model_check_collisions(long);
