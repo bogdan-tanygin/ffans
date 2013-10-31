@@ -1235,15 +1235,15 @@ ff_vect_t Bext(double x, double y, double z)
     {
         if (ext_field_is_homo)
         {
-            tBext.x = BmanX /*Oe*/ * 79.577 * mu0; // Tesla
-            tBext.y = BmanY /*Oe*/ * 79.577 * mu0; // Tesla
-            tBext.z = BmanZ /*Oe*/ * 79.577 * mu0; // Tesla
+            tBext.x = BmanX /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0; // Tesla
+            tBext.y = BmanY /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0; // Tesla
+            tBext.z = BmanZ /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0; // Tesla
         }
         else
         {
-            normX = (BmanX /*Oe*/ * 79.577 * mu0 / B_het(0, 0, 0, 1).x);
-            normY = (BmanY /*Oe*/ * 79.577 * mu0 / B_het(0, 0, 0, 2).y);
-            normZ = (BmanZ /*Oe*/ * 79.577 * mu0 / B_het(0, 0, 0, 3).z);
+            normX = (BmanX /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 1).x);
+            normY = (BmanY /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 2).y);
+            normZ = (BmanZ /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 3).z);
 
             tBext.x = normX * B_het(x, y, z, 1).x + normY * B_het(x, y, z, 2).x + normZ * B_het(x, y, z, 3).x;
             tBext.y = normX * B_het(x, y, z, 1).y + normY * B_het(x, y, z, 2).y + normZ * B_het(x, y, z, 3).y;

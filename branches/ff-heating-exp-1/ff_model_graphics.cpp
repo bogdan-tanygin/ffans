@@ -390,7 +390,7 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-
+	*/
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"Hx = %f Oe", BmanX);
@@ -412,7 +412,7 @@ void ff_mgr_print_info()
     glRasterPos2i(6, shift * 20);
     shift--;
     shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
     sprintf(buf,"Lx = %e m", Lx);

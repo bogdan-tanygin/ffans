@@ -174,8 +174,8 @@ void cbKeyPressed(unsigned char key, int x, int y)
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
-            glob_start_step_susc = step;
-            BmanX += 10 */
+            glob_start_step_susc = step;*/
+            BmanX += 10;
         }
         break;
     case '2':
@@ -185,8 +185,8 @@ void cbKeyPressed(unsigned char key, int x, int y)
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
-            glob_start_step_susc = step;
-            BmanY += 10 ;*/
+            glob_start_step_susc = step; */
+            BmanY += 10;
         }
         break;
     case '3':
@@ -196,8 +196,8 @@ void cbKeyPressed(unsigned char key, int x, int y)
             m_tot_glob.x = 0;
             m_tot_glob.y = 0;
             m_tot_glob.z = 0;
-            glob_start_step_susc = step;
-            BmanZ += 10 ; */
+            glob_start_step_susc = step; */
+            BmanZ += 10;
         }
         break;
 
