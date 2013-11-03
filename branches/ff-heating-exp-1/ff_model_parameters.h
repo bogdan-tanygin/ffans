@@ -43,7 +43,7 @@ extern double dt;
 extern long k_bm_inst_max;
 extern long k_bm_inst;
 extern long slow_steps;
-extern double smooth_v;
+//extern double smooth_v;
 extern double smooth_r;
 //extern double m_h_eff_tol;
 
@@ -76,6 +76,8 @@ extern double delta;
 
 extern double T;
 extern double rop;
+extern double A_H;
+extern double N_oa;
 extern double eta;
 
 //order of magnitude of the external field but exact function is hardcoded 

@@ -49,7 +49,7 @@ long slow_steps = 0;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 200; // K
+double T = 400; // K
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]
@@ -57,6 +57,8 @@ double delta = 2.0E-9;
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
+double A_H = 1E-19; // Hamaker constant [J]
+double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]

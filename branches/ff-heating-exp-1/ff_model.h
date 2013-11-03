@@ -95,3 +95,5 @@ void ff_model_size_dispersion_init(void);
 void ff_model_size_dispersion_param_calc(double,long);
 
 int ff_model_check_walls(long);
+
+//void ff_model_check_overlapp(long);

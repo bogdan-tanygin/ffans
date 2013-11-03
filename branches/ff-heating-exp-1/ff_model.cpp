@@ -288,7 +288,8 @@ int ff_model_check_smooth_dr(long p)
     int res = 1;
 
     dr = sqrt(MUL(drt[p], drt[p]));
-    rmod = 2 * Rp[p];
+    //rmod = 2 * Rp[p];
+	rmod = 2 * delta;
 
 	dphimag = sqrt(MUL(dphi[p], dphi[p]));
 
@@ -664,7 +665,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double tFx, tFy, tFz;
     double dtFx, dtFy, dtFz;
     double dreptFx, dreptFy, dreptFz; // repulsion
-    double dR, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
+    double dR, l, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
     //double R1 = 0.3 * R0;
     double Cmod;
     //double Cmod1 = Ch * m0 * m0;
@@ -754,9 +755,12 @@ ff_vect_t ff_model_nonloc_force(long p)
 
                 } 
 
-                tFx += dtFx;
-                tFy += dtFy;
-                tFz += dtFz;
+                if (dR >= Rp[p] + Rp[ps])
+				{
+					tFx += dtFx;
+					tFy += dtFy;
+					tFz += dtFz;
+				}
 
                 /*
                 if (dR <= 5 * R0) // exp phenomenology
@@ -768,28 +772,53 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
                 // acid elasticity (repulsion)
 #ifndef SECONDARY
-                if (dR <= Rp[p] + Rp[ps]) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
-                {
-                    if (Ch > 5)
+				if (dR <= Rp[p] + Rp[ps]) //soft sphere condition
+				{
+					if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
                     else
                         Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
 
-                    tFx += -dx * Cmod;
+					tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;
+				}
+
+                if ((dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)&&(dR <= Rp[p] + Rp[ps] + 2 * delta)) 
+                {
+                    /*if (Ch > 5)
+                        Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
+                    else
+                        Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);*/
+
+					/*tFx += -dx * Cmod;
+                    tFy += -dy * Cmod;
+                    tFz += -dz * Cmod;*/
+
+					double dd = Rp[p] + Rp[ps];
+					l = 2 * (dR - dd) / dd;
+					double tt = 2 * delta / dd;
+
+					tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                 }
 #endif
 
 #ifndef SECONDARY
                 // attraction
-                if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
+                //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
+				if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
                 {
-                    Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
+                    /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
                     tFx += dx * Cmod;
                     tFy += dy * Cmod;
-                    tFz += dz * Cmod;
+                    tFz += dz * Cmod;*/
+
+					tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
+					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
+					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
                 }
 #endif
 
@@ -979,6 +1008,8 @@ void ff_model_next_step(void)
 					dphi[p].z = tau[p].z * dt / gamma_rot +		 
                     (w[p].z - tau[p].z / gamma_rot) * (1 - exp(- gamma_rot * dt / I0)) * I0 / gamma_rot;
 
+					//ff_model_check_overlapp(p); // hard sphere condition
+
                     r[p].x += drt[p].x;
                     r[p].y += drt[p].y;
                     r[p].z += drt[p].z;
@@ -1023,8 +1054,6 @@ void ff_model_next_step(void)
 					if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
                 } // end of loop for dr
 
-                //ff_model_check_overlapp();
-
                 r0.x = r0.y = r0.z = 0;
 				
                 for (p = 1; p <= pN; p++)
@@ -1066,7 +1095,7 @@ void ff_model_next_step(void)
                         mz_tot_n++;
                     } // end of loop for dv
 
-                    //printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
+					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
 
                     // TODO: need the number of existing (exist_p) particles ! 
                     r0.x /= pN;
@@ -1168,26 +1197,35 @@ int ff_model_check_walls(long p)
     return res;
 }
 
-/*void ff_model_check_overlapp(void)
+/*void ff_model_check_overlapp(long p)
 {
-long p, ps;
+long ps;
 double dR, dx, dy, dz;
+double dr;
 
-for (p = 1; p <= pN; p++)
+//for (p = 1; p <= pN; p++)
 for(ps = 1; ps <= pN; ps ++)
 if (p != ps)
 {
-dx = r[ps].x - r[p].x;
-dy = r[ps].y - r[p].y;
-dz = r[ps].z - r[p].z;
+dx = r[ps].x - r[p].x - drt[p].x;
+dy = r[ps].y - r[p].y - drt[p].y;
+dz = r[ps].z - r[p].z - drt[p].z;
 
 dR = sqrt(dx * dx + dy * dy + dz * dz);
 
-if (dR <= 2.01 * R0 )
+if (dR <= Rp[p] + Rp[ps])
 {
-r[ps].x -= drt[ps].x;
-r[ps].y -= drt[ps].y;
-r[ps].z -= drt[ps].z;
+//r[ps].x -= drt[ps].x;
+//r[ps].y -= drt[ps].y;
+//r[ps].z -= drt[ps].z;
+
+//v[ps].x -= dvt[ps].x;
+//v[ps].y -= dvt[ps].y;
+//v[ps].z -= dvt[ps].z;
+	dr = Rp[p] + Rp[ps] - dR;
+	drt[p].x += - (dx / dR) * dr - delta * 0.1;
+	drt[p].y += - (dy / dR) * dr - delta * 0.1;
+	drt[p].z += - (dz / dR) * dr - delta * 0.1;
 }
 }
 }*/
