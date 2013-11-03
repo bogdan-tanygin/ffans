@@ -1125,11 +1125,9 @@ void ff_model_next_step(void)
 
                     if (setting_plot)
                     {
-                        if (step < 1000)
-                        {
-                            ff_io_save_setting(m_tot,I);
-                        }
-                        else if (step%1000 == 0) ff_io_save_setting(m_tot,I);
+						if (step % 1000 == 0) ff_io_autosave();
+						else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
+						else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
 
                     // end for case of interrupted kinetic loops
