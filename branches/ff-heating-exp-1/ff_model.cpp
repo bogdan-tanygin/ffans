@@ -1125,7 +1125,7 @@ void ff_model_next_step(void)
 
                     if (setting_plot)
                     {
-						if (step % 1000 == 0) ff_io_autosave();
+						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
 						else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
 						else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
@@ -1598,7 +1598,7 @@ void ff_model_size_dispersion_init(void)
 	Ftot = 0;
 	for (i = 1; i <= imax; i++)
 	{
-		d[i] *= 1E-10; // metric system
+		d[i] *= 1E-10 * kr; // metric system
 		Ftot += F[i];
 	}
 

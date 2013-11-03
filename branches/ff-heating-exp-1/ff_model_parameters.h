@@ -75,6 +75,7 @@ extern double delta;
 //extern double m0; // Magnetic moment [J / T]
 
 extern double T;
+extern double kr;
 extern double rop;
 extern double A_H;
 extern double N_oa;
