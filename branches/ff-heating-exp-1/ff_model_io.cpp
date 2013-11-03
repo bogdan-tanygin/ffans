@@ -145,7 +145,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_sphere = show_sphere?0:1;
         break;
 
-    case 'E': case 'e':
+	case 'T': case 't':
+        T += 10;
+        break;
+
+    case 'C': case 'c':
+        T += 10;
+        break;
+	
+	case 'E': case 'e':
         show_bext = show_bext?0:1;
         break;
 

@@ -231,14 +231,14 @@ void ff_mgr_show_next_step()
 
             glTranslatef(r1.x, r1.y, r1.z);
 			glColor3f(1.0, 0.5, 0.5);
+			//glColor3f(0.5, 0.5, 0.5);
 			if (show_sphere) gluSphere(g_quad, space_k * Rp[p], 20, 20);
 	        glTranslatef(-r1.x, -r1.y, -r1.z);
 	
             //glDisable(GL_BLEND);
             //glDisable(GL_ALPHA_TEST);
 
-
-            if (show_m)
+			if (show_m)
             {
                 kvec = 2;
 
@@ -393,21 +393,21 @@ void ff_mgr_print_info()
 	*/
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Hx = %f Oe", BmanX);
+    sprintf(buf,"Hx = %5.3e Oe", BmanX);
 
     glRasterPos2i(6, shift * 20);
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Hy = %f Oe", BmanY);
+    sprintf(buf,"Hy = %5.3e Oe", BmanY);
 
     glRasterPos2i(6, shift * 20);
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Hz = %f Oe", BmanZ);
+    sprintf(buf,"Hz =%5.3e Oe", BmanZ);
 
     glRasterPos2i(6, shift * 20);
     shift--;
@@ -415,19 +415,25 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
-    sprintf(buf,"Lx = %e m", Lx);
+    sprintf(buf,"Lx = %5.3e m", Lx);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
-    sprintf(buf,"Ek = %e J", Ek);
+    sprintf(buf,"pseudo_Ek = %5.3e J", Ek);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
-    sprintf(buf,"dT = %e K", dT);
+    sprintf(buf,"pseudo_dT = %5.3e K", dT);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"T = %5.3e K", T);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
