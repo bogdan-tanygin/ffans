@@ -1615,13 +1615,13 @@ void ff_model_size_dispersion_init(void)
 		if (random_value <= random_points[1])
 		{
 			Rp[p] = 0.5 * d[1] + delta;
-			ff_model_size_dispersion_param_calc(Rp[p],p);
+			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
 		}
 		for (i = 1; i <= imax - 1; i++)
 		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
 		{
 			Rp[p] = 0.5 * d[i + 1] + delta;
-			ff_model_size_dispersion_param_calc(Rp[p],p);
+			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
 			break;
 		}
 	}
