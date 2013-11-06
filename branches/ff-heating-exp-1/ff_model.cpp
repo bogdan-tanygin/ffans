@@ -296,7 +296,7 @@ int ff_model_check_smooth_dr(long p)
     if (rmod > 0)
         if ((dr / rmod > smooth_r) || (dphimag / pi > smooth_r))
         {
-            //if ((dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dphimag = %e", dphimag);
+			//if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
 			for(ps = 1; ps <= p; ps ++)
             {
                 r[ps].x -= drt[ps].x;
@@ -684,7 +684,9 @@ ff_vect_t ff_model_nonloc_force(long p)
     int is_last;
     double sign, tms, mag_qs;
 
-    ff_vect_t tau;
+    //ff_vect_t ttau;
+
+	double dd, tt;
 
     //long di, dj;
 
@@ -772,7 +774,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
                 // acid elasticity (repulsion)
 #ifndef SECONDARY
-				if (dR <= Rp[p] + Rp[ps]) //soft sphere condition
+				if ((dR <= Rp[p] + Rp[ps]) && (dR >= delta)) //soft sphere condition
 				{
 					if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
@@ -795,9 +797,9 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					double dd = Rp[p] + Rp[ps];
+					dd = Rp[p] + Rp[ps];
 					l = 2 * (dR - dd) / dd;
-					double tt = 2 * delta / dd;
+					tt = 2 * delta / dd;
 
 					tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 					tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
@@ -903,7 +905,7 @@ ff_vect_t ff_model_torque(long p)
 	ff_vect_t ttau;
     ff_vect_t dtau;
 
-    ttau.x = ttau.y = ttau.z;
+    ttau.x = ttau.y = ttau.z = 0;
 
     // non-local
     dtau = ff_model_nonloc_torque(p);
@@ -965,12 +967,16 @@ void ff_model_next_step(void)
 				
 				f = ff_model_force(p);
 				ttau = ff_model_torque(p);
-                F[p] = f;
-				tau[p] = ttau;
+                F[p].x = f.x; F[p].y = f.y; F[p].z = f.z;
+				tau[p].x = ttau.x; tau[p].y = ttau.y; tau[p].z = ttau.z;
 
-                /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e Rp[p] = %e", p, f.x, Rp[p]);
+                /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
                 /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
                 /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
+
+				/*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
+                /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
+                /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
 
                 /*DEBUG*/ if (v[p].x != v[p].x) printf("\n DEBUG 1.1 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
                 /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
@@ -1008,6 +1014,10 @@ void ff_model_next_step(void)
 
 					dphi[p].z = tau[p].z * dt / gamma_rot +		 
                     (w[p].z - tau[p].z / gamma_rot) * (1 - exp(- gamma_rot * dt / I0)) * I0 / gamma_rot;
+
+					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
+                    /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
+                    /*DEBUG*/ if (dphi[p].z != dphi[p].z) printf("\n DEBUG 1 p = %d dphi[p].z = %e", p, dphi[p].z);
 
 					//ff_model_check_overlapp(p); // hard sphere condition
 
