@@ -936,6 +936,7 @@ void ff_model_next_step(void)
 	double C2, gamma_rot;
 	double M0, I0;
 	ff_vect_t ex, ey, ez; // basis of rotation around ez = w
+	double tmmag;
 
     Ek = 0;
     mz_tot = 0;
@@ -1034,6 +1035,14 @@ void ff_model_next_step(void)
 					m[p].x += dm[p].x;
 					m[p].y += dm[p].y;
 					m[p].z += dm[p].z;
+
+					tmmag = sqrt(MUL(m[p], m[p]));
+
+					m[p].x *= m0p[p] / tmmag;
+					m[p].y *= m0p[p] / tmmag;
+					m[p].z *= m0p[p] / tmmag;
+
+					//if (m0p[p] == 0) printf("\n !!!");
 
 					//printf("\n %e", sqrt(MUL(m[p],m[p])) / m0p[p]);
 
@@ -1608,9 +1617,14 @@ void ff_model_size_dispersion_init(void)
         if (i > 1) random_points[i] += random_points[i - 1];
 	}
 
+	printf("\n random_points[14] = %e", random_points[14]);
+	printf("\n random_points[13] = %e", random_points[13]);
+
 	for (p = 1; p <= pN; p++)
 	{
 		random_value = (*var_uni)();
+
+		printf("\n random_value = %e", random_value);
 		
 		if (random_value <= random_points[1])
 		{
