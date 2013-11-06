@@ -757,7 +757,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
                 } 
 
-                if (dR >= Rp[p] + Rp[ps])
+                if (dR >= Rp[p] + Rp[ps] + delta)
 				{
 					tFx += dtFx;
 					tFy += dtFy;
@@ -772,21 +772,21 @@ ff_vect_t ff_model_nonloc_force(long p)
                 tFz += - (EPS * dz / dR) * (exp(-(dR - 2 * R00) / ro1) / ro1 - exp(-(dR - 2 * R00) / ro2) / ro2);
                 }
                 */
-                // acid elasticity (repulsion)
+
 #ifndef SECONDARY
 				if ((dR <= Rp[p] + Rp[ps]) && (dR >= delta)) //soft sphere condition
 				{
 					if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
                     else
-                        Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
+                        Cmod = 500 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 					tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;
 				}
 
-                if ((dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)&&(dR <= Rp[p] + Rp[ps] + 2 * delta)) 
+                if ((dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
                 {
                     /*if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
@@ -1627,14 +1627,14 @@ void ff_model_size_dispersion_init(void)
         if (i > 1) random_points[i] += random_points[i - 1];
 	}
 
-	printf("\n random_points[14] = %e", random_points[14]);
-	printf("\n random_points[13] = %e", random_points[13]);
+	//printf("\n random_points[14] = %e", random_points[14]);
+	//printf("\n random_points[13] = %e", random_points[13]);
 
 	for (p = 1; p <= pN; p++)
 	{
 		random_value = (*var_uni)();
 
-		printf("\n random_value = %e", random_value);
+		//printf("\n random_value = %e", random_value);
 		
 		if (random_value <= random_points[1])
 		{
