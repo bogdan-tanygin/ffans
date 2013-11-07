@@ -93,6 +93,8 @@ ModelParameters::ModelParameters(QString fileName)
     PWRITE(s_particle_mean)
     double M_particle_mean = s_particle_mean / V_particle_mean;
     PWRITE(M_particle_mean)
+    double v_particle_rms = sqrt(3 * kb * T1 / m_mean);
+    PWRITE(v_particle_rms)
 
     qDebug() << "--------------------------------";
     qDebug() << "Derived paramaters";
