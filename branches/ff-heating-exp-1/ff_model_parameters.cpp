@@ -57,6 +57,11 @@ double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
+// Parameters of oleic acid drop
+double R_oleic = Lx / 2.0;
+double eta_oleic = 25.6 * 1E-3; // [Pa * s]
+double sigma_sf = 32.5 * 1E-3; // [N / m]
+
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 1E-19; // Hamaker constant [J]

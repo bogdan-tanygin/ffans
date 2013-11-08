@@ -44,6 +44,7 @@ boost::uniform_01<>* ud;
 boost::variate_generator<boost::mt19937&, boost::uniform_01<> >* var_uni;
 
 ff_vect_t r[pN + 1];  //particles positions
+double Rp_to_c[pN + 1];
 ff_vect_t m[pN + 1];  //particles magnetic moment direction
 ff_vect_t mt[pN + 1];
 int m_sat[pN + 1];
@@ -895,6 +896,14 @@ ff_vect_t ff_model_force(long p)
     // Buoyancy force
     //tF.z +=   C6;
 
+	// oleic droplet surface re-creation force
+	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
+	{
+		tF.x += - sigma_sf * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p]; // TODO: need to add droplet radius change energy? It can transform to the heat. 
+		tF.y += - sigma_sf * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
+		tF.z += - sigma_sf * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
+	}
+
     tF.x += P[p].x;
     tF.y += P[p].y;
     tF.z += P[p].z;
@@ -965,7 +974,9 @@ void ff_model_next_step(void)
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                /*if (k_bm_inst == 1)*/
+                Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+				
+				/*if (k_bm_inst == 1)*/
 				ff_model_effective_random_force_update(p);
 				
 				f = ff_model_force(p);
@@ -993,8 +1004,17 @@ void ff_model_next_step(void)
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
-                    C2 = 6 * pi * eta * Rp[p];
-					gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+                    if (Rp_to_c[p] > R_oleic)
+					{
+						C2 = 6 * pi * eta * Rp[p];
+						gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+					}
+					else
+					{
+						C2 = 6 * pi * eta_oleic * Rp[p];
+						gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+					}
+
 					M0 = M0p[p];
 					I0 = I0p[p]; 
 
@@ -1081,9 +1101,18 @@ void ff_model_next_step(void)
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-                        C2 = 6 * pi * eta * Rp[p];
-					    gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
-					    M0 = M0p[p];
+					    if (Rp_to_c[p] > R_oleic)
+					    {
+					    	C2 = 6 * pi * eta * Rp[p];
+					    	gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+					    }
+					    else
+					    {
+					    	C2 = 6 * pi * eta_oleic * Rp[p];
+					    	gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+					    }
+					    
+						M0 = M0p[p];
 					    I0 = I0p[p];
 
 						// C2 is a friction
@@ -1520,8 +1549,16 @@ void ff_model_effective_random_force_update(long p)
 	double M0, I0;
     
 	//dt0 = dt * k_bm_inst_max;
-	gamma = 6 * pi * eta * Rp[p];
-	gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+	if (Rp_to_c[p] > R_oleic)
+	{
+		gamma = 6 * pi * eta * Rp[p];
+		gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+	}
+	else
+	{
+		gamma = 6 * pi * eta_oleic * Rp[p];
+		gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+	}
 	D = kb * T / gamma;
 	D_rot = kb * T / gamma_rot;
 	M0 = M0p[p];

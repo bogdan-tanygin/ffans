@@ -75,6 +75,10 @@ extern double delta;
 //extern double M0; // mass [kg]
 //extern double m0; // Magnetic moment [J / T]
 
+extern double R_oleic;
+extern double eta_oleic;
+extern double sigma_sf;
+
 extern double T;
 extern double kr;
 extern double rop;
