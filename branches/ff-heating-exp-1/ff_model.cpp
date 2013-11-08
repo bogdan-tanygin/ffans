@@ -108,6 +108,8 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
+double k_force_adapt = 0;
+
 void ff_model_upgrade_ext_field(void)
 {
     g_Bz_prev = Bext(0,0,0).z;
@@ -963,7 +965,8 @@ void ff_model_next_step(void)
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                if (k_bm_inst == 1) ff_model_effective_random_force_update(p);
+                /*if (k_bm_inst == 1)*/
+				ff_model_effective_random_force_update(p);
 				
 				f = ff_model_force(p);
 				ttau = ff_model_torque(p);
@@ -1063,14 +1066,14 @@ void ff_model_next_step(void)
                     chk = ff_model_check_smooth_dr(p);
 					if ( chk == 0)
 						{
-							k_bm_inst = 1;
+							//k_bm_inst = 1;
 							goto t_end;
 						}
 
 					ff_model_check_walls(p);
 					
-					k_bm_inst++;
-					if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
+					//k_bm_inst++;
+					//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
                 } // end of loop for dr
 
                 r0.x = r0.y = r0.z = 0;
@@ -1423,6 +1426,8 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
+	k_force_adapt = k_force_adapt_0;
+	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
     sigma = 1;
 
@@ -1504,17 +1509,17 @@ again:
     //if (start_sediment) ff_model_init_sediment();
 }
 
-// Update of the effective instantiated random force
+// Update of the random force
 void ff_model_effective_random_force_update(long p)
 {
 	double Px, Py, Pz, tau_r_phi; // instantiated effective random force
 	double theta_0, phi_0; // random direction of the torque 
 	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
-	double dt0;
+	//double dt0;
 	double D, D_rot, gamma, gamma_rot;
 	double M0, I0;
     
-	dt0 = dt * k_bm_inst_max;
+	//dt0 = dt * k_bm_inst_max;
 	gamma = 6 * pi * eta * Rp[p];
 	gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
 	D = kb * T / gamma;
@@ -1524,30 +1529,36 @@ void ff_model_effective_random_force_update(long p)
 
 	// instantiation of position change
 	// [Langevin equation + Stokes' law]
-    dx = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
-	dy = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
-	dz = (*var_nor)() * sqrt(2 * D * dt0 * dT / T);
+    /*dx = (*var_nor)() * sqrt(2 * D * dt * dT / T);
+	dy = (*var_nor)() * sqrt(2 * D * dt * dT / T);
+	dz = (*var_nor)() * sqrt(2 * D * dt * dT / T);*/
+
 	// instantiation of rotation of the magnetization direction
 	// [Euler-Langevin equation + Stokes' law]
-	dphi = (*var_nor)() * sqrt(6 * D_rot * dt0 * dT / T); // rotation magnitude
+	//dphi = (*var_nor)() * sqrt(6 * D_rot * dt * dT / T); // rotation magnitude
 	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
 	phi_0 = (*var_uni)() * 2 * pi;
 
-	Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+	/*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
-	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);
+	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
+
+	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px;
-	P[p].y = Py;
-	P[p].z = Pz;
+	P[p].x = Px * k_force_adapt;
+	P[p].y = Py * k_force_adapt;
+	P[p].z = Pz * k_force_adapt;
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0);
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0);
-	tau_r[p].z = tau_r_phi * cos(theta_0);
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
 }
 
 void ff_model_update_dT(void)
@@ -1558,8 +1569,11 @@ void ff_model_update_dT(void)
 	if (dT < 0)
 	{
 		//printf("\n WARNING: dT < 0");
-		dT = 0;
+		//dT = 0;
 	}
+
+	if (dT > 0) k_force_adapt *= k_force_adapt_0;
+	else k_force_adapt /= k_force_adapt_0;
 }
 
 void ff_model_size_dispersion_init(void)

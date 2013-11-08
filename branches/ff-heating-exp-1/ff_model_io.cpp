@@ -348,7 +348,7 @@ void ff_io_load(void)
 
     glob_start_step = step;
     glob_start_step_susc = step;
-	k_bm_inst = 1;
+	//k_bm_inst = 1;
 
     printf("Step to load (must be > 0) = ");
     scanf("%d", &tstep);
