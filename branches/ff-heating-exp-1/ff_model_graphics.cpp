@@ -184,7 +184,7 @@ void ff_mgr_show_next_step()
     double tmag;
     double kvec;
     double space_k = 1E6;
-    long kSecondary = 1;
+    double kSecondary = 1;
     
 
     //step++;
