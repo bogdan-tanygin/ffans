@@ -241,6 +241,7 @@ void ff_mgr_show_next_step()
 			if (show_m)
             {
                 kvec = 2;
+				kSecondary = space_k * Rp[p] * 150;
 
                 //r1.x = space_k * r[p].x / Lx;
                 //r1.y = space_k * r[p].y / Ly;
