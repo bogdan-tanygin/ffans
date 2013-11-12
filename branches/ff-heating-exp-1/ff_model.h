@@ -57,6 +57,8 @@ extern double t;
 extern double dT;
 
 extern double Ek;
+extern double Ek_tr;
+extern double Ek_rot;
 
 extern double kB;
 

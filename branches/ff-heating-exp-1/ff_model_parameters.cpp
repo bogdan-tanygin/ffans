@@ -34,14 +34,14 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 100;
+double scale = 1000;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1E-12; // s
+double dt = 1E-1; // s
 //long k_bm_inst_max = 10; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 //long k_bm_inst = 1;
 double k_force_adapt_0 = 1.05;
@@ -51,7 +51,7 @@ double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 300; // K
-double kr = 1; // particle size parameter []
+double kr = 2; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]

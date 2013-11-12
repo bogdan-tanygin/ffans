@@ -83,6 +83,8 @@ double Mz_hyst_n[21];
 double t; // time
 double dT = 0;
 double Ek = 0;
+double Ek_rot = 0;
+double Ek_tr = 0;
 double g_Bz_prev;
 long step = 0;
 
@@ -953,15 +955,18 @@ void ff_model_next_step(void)
 	ff_vect_t ex, ey, ez; // basis of rotation around ez = w
 	double tmmag;
 
-    Ek = 0;
+    Ek = Ek_tr = Ek_rot = 0;
     mz_tot = 0;
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
 
 	for (p = 1; p <= pN; p++) if (exist_p[p])
 		{
-			Ek += M0p[p] * MUL(v[p],v[p]) / 2.0 + I0p[p] * MUL(w[p],w[p]) / 2.0;
+			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
+			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
 		};
+	
+	Ek = Ek_tr + Ek_rot;
 
     if (time_go)
     {
@@ -1459,7 +1464,7 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	k_force_adapt = k_force_adapt_0;
+	k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
     sigma = 1;
@@ -1595,13 +1600,13 @@ void ff_model_effective_random_force_update(long p)
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt;
-	P[p].y = Py * k_force_adapt;
-	P[p].z = Pz * k_force_adapt;
+	P[p].x = Px * k_force_adapt * sqrt(dt);
+	P[p].y = Py * k_force_adapt * sqrt(dt);
+	P[p].z = Pz * k_force_adapt * sqrt(dt);
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt * sqrt(dt);
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt * sqrt(dt);
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt * sqrt(dt);
 }
 
 void ff_model_update_dT(void)
@@ -1614,6 +1619,8 @@ void ff_model_update_dT(void)
 		//printf("\n WARNING: dT < 0");
 		//dT = 0;
 	}
+
+	printf("\n dT = %e", dT);
 
 	if (dT > 0) k_force_adapt *= k_force_adapt_0;
 	else k_force_adapt /= k_force_adapt_0;
@@ -1745,5 +1752,5 @@ void ff_model_brownian_validation(long p)
 	dr_root_sim = sqrt(pow(r[p].x - r_brown_valid_0.x, 2) + pow(r[p].y - r_brown_valid_0.y, 2) + pow(r[p].z - r_brown_valid_0.z, 2));
 	dr_root_theory = sqrt(6 * D * t);
 
-	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
+	printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
 }
