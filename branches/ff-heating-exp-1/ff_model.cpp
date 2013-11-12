@@ -111,6 +111,8 @@ ff_vect_t dir110[13];
 
 double k_force_adapt = 0;
 
+ff_vect_t r_brown_valid_0;
+
 void ff_model_upgrade_ext_field(void)
 {
     g_Bz_prev = Bext(0,0,0).z;
@@ -1144,6 +1146,8 @@ void ff_model_next_step(void)
                         m_tot.y += m[p].y;
                         m_tot.z += m[p].z;
                         mz_tot_n++;
+
+						if (p == 1) ff_model_brownian_validation(p);
                     } // end of loop for dv
 
 					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
@@ -1536,6 +1540,8 @@ again:
     if (load_at_start) ff_io_load();
 
     //if (start_sediment) ff_model_init_sediment();
+
+	r_brown_valid_0 = r[1];
 }
 
 // Update of the random force
@@ -1727,4 +1733,17 @@ void ff_model_size_dispersion_param_calc(double R, long p)
     m[p].x = m0p[p] * sin(theta) * cos(phi);
     m[p].y = m0p[p] * sin(theta) * sin(phi);
     m[p].z = m0p[p] * cos(theta);
+}
+
+void ff_model_brownian_validation(long p)
+{
+	double gamma = 6 * pi * eta * Rp[p];
+	double D = kb * T / gamma;
+	double dr_root_theory = 0;
+	double dr_root_sim = 0;
+
+	dr_root_sim = sqrt(pow(r[p].x - r_brown_valid_0.x, 2) + pow(r[p].y - r_brown_valid_0.y, 2) + pow(r[p].z - r_brown_valid_0.z, 2));
+	dr_root_theory = sqrt(6 * D * t);
+
+	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
 }
