@@ -1464,7 +1464,8 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
+	k_force_adapt = k_force_adapt_0;
+	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
     sigma = 1;
@@ -1600,13 +1601,13 @@ void ff_model_effective_random_force_update(long p)
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt * sqrt(dt);
-	P[p].y = Py * k_force_adapt * sqrt(dt);
-	P[p].z = Pz * k_force_adapt * sqrt(dt);
+	P[p].x = Px * k_force_adapt;
+	P[p].y = Py * k_force_adapt;
+	P[p].z = Pz * k_force_adapt;
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt * sqrt(dt);
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt * sqrt(dt);
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt * sqrt(dt);
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
 }
 
 void ff_model_update_dT(void)
@@ -1620,7 +1621,7 @@ void ff_model_update_dT(void)
 		//dT = 0;
 	}
 
-	printf("\n dT = %e", dT);
+	//printf("\n dT = %e", dT);
 
 	if (dT > 0) k_force_adapt *= k_force_adapt_0;
 	else k_force_adapt /= k_force_adapt_0;
@@ -1752,5 +1753,5 @@ void ff_model_brownian_validation(long p)
 	dr_root_sim = sqrt(pow(r[p].x - r_brown_valid_0.x, 2) + pow(r[p].y - r_brown_valid_0.y, 2) + pow(r[p].z - r_brown_valid_0.z, 2));
 	dr_root_theory = sqrt(6 * D * t);
 
-	printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
+	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
 }
