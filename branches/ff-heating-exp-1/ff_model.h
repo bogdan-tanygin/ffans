@@ -55,6 +55,9 @@ extern double Mz_hyst_n[];
 extern long step;
 extern double t;
 extern double dT;
+extern double T_mean;
+extern long k_mean;
+extern double T_mean_loc_prev;
 
 extern double Ek;
 extern double Ek_tr;

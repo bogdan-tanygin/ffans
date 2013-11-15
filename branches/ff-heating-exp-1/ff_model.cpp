@@ -82,6 +82,13 @@ double Mz_hyst_n[21];
 
 double t; // time
 double dT = 0;
+double dT_prev = 0;
+double T_basic = 0;
+double T_mean = 0;
+double T_mean_loc = 0;
+double T_mean_loc_prev = 0;
+double T_mean_loc_prev_revert = 0;
+long k_mean = 0;
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
@@ -318,6 +325,20 @@ int ff_model_check_smooth_dr(long p)
             slow_steps += 10;
             res = 0;
             step--;
+
+			T_mean -= T_basic;
+			k_mean --;
+			T_mean_loc -= T_basic;
+			k_bm_inst --;
+			if (k_bm_inst == k_bm_inst_max - 1)
+			{
+				if (dT < 0) k_force_adapt *= k_force_adapt_0;
+				else k_force_adapt /= k_force_adapt_0;
+
+				dT= dT_prev;
+
+				T_mean_loc_prev = T_mean_loc_prev_revert;
+			}
         }
 
         return res;
@@ -1101,6 +1122,11 @@ void ff_model_next_step(void)
 					
 					//k_bm_inst++;
 					//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
+					if (k_bm_inst == k_bm_inst_max)
+					{
+						k_bm_inst = 1;
+						T_mean_loc = 0;
+					}
                 } // end of loop for dr
 
                 r0.x = r0.y = r0.z = 0;
@@ -1612,9 +1638,12 @@ void ff_model_effective_random_force_update(long p)
 
 void ff_model_update_dT(void)
 {
-	double T_basic = 0;
 	T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
-	dT = T - T_basic;
+	//dT = T - T_basic;
+	T_mean += T_basic;
+	k_mean ++;
+	T_mean_loc += T_basic;
+	
 	if (dT < 0)
 	{
 		//printf("\n WARNING: dT < 0");
@@ -1623,8 +1652,19 @@ void ff_model_update_dT(void)
 
 	//printf("\n dT = %e", dT);
 
-	if (dT > 0) k_force_adapt *= k_force_adapt_0;
-	else k_force_adapt /= k_force_adapt_0;
+	if (k_bm_inst == k_bm_inst_max - 1)
+	{
+		dT_prev = dT;
+		dT = T - T_mean_loc / k_bm_inst;
+		if (dT > 0) k_force_adapt *= k_force_adapt_0;
+		else k_force_adapt /= k_force_adapt_0;
+		T_mean_loc_prev_revert = T_mean_loc_prev;
+		T_mean_loc_prev = T_mean_loc;
+	}
+	k_bm_inst ++;
+
+	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
+	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
 }
 
 void ff_model_size_dispersion_init(void)

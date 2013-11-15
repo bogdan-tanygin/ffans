@@ -440,6 +440,18 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
+    sprintf(buf,"T_mean = %5.3e K", T_mean / k_mean);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"T_mean_loc = %5.3e K", T_mean_loc_prev / (k_bm_inst_max - 1));
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+	glColor4f(0,0,0,0.75);
     sprintf(buf,"T = %5.3e K", T);
 
     glRasterPos2i(6, (shift--) * 20);
