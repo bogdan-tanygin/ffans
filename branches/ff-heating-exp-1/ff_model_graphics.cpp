@@ -33,6 +33,7 @@
 GLUquadric* g_quad;
 
 int show_m, show_b, show_bext;
+int show_droplet = 1;
 int transp;
 int show_sphere;
 
@@ -288,7 +289,7 @@ void ff_mgr_show_next_step()
             r1.z = space_k * r[p].z / Lz;
             ff_mgr_draw_vector(r1, B[p]);
             }*/
-        }
+        } // particles loop
         if (show_bext)
         {
             r0.x = - 0.6;
@@ -298,6 +299,19 @@ void ff_mgr_show_next_step()
             v1 = Bext(0,0,0);
             ff_mgr_draw_vector(r0, v1);
         }
+
+		if (show_droplet)
+		{
+			glEnable(GL_ALPHA_TEST);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			
+			glColor4f(0.2, 0.1, 0.6, 0.5);
+			gluSphere(g_quad, space_k * R_oleic, 20, 20);
+
+			glDisable(GL_BLEND);
+			glDisable(GL_ALPHA_TEST);
+		}
 }
 
 void ff_mgr_print_info()

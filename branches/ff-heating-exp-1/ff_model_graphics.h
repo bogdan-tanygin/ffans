@@ -26,7 +26,7 @@ void ff_mgr_print_info(void);
 
 void ff_mgr_show_next_step(void);
 
-extern int show_m, show_b, show_bext;
+extern int show_m, show_b, show_bext, show_droplet;
 
 extern int transp;
 
