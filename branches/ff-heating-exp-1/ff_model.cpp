@@ -1624,6 +1624,7 @@ void ff_model_effective_random_force_update(long p)
 	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
+	//printf("\n t1 = %e", M0 / gamma);
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 

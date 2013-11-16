@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 20 // number of the particles
+#define pN 2 // number of the particles
 
 // Math constants
 extern double pi;
