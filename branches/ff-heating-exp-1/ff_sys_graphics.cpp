@@ -44,10 +44,12 @@ int frame_count;
 int window_width  = 1500;
 int window_height = 1000;
 
-GLdouble nearVal = 4;
-GLdouble farVal = 15;
+GLdouble nearVal = 1;
+GLdouble farVal = 100;
 
-static void do_fps(void);
+int projection_type = 1; // "0" is an orthographic type; "1" is a perspective one
+
+//static void do_fps(void);
 
 void cbRenderScene(void)
 {
@@ -74,13 +76,14 @@ void cbRenderScene(void)
     glRotatef(x_rot,1.0f,0.0f,0.0f);
     glRotatef(y_rot,0.0f,0.0f,1.0f);
 
-	glTranslatef(0.0f, 0.0f, 0.0f);
+	//glTranslatef(0.0f, 0.0f, 0.0f);
 
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
 	ff_model_next_step();
 	glPopMatrix();
+	
 	glutSwapBuffers();
 	
     /*glLoadIdentity();
@@ -127,13 +130,13 @@ void cbResizeScene(int width, int height)
 	else side = height;
 	
     glViewport((width - side) / 2, (height - side) / 2, side, side);
-
     //glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //gluPerspective(45.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
-	glFrustum(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
+	if (projection_type == 1) glFrustum(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
+	else					  glOrtho  (-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
 
     glMatrixMode(GL_MODELVIEW);
 

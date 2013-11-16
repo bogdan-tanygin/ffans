@@ -32,3 +32,5 @@ extern int transp;
 
 extern int show_sphere;
 
+extern double space_k;
+

@@ -76,11 +76,13 @@ void cbSpecialKeyPressed(int key, int x, int y)
         break;
 
     case GLUT_KEY_UP:
-        x_speed -= 0.01f;
+        //x_speed -= 0.01f;
+		space_k *= 1.1;
         break;
 
     case GLUT_KEY_DOWN:
-        x_speed += 0.01f;
+        //x_speed += 0.01f;
+		space_k /= 1.1;
         break;
 
     case GLUT_KEY_LEFT:
@@ -155,6 +157,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
     case 'C': case 'c':
         T += 10;
+        break;
+	
+	case 'P': case 'p':
+        projection_type = projection_type ? 0 : 1;
+		cbResizeScene(window_width, window_height);
         break;
 	
 	case 'E': case 'e':

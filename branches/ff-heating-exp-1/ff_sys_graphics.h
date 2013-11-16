@@ -31,9 +31,12 @@ extern int frame_count;
 extern int window_width;
 extern int window_height;
 
+extern int projection_type;
+
 void ff_gr_init(int argc, char **argv);
 void ff_gr_print(void *font, char *str);
 void ff_gr_loop(void);
+void cbResizeScene(int width, int height);
 
 
 

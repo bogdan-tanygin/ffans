@@ -37,11 +37,12 @@ int show_droplet = 1;
 int transp;
 int show_sphere;
 
-
 // vector parameters
 double v_len;
 //double v_diam;
 ff_color4f_t v_col;
+
+double space_k = 9E6;
 
 void ff_mgr_draw_vector(ff_vect_t r, ff_vect_t v)
 {
@@ -184,10 +185,9 @@ void ff_mgr_show_next_step()
     double theta, phi;
     double tmag;
     double kvec;
-    double space_k = 1E6;
+    //double space_k = 9E6;
     double kSecondary = 1;
     
-
     //step++;
     //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
@@ -492,9 +492,9 @@ void ff_mgr_init()
     //z_off = -1.0f;
 	z_off = -5.0f;
 
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-    glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
+    //glFrontFace(GL_CCW);
+    //glEnable(GL_CULL_FACE);
 
     g_quad = gluNewQuadric();
 }
