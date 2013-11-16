@@ -924,9 +924,9 @@ ff_vect_t ff_model_force(long p)
 	// oleic droplet surface re-creation force
 	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
 	{
-		tF.x += - sigma_sf * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p]; // TODO: need to add droplet radius change energy? It can transform to the heat. 
-		tF.y += - sigma_sf * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
-		tF.z += - sigma_sf * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
+		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
+		tF.y += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
+		tF.z += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
 	}
 
     tF.x += P[p].x;
