@@ -191,9 +191,10 @@ void ff_mgr_show_next_step()
     //step++;
     //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
-    glBegin(GL_LINE_STRIP);
+    glLineWidth(2.0f);
+	glBegin(GL_LINE_LOOP);
 
-    glColor3f(space_k * 0.0, space_k * 0.0, space_k * 0.0);
+    glColor3f(0.0, 0.0, 0.0);
     glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
     glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
     glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
@@ -214,7 +215,7 @@ void ff_mgr_show_next_step()
     glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
     glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
 
-    glEnd();    
+    glEnd();
 
     for (long p = 1; p <= pN; p++)
         if (exist_p[p])
@@ -486,9 +487,10 @@ void ff_mgr_init()
     show_b    = 0;
     show_bext = 0;
 
-    y_rot = 30.0f;
-    x_rot = -60.0f;
-    z_off = -1.0f;
+    //y_rot = 30.0f;
+    //x_rot = -60.0f;
+    //z_off = -1.0f;
+	z_off = -5.0f;
 
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
