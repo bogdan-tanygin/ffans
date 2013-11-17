@@ -113,7 +113,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
         Lx *= 2;
         Ly *= 2;
         Lz *= 2;
-
         break;
 
     case 'M': case 'm':
@@ -219,8 +218,14 @@ void cbKeyPressed(unsigned char key, int x, int y)
             BmanZ += 10;
         }
         break;
-
-
+	case '8':
+        show_info = show_info?0:1;
+        break;
+	case '9':
+        Lx /= 2;
+        Ly /= 2;
+        Lz /= 2;
+        break;
     case ' ':  // F (Space) - Freeze Rotation!
         time_go = time_go?0:1;
         break;

@@ -82,11 +82,14 @@ void cbRenderScene(void)
 
     glPushMatrix();
 	ff_model_next_step();
-	glPopMatrix();
+	//glPopMatrix();
 	
-	glutSwapBuffers();
+	//glutSwapBuffers();
+
+	// Output of information to the GL screen
+	// --------------------------------------
 	
-    /*glLoadIdentity();
+    glLoadIdentity();
 
     glMatrixMode(GL_PROJECTION);
 
@@ -103,13 +106,13 @@ void cbRenderScene(void)
 
     glColor4f(0.6,1.0,0.6,.75);
 
-    glTranslatef(6.0f,window_height - 14,0.0f);
+    glTranslatef(0.0f,window_height - 14,0.0f);
 
-    ff_mgr_print_info();
+    if (show_info) ff_mgr_print_info();
 
     glPopMatrix();
 
-    glutSwapBuffers();*/
+    glutSwapBuffers();
 
     if(rotating)
     {
@@ -118,6 +121,10 @@ void cbRenderScene(void)
     }
 
     //do_fps();
+
+	glEnable(GL_DEPTH_TEST);
+
+	cbResizeScene(window_width, window_height);
 }
 
 void cbResizeScene(int width, int height)
