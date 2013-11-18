@@ -955,6 +955,8 @@ ff_vect_t ff_model_torque(long p)
     // Buoyancy
     ttau.z += 0;
 
+	//printf("\n %e", ttau.x);
+
     ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
     ttau.z += tau_r[p].z;
@@ -1071,6 +1073,8 @@ void ff_model_next_step(void)
                     /*DEBUG*/ if (dphi[p].z != dphi[p].z) printf("\n DEBUG 1 p = %d dphi[p].z = %e", p, dphi[p].z);
 
 					//ff_model_check_overlapp(p); // hard sphere condition
+
+					//printf("\n %e", dphi[p].y);
 
                     r[p].x += drt[p].x;
                     r[p].y += drt[p].y;
