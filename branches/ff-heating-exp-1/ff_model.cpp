@@ -66,12 +66,15 @@ ff_vect_t dw[pN + 1];
 //ff_vect_t dir110[13];
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
+int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
 double m0p[pN + 1];
 double M0p[pN + 1];
 double I0p[pN + 1]; // particle moment of inertia
 double r0modp[pN + 1];
 double Vselfp[pN + 1];
+double C2[pN + 1];
+double gamma_rot[pN + 1];
 
 int time_go = 0;
 
@@ -92,6 +95,7 @@ long k_mean = 0;
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
+double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
 
@@ -302,8 +306,8 @@ int ff_model_check_smooth_dr(long p)
     int res = 1;
 
     dr = sqrt(MUL(drt[p], drt[p]));
-    //rmod = 2 * Rp[p];
-	rmod = 2 * delta;
+    rmod = 2 * Rp[p];
+	//rmod = 2 * delta;
 
 	dphimag = sqrt(MUL(dphi[p], dphi[p]));
 
@@ -804,14 +808,17 @@ ff_vect_t ff_model_nonloc_force(long p)
 #ifndef SECONDARY
 				if ((dR <= Rp[p] + Rp[ps]) && (dR >= delta)) //soft sphere condition
 				{
-					if (Ch > 5)
-                        Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
-                    else
-                        Cmod = 500 * m0p[p] * m0p[ps] * (C1 / dR5);
+					Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 					tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;
+
+					if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
+					{
+						aggregated_p[p][ps] = 1;
+						//printf("\n aggregated_p");
+					}
 				}
 
                 if ((dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
@@ -825,20 +832,21 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					dd = Rp[p] + Rp[ps];
+					/*dd = Rp[p] + Rp[ps];
 					l = 2 * (dR - dd) / dd;
 					tt = 2 * delta / dd;
 
 					tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 					tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
                 }
 #endif
 
 #ifndef SECONDARY
                 // attraction
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
-				if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
+				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
+				if (dR > (Rp[p] + Rp[ps]) * (1 + 2 * smooth_r))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -849,6 +857,15 @@ ff_vect_t ff_model_nonloc_force(long p)
 					tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
 					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
 					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
+
+					if (aggregated_p[p][ps])
+					{
+						Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dR5);
+
+						tFx += dx * Cmod;
+						tFy += dy * Cmod;
+						tFz += dz * Cmod;
+					}
                 }
 #endif
 
@@ -973,7 +990,7 @@ void ff_model_next_step(void)
     int chk;
     long mz_tot_n;
     ff_vect_t r0;
-	double C2, gamma_rot;
+	//double C2, gamma_rot;
 	double M0, I0;
 	ff_vect_t ex, ey, ez; // basis of rotation around ez = w
 	double tmmag;
@@ -1036,37 +1053,37 @@ void ff_model_next_step(void)
                 {
                     if (Rp_to_c[p] > R_oleic)
 					{
-						C2 = 6 * pi * eta * Rp[p];
-						gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+						C2[p] = 6 * pi * eta * Rp[p];
+						gamma_rot[p] = 8 * pi * eta * pow(Rp[p], 3);
 					}
 					else
 					{
-						C2 = 6 * pi * eta_oleic * Rp[p];
-						gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+						C2[p] = 6 * pi * eta_oleic * Rp[p];
+						gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
 					}
 
 					M0 = M0p[p];
 					I0 = I0p[p]; 
 
-					drt[p].x = F[p].x * dt / C2 +		 
-                        (v[p].x - F[p].x / C2) * (1 - exp(- C2 * dt / M0)) * M0 / C2;
+					drt[p].x = F[p].x * dt / C2[p] +		 
+                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 
-                    drt[p].y = F[p].y * dt / C2 +		 
-                        (v[p].y - F[p].y / C2) * (1 - exp(- C2 * dt / M0)) * M0 / C2;
+                    drt[p].y = F[p].y * dt / C2[p] +		 
+                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 
-                    drt[p].z = F[p].z * dt / C2 +		 
-                        (v[p].z - F[p].z / C2) * (1 - exp(- C2 * dt / M0)) * M0 / C2;
+                    drt[p].z = F[p].z * dt / C2[p] +		 
+                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
-					dphi[p].x = tau[p].x * dt / gamma_rot +		 
-                    (w[p].x - tau[p].x / gamma_rot) * (1 - exp(- gamma_rot * dt / I0)) * I0 / gamma_rot;
+					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
+                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 
-					dphi[p].y = tau[p].y * dt / gamma_rot +		 
-                    (w[p].y - tau[p].y / gamma_rot) * (1 - exp(- gamma_rot * dt / I0)) * I0 / gamma_rot;
+					dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
+                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 
-					dphi[p].z = tau[p].z * dt / gamma_rot +		 
-                    (w[p].z - tau[p].z / gamma_rot) * (1 - exp(- gamma_rot * dt / I0)) * I0 / gamma_rot;
+					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
+                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 
 					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
@@ -1138,7 +1155,7 @@ void ff_model_next_step(void)
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-					    if (Rp_to_c[p] > R_oleic)
+					    /*if (Rp_to_c[p] > R_oleic)
 					    {
 					    	C2 = 6 * pi * eta * Rp[p];
 					    	gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
@@ -1147,23 +1164,23 @@ void ff_model_next_step(void)
 					    {
 					    	C2 = 6 * pi * eta_oleic * Rp[p];
 					    	gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
-					    }
+					    }*/
 					    
 						M0 = M0p[p];
 					    I0 = I0p[p];
 
 						// C2 is a friction
-                        dvt[p].x = (F[p].x / C2) + (v[p].x - F[p].x / C2) * exp(- C2 * dt / M0) - v[p].x;
-                        dvt[p].y = (F[p].y / C2) + (v[p].y - F[p].y / C2) * exp(- C2 * dt / M0) - v[p].y;
-                        dvt[p].z = (F[p].z / C2) + (v[p].z - F[p].z / C2) * exp(- C2 * dt / M0) - v[p].z;
+                        dvt[p].x = (F[p].x / C2[p]) + (v[p].x - F[p].x / C2[p]) * exp(- C2[p] * dt / M0) - v[p].x;
+                        dvt[p].y = (F[p].y / C2[p]) + (v[p].y - F[p].y / C2[p]) * exp(- C2[p] * dt / M0) - v[p].y;
+                        dvt[p].z = (F[p].z / C2[p]) + (v[p].z - F[p].z / C2[p]) * exp(- C2[p] * dt / M0) - v[p].z;
 
                         v[p].x += dvt[p].x;
                         v[p].y += dvt[p].y;
                         v[p].z += dvt[p].z;
 
-						w[p].x = (tau[p].x / gamma_rot) + (w[p].x - tau[p].x / gamma_rot) * exp(- gamma_rot * dt / I0);
-						w[p].y = (tau[p].y / gamma_rot) + (w[p].y - tau[p].y / gamma_rot) * exp(- gamma_rot * dt / I0);
-						w[p].z = (tau[p].z / gamma_rot) + (w[p].z - tau[p].z / gamma_rot) * exp(- gamma_rot * dt / I0);
+						w[p].x = (tau[p].x / gamma_rot[p]) + (w[p].x - tau[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
+						w[p].y = (tau[p].y / gamma_rot[p]) + (w[p].y - tau[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
+						w[p].z = (tau[p].z / gamma_rot[p]) + (w[p].z - tau[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
 
                         if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
                         if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
@@ -1182,7 +1199,11 @@ void ff_model_next_step(void)
                         m_tot.z += m[p].z;
                         mz_tot_n++;
 
-						if (p == 1) ff_model_brownian_validation(p);
+						//if (p == 1) ff_model_brownian_validation(p);
+
+						dW[p] = MUL(F[p], drt[p]) + MUL(tau[p], dphi[p]) 
+							   - C2[p] * ((v[p].x - dvt[p].x / 2) * drt[p].x + (v[p].y - dvt[p].y / 2) * drt[p].y + (v[p].z - dvt[p].z / 2) * drt[p].z)
+							   - gamma_rot[p] * ((w[p].x - dw[p].x / 2) * dphi[p].x + (w[p].y - dw[p].y / 2) * dphi[p].y + (w[p].z - dw[p].z / 2) * dphi[p].z);
                     } // end of loop for dv
 
 					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
@@ -1557,6 +1578,8 @@ again:
 
         v[p].x = v[p].y = v[p].z = 0;
 		w[p].x = w[p].y = w[p].z = 0;
+		dW[p] = 0;
+		for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
         /*theta = pi * rand() / 32768.0;
         phi = 2 * pi * rand() / 32768.0;

@@ -34,7 +34,7 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 0.1;
+double scale = 0.4;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -51,7 +51,7 @@ double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 300; //273.15 + 54; // K
-double kr = 1; // particle size parameter []
+double kr = 4; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]
@@ -67,11 +67,12 @@ double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 1E-19; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
+double G_barrier = 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
-double Ch = 0.01; // adhesion / magnetic relation
+double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
 
 int load_at_start = 0; // the best method of loading
 int auto_save = 1;
