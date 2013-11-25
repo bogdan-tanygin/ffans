@@ -34,7 +34,7 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 0.4;
+double scale = 1;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -67,7 +67,7 @@ double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 1E-19; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
-double G_barrier = 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
+double G_barrier = 16 * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]

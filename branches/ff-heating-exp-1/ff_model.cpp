@@ -808,7 +808,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 #ifndef SECONDARY
 				if ((dR <= Rp[p] + Rp[ps]) && (dR >= delta)) //soft sphere condition
 				{
-					Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dR5);
+					Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 					tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
@@ -846,7 +846,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 // attraction
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
 				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
-				if (dR > (Rp[p] + Rp[ps]) * (1 + 2 * smooth_r))
+				if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -860,7 +860,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
 					if (aggregated_p[p][ps])
 					{
-						Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dR5);
+						Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 						tFx += dx * Cmod;
 						tFy += dy * Cmod;
