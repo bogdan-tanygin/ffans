@@ -919,6 +919,31 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
+double ff_model_force_G_steric(long p, long ps)
+{
+	double G_steric = 0;
+	double z = 0;
+	double dx = 0; 
+	double dy = 0; 
+	double dz = 0;
+	double dR = 0;
+	double dRmax = 0;
+
+	dx = r[p].x - r[ps].x;
+	dy = r[p].y - r[ps].y;
+	dz = r[p].z - r[ps].z;
+	dR = sqrt(dx * dx + dy * dy + dz * dz);
+
+	dRmax = Rp[ps] + Rp[p] + 2 * delta;
+
+	if (dR <= dRmax)
+		G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
+			       (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_oa * T) / ( 6 * delta * dR);
+	else G_steric = 0;
+
+	return G_steric;
+}
+
 ff_vect_t ff_model_force(long p)
 {
     ff_vect_t tF;
