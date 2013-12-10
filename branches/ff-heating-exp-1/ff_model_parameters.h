@@ -49,6 +49,7 @@ extern double smooth_r;
 //extern double m_h_eff_tol;
 
 extern double Ch;
+extern double Ch_ss;
 //extern double EPS;
 //extern double ro1;
 //extern double ro2;

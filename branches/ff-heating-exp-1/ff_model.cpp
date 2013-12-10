@@ -825,9 +825,9 @@ ff_vect_t ff_model_nonloc_force(long p)
 					l = 2 * (dRtemp - dd) / dd;
 					tt = 2 * delta / dd;
 
-					tFx += - (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFy += - (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFz += - (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFx += - Ch_ss * (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFy += - Ch_ss * (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFz += - Ch_ss * (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 				}
 
                 if ((dR > Rp[p] + Rp[ps]) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
