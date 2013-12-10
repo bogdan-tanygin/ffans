@@ -66,7 +66,7 @@ ff_vect_t dw[pN + 1];
 //ff_vect_t dir110[13];
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
-int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
+//int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
 double m0p[pN + 1];
 double M0p[pN + 1];
@@ -95,7 +95,7 @@ long k_mean = 0;
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
-double dW[pN + 1]; // work
+//double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
 
@@ -697,7 +697,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double tFx, tFy, tFz;
     double dtFx, dtFy, dtFz;
     double dreptFx, dreptFy, dreptFz; // repulsion
-    double dR, l, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
+    double dR, dRtemp, l, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
     //double R1 = 0.3 * R0;
     double Cmod;
     //double Cmod1 = Ch * m0 * m0;
@@ -789,7 +789,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
                 } 
 
-                if (dR >= Rp[p] + Rp[ps] + delta)
+                if (dR >= Rp[p] + Rp[ps])
 				{
 					tFx += dtFx;
 					tFy += dtFy;
@@ -806,22 +806,31 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
 
 #ifndef SECONDARY
-				if ((dR <= Rp[p] + Rp[ps]) && (dR >= delta)) //soft sphere condition
+				if (dR <= Rp[p] + Rp[ps]) //soft sphere condition
 				{
-					Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
+					/*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 					tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
-                    tFz += -dz * Cmod;
+                    tFz += -dz * Cmod;*/
 
-					if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
+					/*if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
 					{
 						aggregated_p[p][ps] = 1;
 						//printf("\n aggregated_p");
-					}
+					}*/
+
+					dRtemp = Rp[p] + Rp[ps];
+					dd = Rp[p] + Rp[ps];
+					l = 2 * (dRtemp - dd) / dd;
+					tt = 2 * delta / dd;
+
+					tFx += - (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFy += - (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+					tFz += - (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 				}
 
-                if ((dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
+                if ((dR > Rp[p] + Rp[ps]) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
                 {
                     /*if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
@@ -832,13 +841,13 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					/*dd = Rp[p] + Rp[ps];
+					dd = Rp[p] + Rp[ps];
 					l = 2 * (dR - dd) / dd;
 					tt = 2 * delta / dd;
 
 					tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 					tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
+					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                 }
 #endif
 
@@ -858,14 +867,14 @@ ff_vect_t ff_model_nonloc_force(long p)
 					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
 					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
 
-					if (aggregated_p[p][ps])
+					/*if (aggregated_p[p][ps])
 					{
 						Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
 
 						tFx += dx * Cmod;
 						tFy += dy * Cmod;
 						tFz += dz * Cmod;
-					}
+					}*/
                 }
 #endif
 
@@ -936,6 +945,7 @@ double ff_model_force_G_steric(long p, long ps)
 
 	dRmax = Rp[ps] + Rp[p] + 2 * delta;
 
+	// Entropic repulsion
 	if (dR <= dRmax)
 		G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
 			       (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_oa * T) / ( 6 * delta * dR);
@@ -1226,9 +1236,9 @@ void ff_model_next_step(void)
 
 						//if (p == 1) ff_model_brownian_validation(p);
 
-						dW[p] = MUL(F[p], drt[p]) + MUL(tau[p], dphi[p]) 
+						/*dW[p] = MUL(F[p], drt[p]) + MUL(tau[p], dphi[p]) 
 							   - C2[p] * ((v[p].x - dvt[p].x / 2) * drt[p].x + (v[p].y - dvt[p].y / 2) * drt[p].y + (v[p].z - dvt[p].z / 2) * drt[p].z)
-							   - gamma_rot[p] * ((w[p].x - dw[p].x / 2) * dphi[p].x + (w[p].y - dw[p].y / 2) * dphi[p].y + (w[p].z - dw[p].z / 2) * dphi[p].z);
+							   - gamma_rot[p] * ((w[p].x - dw[p].x / 2) * dphi[p].x + (w[p].y - dw[p].y / 2) * dphi[p].y + (w[p].z - dw[p].z / 2) * dphi[p].z);*/
                     } // end of loop for dv
 
 					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
@@ -1603,8 +1613,8 @@ again:
 
         v[p].x = v[p].y = v[p].z = 0;
 		w[p].x = w[p].y = w[p].z = 0;
-		dW[p] = 0;
-		for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
+		//dW[p] = 0;
+		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
         /*theta = pi * rand() / 32768.0;
         phi = 2 * pi * rand() / 32768.0;
