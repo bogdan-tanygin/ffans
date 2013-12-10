@@ -830,7 +830,8 @@ ff_vect_t ff_model_nonloc_force(long p)
 					tFz += - Ch_ss * (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
 				}
 
-                if ((dR > Rp[p] + Rp[ps]) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
+                // Entropic repulsion
+				if ((dR > Rp[p] + Rp[ps]) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
                 {
                     /*if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
