@@ -1839,12 +1839,15 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 
 	m0p[p] = s;
 
-	theta = pi * rand() / 32768.0;
-    phi = 2 * pi * rand() / 32768.0;
+	if (t == 0)
+	{
+		theta = pi * rand() / 32768.0;
+		phi = 2 * pi * rand() / 32768.0;
 
-    m[p].x = m0p[p] * sin(theta) * cos(phi);
-    m[p].y = m0p[p] * sin(theta) * sin(phi);
-    m[p].z = m0p[p] * cos(theta);
+		m[p].x = m0p[p] * sin(theta) * cos(phi);
+		m[p].y = m0p[p] * sin(theta) * sin(phi);
+		m[p].z = m0p[p] * cos(theta);
+	}
 }
 
 void ff_model_brownian_validation(long p)
