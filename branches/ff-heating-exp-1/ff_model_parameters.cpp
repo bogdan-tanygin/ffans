@@ -34,8 +34,8 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale_all = 1.5;
-double scale = 0.15 * 5 * scale_all;
+double scale_all = 4;
+double scale = 0.15 * 3 * scale_all * 0.06;
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -74,7 +74,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 1E4; // soft-sphere repulsion parameter
+double Ch_ss = 5E4; // soft-sphere repulsion parameter
 
 int load_at_start = 0; // the best method of loading
 int auto_save = 1;
