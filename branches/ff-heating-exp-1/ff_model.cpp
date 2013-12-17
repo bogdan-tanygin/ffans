@@ -929,7 +929,7 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
-double ff_model_force_G_steric(long p, long ps)
+double ff_model_G_steric(long p, long ps)
 {
 	double G_steric = 0;
 	double z = 0;
