@@ -34,7 +34,7 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 0.15; // / pow(50.0, 1 / 3.0);
+double scale = 0.15 / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -50,7 +50,7 @@ long slow_steps = 0;
 double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 273.15 + 60; // K
+double T = 273.15 + 50; // K
 double kr = 1; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
@@ -61,7 +61,7 @@ double delta = 2.0E-9;
 double R_oleic = (Lx / 2.0) * 1;
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
-double sigma_sf_nano = sigma_sf * 5E-4; // [N / m]
+double sigma_sf_nano = sigma_sf * 2E-3; // [N / m]
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
