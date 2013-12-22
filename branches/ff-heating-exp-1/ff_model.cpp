@@ -1099,7 +1099,7 @@ void ff_model_next_step(void)
 					}
 
 					M0 = M0p[p];
-					I0 = I0p[p]; 
+					I0 = I0p[p];
 
 					drt[p].x = F[p].x * dt / C2[p] +		 
                         (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];

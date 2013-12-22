@@ -55,15 +55,18 @@ ModelParameters::ModelParameters(QString fileName)
     PREAD(Vessel, Lz, 1E-6) //[µm]
 
     PREAD(Carrier fluid, rho_f, 1) //[kg m-3]
-    PREAD(Carrier fluid, t1, 1) // [°C]
-    PREAD(Carrier fluid, t2, 1) // [°C]
+    PREAD(Ferrofluid, t1, 1) // [°C]
+    PREAD(Ferrofluid, t2, 1) // [°C]
 
     double T1 = t1 - ta0;
     PWRITE(T1)
     double T2 = t2 - ta0;
     PWRITE(T2)
 
+    PREAD(Ferrofluid, sigma_sf_oleic, 1) // [N / m]
+    PREAD(Ferrofluid, eta_oleic, 1) // [Pa * s]
     PREAD(Ferrofluid, d_mean, 1E-9) // [nm]
+    double R_mean = d_mean / 2.0;
     PREAD(Ferrofluid, s_mean, 1) // [A m2]
     PREAD(Ferrofluid, n_p, 1) // [m-3]
     PREAD(Ferrofluid, t_vap_ldc, 1) // [°C]
@@ -148,4 +151,23 @@ ModelParameters::ModelParameters(QString fileName)
     PWRITE(d_mean_estimate)
 
     qDebug() << "--------------------------------";
+
+    qDebug() << "[Hypothesis] Viscosity of the oleic nanolayer estimation based on cluster evaporation temperature";
+
+    double T_evap_ldc = t_vap_ldc - ta0;
+    double Ek = (3 / 2.0) * kb * T_evap_ldc;
+    double sigma_sf_nano_coef = Ek / (4 * pi * pow(R_mean, 2) * sigma_sf_oleic);
+    PWRITE(sigma_sf_nano_coef)
+
+    qDebug() << "--------------------------------";
+
+    double gamma_tr_mean = 6 * pi * eta_oleic * R_mean;
+    double time_damping = m_mean / gamma_tr_mean;
+    PWRITE(time_damping)
+    double v_heat_mean = sqrt(8 * kb * T_evap_ldc / (pi * m_mean));
+    PWRITE(v_heat_mean)
+    double F_heat_adaptive = gamma_tr_mean * v_heat_mean;
+    double F_oleic_droplet = sigma_sf_nano_coef * sigma_sf_oleic * 2 * pi * R_mean;
+    double forces_relation = F_heat_adaptive / F_oleic_droplet;
+    PWRITE(forces_relation)
 }
