@@ -1565,7 +1565,7 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	k_force_adapt = k_force_adapt_0;
+	k_force_adapt = 1;
 	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
@@ -1615,7 +1615,7 @@ again:
             //r[p].x = r[p].y = r[p].z = 0;
 
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic) goto again;
+			if (Rp_to_c[p] > R_oleic - d[14] / 2.0) goto again;
 
 			for (tp = 1; tp < p; tp++)
             {

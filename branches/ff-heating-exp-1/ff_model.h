@@ -97,6 +97,8 @@ extern long pN_oleic_drop_I;
 extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 
+extern double k_force_adapt;
+
 // Update of the effective instantiated random force
 void ff_model_effective_random_force_update(long);
 void ff_model_update_dT(void);
