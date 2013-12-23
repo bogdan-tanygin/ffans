@@ -1622,7 +1622,9 @@ again:
 
                 dR = sqrt(MUL(dr,dr));
 
-                if (dR <= Rp[p] + Rp[tp]) goto again;
+				Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+
+                if ((dR <= Rp[p] + Rp[tp]) || (Rp_to_c[p] > R_oleic)) goto again;
             }
         } // start_ideal
 

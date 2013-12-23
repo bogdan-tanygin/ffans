@@ -41,10 +41,10 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1E-5; // s
+double dt = 1.5E-12; // s
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
-double k_force_adapt_0 = 1.05;
+double k_force_adapt_0 = 1.0 /*inertial mode*/; //= 1.05;
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.2;
@@ -58,10 +58,10 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-double R_oleic = (Lx / 2.0) * 2;
+double R_oleic = (Lx / 8.0);
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
-double sigma_sf_nano = sigma_sf * 1E-4; // [N / m]
+double sigma_sf_nano = sigma_sf * 2E-1;// * 5.017559E-04 * 7.819136E+03 / 2; // [N / m]
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
