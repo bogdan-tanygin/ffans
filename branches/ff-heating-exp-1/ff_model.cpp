@@ -1614,7 +1614,10 @@ again:
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            for (tp = 1; tp < p; tp++)
+            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic) goto again;
+
+			for (tp = 1; tp < p; tp++)
             {
                 dr.x = r[p].x - r[tp].x;
                 dr.y = r[p].y - r[tp].y;
@@ -1622,9 +1625,7 @@ again:
 
                 dR = sqrt(MUL(dr,dr));
 
-				Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-
-                if ((dR <= Rp[p] + Rp[tp]) || (Rp_to_c[p] > R_oleic)) goto again;
+                if (dR <= Rp[p] + Rp[tp]) goto again;
             }
         } // start_ideal
 
