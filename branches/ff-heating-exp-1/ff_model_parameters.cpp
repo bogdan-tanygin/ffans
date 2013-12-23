@@ -61,7 +61,7 @@ double delta = 2.0E-9;
 double R_oleic = (Lx / 2.0) * 2;
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
-double sigma_sf_nano = sigma_sf * 5.017559E-04 * 7.819136E+03 / 2; // [N / m]
+double sigma_sf_nano = sigma_sf * 1E-4; // [N / m]
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]

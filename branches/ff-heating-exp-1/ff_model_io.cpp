@@ -298,19 +298,24 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
-    FILE* file, *file1;
+    FILE *file, *file1, *file2;
+	double V_oleic = 0;
 
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
+	file2 = fopen("setting_n_oleic.dat", "a");
 
     //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
     //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
 	fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
     fprintf(file1, "%5.3e %5.3e \n", t, I);
 
+	V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
+	fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
+
     fclose(file);
     fclose(file1);
-
+	fclose(file2);
 }
 
 void ff_io_autosave(void)

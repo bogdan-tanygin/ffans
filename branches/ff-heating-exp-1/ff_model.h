@@ -92,6 +92,8 @@ extern ff_vect_t m_tot;
 extern int exist_p[];
 extern double Rp[];
 
+extern long pN_oleic_drop;
+
 // Update of the effective instantiated random force
 void ff_model_effective_random_force_update(long);
 void ff_model_update_dT(void);

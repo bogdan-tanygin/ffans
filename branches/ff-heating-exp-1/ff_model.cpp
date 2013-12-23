@@ -126,6 +126,8 @@ double k_force_adapt = 0;
 
 ff_vect_t r_brown_valid_0;
 
+long pN_oleic_drop = 0;
+
 void ff_model_upgrade_ext_field(void)
 {
     g_Bz_prev = Bext(0,0,0).z;
@@ -977,6 +979,8 @@ ff_vect_t ff_model_force(long p)
 	// oleic droplet surface re-creation force
 	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
 	{
+		pN_oleic_drop++;
+		
 		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
 		tF.y += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
 		tF.z += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
@@ -1035,6 +1039,7 @@ void ff_model_next_step(void)
     mz_tot = 0;
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
+	pN_oleic_drop = 0;
 
 	for (p = 1; p <= pN; p++) if (exist_p[p])
 		{
