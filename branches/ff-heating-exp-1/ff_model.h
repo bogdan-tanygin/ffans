@@ -93,6 +93,9 @@ extern int exist_p[];
 extern double Rp[];
 
 extern long pN_oleic_drop;
+extern long pN_oleic_drop_I;
+extern long pN_oleic_drop_II;
+extern long pN_oleic_drop_III;
 
 // Update of the effective instantiated random force
 void ff_model_effective_random_force_update(long);
@@ -106,3 +109,4 @@ int ff_model_check_walls(long);
 //void ff_model_check_overlapp(long);
 
 void ff_model_brownian_validation(long);
+void ff_model_update_conc_in_oleic(long);

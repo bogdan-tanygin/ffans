@@ -298,12 +298,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
-    FILE *file, *file1, *file2;
+    FILE *file, *file1, *file2, *file2_I, *file2_II, *file2_III;
 	double V_oleic = 0;
 
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
 	file2 = fopen("setting_n_oleic.dat", "a");
+	file2_I = fopen("setting_n_oleic_I.dat", "a");
+	file2_II = fopen("setting_n_oleic_II.dat", "a");
+	file2_III = fopen("setting_n_oleic_III.dat", "a");
 
     //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
     //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
@@ -312,10 +315,16 @@ void ff_io_save_setting(ff_vect_t m_tot,double I)
 
 	V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
 	fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
+	fprintf(file2_I, "%5.3e %5.3e \n", t, pN_oleic_drop_I / V_oleic);
+	fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
+	fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
 
     fclose(file);
     fclose(file1);
 	fclose(file2);
+	fclose(file2_I);
+	fclose(file2_II);
+	fclose(file2_III);
 }
 
 void ff_io_autosave(void)

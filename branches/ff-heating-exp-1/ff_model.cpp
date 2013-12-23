@@ -127,6 +127,10 @@ double k_force_adapt = 0;
 ff_vect_t r_brown_valid_0;
 
 long pN_oleic_drop = 0;
+long pN_oleic_drop_I = 0;
+long pN_oleic_drop_II = 0;
+long pN_oleic_drop_III = 0;
+double d[14 + 1];
 
 void ff_model_upgrade_ext_field(void)
 {
@@ -979,8 +983,6 @@ ff_vect_t ff_model_force(long p)
 	// oleic droplet surface re-creation force
 	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
 	{
-		pN_oleic_drop++;
-		
 		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
 		tF.y += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
 		tF.z += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
@@ -1040,6 +1042,7 @@ void ff_model_next_step(void)
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
 	pN_oleic_drop = 0;
+	pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
 
 	for (p = 1; p <= pN; p++) if (exist_p[p])
 		{
@@ -1062,8 +1065,8 @@ void ff_model_next_step(void)
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-				
+                //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+								
 				/*if (k_bm_inst == 1)*/
 				ff_model_effective_random_force_update(p);
 				
@@ -1269,8 +1272,14 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
+					
+					for (p = 1; p <= pN; p++)
+					{
+						Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+						ff_model_update_conc_in_oleic(p);
+					}
 
-                    if (auto_reversal) ff_model_auto_hyst();
+					if (auto_reversal) ff_model_auto_hyst();
                     if (step % 10000 == 0) ff_io_autosave();
 					else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
 					else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
@@ -1738,7 +1747,7 @@ void ff_model_update_dT(void)
 
 void ff_model_size_dispersion_init(void)
 {
-	double d[14 + 1];
+	//double d[14 + 1];
 	double F[14 + 1];
 	long i, p;
 	long imax = 14;
@@ -1866,4 +1875,15 @@ void ff_model_brownian_validation(long p)
 	dr_root_theory = sqrt(6 * D * t);
 
 	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
+}
+
+void ff_model_update_conc_in_oleic(long p)
+{
+	if (Rp_to_c[p] <= R_oleic)
+	{
+		pN_oleic_drop++;
+		if ((Rp[p] >= d[1]) && (Rp[p] <= d[2])) pN_oleic_drop_I++;
+		if ((Rp[p] >= d[3]) && (Rp[p] <= d[7])) pN_oleic_drop_II++;
+		if ((Rp[p] >= d[8]) && (Rp[p] <= d[14])) pN_oleic_drop_III++;
+	}
 }
