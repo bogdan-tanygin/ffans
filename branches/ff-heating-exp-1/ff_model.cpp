@@ -1280,15 +1280,15 @@ void ff_model_next_step(void)
 					}
 
 					if (auto_reversal) ff_model_auto_hyst();
-                    if (step % 10000 == 0) ff_io_autosave();
+                    if (step % 100000 == 0) ff_io_autosave();
+					else if ((step < 100000) && (step % 10000 == 0)) ff_io_autosave();
 					else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
-					else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
 
                     if (setting_plot)
                     {
-						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
+						if (step % 10000 == 0) ff_io_save_setting(m_tot,I);
+						else if ((step < 10000) && (step % 1000 == 0)) ff_io_save_setting(m_tot,I);
 						else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
-						else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
 
                     // end for case of interrupted kinetic loops
@@ -1615,7 +1615,7 @@ again:
             //r[p].x = r[p].y = r[p].z = 0;
 
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic - d[14] / 2.0) goto again;
+			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
 
 			for (tp = 1; tp < p; tp++)
             {
