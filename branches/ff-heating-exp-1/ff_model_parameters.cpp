@@ -34,14 +34,14 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 5.75 * 0.15 / pow(50.0, 1 / 3.0);
+double scale = 5.75 * 0.15//; / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1.5E-12 / 2; // s
+double dt = 1.5E-5; // s
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
 double k_force_adapt_0 = 1.05;

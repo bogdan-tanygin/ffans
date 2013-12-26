@@ -1280,15 +1280,15 @@ void ff_model_next_step(void)
 					}
 
 					if (auto_reversal) ff_model_auto_hyst();
-                    if (step % 100000 == 0) ff_io_autosave();
-					else if ((step < 100000) && (step % 10000 == 0)) ff_io_autosave();
+                    if (step % 10000 == 0) ff_io_autosave();
 					else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
+					else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
 
                     if (setting_plot)
                     {
-						if (step % 10000 == 0) ff_io_save_setting(m_tot,I);
-						else if ((step < 10000) && (step % 1000 == 0)) ff_io_save_setting(m_tot,I);
+						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
 						else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
+						else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
 
                     // end for case of interrupted kinetic loops
