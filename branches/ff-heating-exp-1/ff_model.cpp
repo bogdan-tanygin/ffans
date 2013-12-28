@@ -1864,7 +1864,6 @@ void ff_model_size_dispersion_init(void)
 		random_points[i] = F[i] / Ftot;
         if (i > 1) random_points[i] += random_points[i - 1];
 	}
-
 	//printf("\n random_points[14] = %e", random_points[14]);
 	//printf("\n random_points[13] = %e", random_points[13]);
 
@@ -1880,7 +1879,7 @@ void ff_model_size_dispersion_init(void)
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
 		}
 		for (i = 1; i <= imax - 1; i++)
-		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
+		if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]))
 		{
 			Rp[p] = 0.5 * d[i + 1] + delta;
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
@@ -1937,8 +1936,8 @@ void ff_model_update_conc_in_oleic(long p)
 	if (Rp_to_c[p] <= R_oleic)
 	{
 		pN_oleic_drop++;
-		if ((Rp[p] >= d[1]) && (Rp[p] <= d[2])) pN_oleic_drop_I++;
-		if ((Rp[p] >= d[3]) && (Rp[p] <= d[7])) pN_oleic_drop_II++;
-		if ((Rp[p] >= d[8]) && (Rp[p] <= d[14])) pN_oleic_drop_III++;
+		if ((2 * Rp[p] >= d[1]) && (2 * Rp[p] <= d[2])) pN_oleic_drop_I++;
+		if ((2 * Rp[p] >= d[3]) && (2 * Rp[p] <= d[7])) pN_oleic_drop_II++;
+		if ((2 * Rp[p] >= d[8]) && (2 * Rp[p] <= d[14])) pN_oleic_drop_III++;
 	}
 }
