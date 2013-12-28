@@ -319,8 +319,8 @@ int ff_model_check_smooth_dr(long p)
     int res = 1;
 
     dr = sqrt(MUL(drt[p], drt[p]));
-    rmod = d[4];
-	//rmod = 2 * Rp[p];
+    //rmod = d[4];
+	rmod = 2 * Rp[p];
 	//rmod = 2 * delta;
 
 	dphimag = sqrt(MUL(dphi[p], dphi[p]));
