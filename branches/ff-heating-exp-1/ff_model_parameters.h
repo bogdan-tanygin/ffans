@@ -39,10 +39,11 @@ extern double C1;
 extern double Lx, Ly, Lz; //meters
 
 // Basic physical model parameters
+extern double dt0;
 extern double dt;
-extern long k_bm_inst_max;
-extern long k_bm_inst;
-extern double k_force_adapt_0;
+//extern long k_bm_inst_max;
+//extern long k_bm_inst;
+//extern double k_force_adapt_0;
 extern long slow_steps;
 //extern double smooth_v;
 extern double smooth_r;
@@ -87,7 +88,7 @@ extern double rop;
 extern double A_H;
 extern double N_oa;
 extern double eta;
-extern double G_barrier;
+//extern double G_barrier;
 
 //order of magnitude of the external field but exact function is hardcoded 
 extern double B0; // Tesla

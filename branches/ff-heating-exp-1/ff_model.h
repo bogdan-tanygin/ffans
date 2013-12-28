@@ -41,7 +41,7 @@ extern ff_vect_t w[];
 
 extern double Rp[];
 
-extern ff_vect_t P[];  // effective instantiated random force
+//extern ff_vect_t P[];  // effective instantiated random force
 
 //extern ff_vect_t F0[];
 
@@ -57,7 +57,7 @@ extern double t;
 extern double dT;
 extern double T_mean;
 extern long k_mean;
-extern double T_mean_loc_prev;
+//extern double T_mean_loc_prev;
 
 extern double Ek;
 extern double Ek_tr;
@@ -97,10 +97,10 @@ extern long pN_oleic_drop_I;
 extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 
-extern double k_force_adapt;
+//extern double k_force_adapt;
 
 // Update of the effective instantiated random force
-void ff_model_effective_random_force_update(long);
+void ff_model_inst_random_trans_update(long);
 void ff_model_update_dT(void);
 
 void ff_model_size_dispersion_init(void);

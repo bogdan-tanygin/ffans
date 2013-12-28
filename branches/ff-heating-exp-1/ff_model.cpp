@@ -50,18 +50,23 @@ ff_vect_t mt[pN + 1];
 int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
-ff_vect_t P[pN + 1];
+//ff_vect_t P[pN + 1];
 ff_vect_t tau[pN + 1]; // torque
-ff_vect_t tau_r[pN + 1]; // random torque
+//ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
 ff_vect_t w[pN + 1]; // angular velocity vector
 
 ff_vect_t drt[pN + 1];
+ff_vect_t drt_r[pN + 1]; // instantiated random translation
 ff_vect_t dvt[pN + 1];
+ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
+double dv_r[pN + 1]; // extra random velocity magnitude
 ff_vect_t dphi[pN + 1];
+ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
 ff_vect_t dm[pN + 1];
 ff_vect_t dw[pN + 1];
+double dw_r[pN + 1]; // extra random angular velocity magnitude
 
 //ff_vect_t dir110[13];
 
@@ -85,12 +90,12 @@ double Mz_hyst_n[21];
 
 double t; // time
 double dT = 0;
-double dT_prev = 0;
+//double dT_prev = 0;
 double T_basic = 0;
 double T_mean = 0;
-double T_mean_loc = 0;
+/*double T_mean_loc = 0;
 double T_mean_loc_prev = 0;
-double T_mean_loc_prev_revert = 0;
+double T_mean_loc_prev_revert = 0;*/
 long k_mean = 0;
 double Ek = 0;
 double Ek_rot = 0;
@@ -122,7 +127,7 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
-double k_force_adapt = 0;
+//double k_force_adapt = 0;
 
 ff_vect_t r_brown_valid_0;
 
@@ -131,6 +136,8 @@ long pN_oleic_drop_I = 0;
 long pN_oleic_drop_II = 0;
 long pN_oleic_drop_III = 0;
 double d[14 + 1];
+
+double dt_red = dt0; // reducing time indicator for the random translation
 
 void ff_model_upgrade_ext_field(void)
 {
@@ -312,7 +319,8 @@ int ff_model_check_smooth_dr(long p)
     int res = 1;
 
     dr = sqrt(MUL(drt[p], drt[p]));
-    rmod = 2 * Rp[p];
+    rmod = d[4];
+	//rmod = 2 * Rp[p];
 	//rmod = 2 * delta;
 
 	dphimag = sqrt(MUL(dphi[p], dphi[p]));
@@ -338,7 +346,7 @@ int ff_model_check_smooth_dr(long p)
 
 			T_mean -= T_basic;
 			k_mean --;
-			T_mean_loc -= T_basic;
+			/*T_mean_loc -= T_basic;
 			k_bm_inst --;
 			if (k_bm_inst == k_bm_inst_max - 1)
 			{
@@ -348,7 +356,7 @@ int ff_model_check_smooth_dr(long p)
 				dT= dT_prev;
 
 				T_mean_loc_prev = T_mean_loc_prev_revert;
-			}
+			}*/
         }
 
         return res;
@@ -988,9 +996,9 @@ ff_vect_t ff_model_force(long p)
 		tF.z += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
 	}
 
-    tF.x += P[p].x;
+    /*tF.x += P[p].x;
     tF.y += P[p].y;
-    tF.z += P[p].z;
+    tF.z += P[p].z;*/
 
     return tF;
 }
@@ -1016,9 +1024,9 @@ ff_vect_t ff_model_torque(long p)
 
 	//printf("\n %e", ttau.x);
 
-    ttau.x += tau_r[p].x;
+    /*ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
-    ttau.z += tau_r[p].z;
+    ttau.z += tau_r[p].z;*/
 
     return ttau;
 }
@@ -1036,7 +1044,9 @@ void ff_model_next_step(void)
 	double M0, I0;
 	ff_vect_t ex, ey, ez; // basis of rotation around ez = w
 	double tmmag;
-
+	double theta_0_r, phi_0_r;
+	double Mtot;
+	
     Ek = Ek_tr = Ek_rot = 0;
     mz_tot = 0;
     m_tot.x = m_tot.y = m_tot.z = 0;
@@ -1044,15 +1054,7 @@ void ff_model_next_step(void)
 	pN_oleic_drop = 0;
 	pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
 
-	for (p = 1; p <= pN; p++) if (exist_p[p])
-		{
-			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
-			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
-		};
-	
-	Ek = Ek_tr + Ek_rot;
-
-    if (time_go)
+	if (time_go)
     {
         step++;
 		//printf("\n ============================", step);
@@ -1060,7 +1062,7 @@ void ff_model_next_step(void)
 
         //ff_model_m_setting();
 
-		ff_model_update_dT();
+		//ff_model_update_dT();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
@@ -1068,7 +1070,7 @@ void ff_model_next_step(void)
                 //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 								
 				/*if (k_bm_inst == 1)*/
-				ff_model_effective_random_force_update(p);
+				//ff_model_inst_random_trans_update(p);
 				
 				f = ff_model_force(p);
 				ttau = ff_model_torque(p);
@@ -1110,24 +1112,30 @@ void ff_model_next_step(void)
 					I0 = I0p[p];
 
 					drt[p].x = F[p].x * dt / C2[p] +		 
-                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
+						+ drt_r[p].x * dt / dt0;
 
                     drt[p].y = F[p].y * dt / C2[p] +		 
-                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
+						+ drt_r[p].y * dt / dt0;
 
                     drt[p].z = F[p].z * dt / C2[p] +		 
-                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
+						+ drt_r[p].z * dt / dt0;
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
 					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
-                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
+					+ dphi_r[p].x * dt / dt0;
 
 					dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
-                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
+					+ dphi_r[p].y * dt / dt0;
 
 					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
-                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
+					+ dphi_r[p].z * dt / dt0;
 
 					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
@@ -1187,14 +1195,15 @@ void ff_model_next_step(void)
 					
 					//k_bm_inst++;
 					//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
-					if (k_bm_inst == k_bm_inst_max)
+					/*if (k_bm_inst == k_bm_inst_max)
 					{
 						k_bm_inst = 1;
 						T_mean_loc = 0;
-					}
+					}*/
                 } // end of loop for dr
 
                 r0.x = r0.y = r0.z = 0;
+				Mtot = 0;
 				
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
@@ -1233,9 +1242,10 @@ void ff_model_next_step(void)
                         //chk = ff_model_check_smooth_dv(p);
                         //if ( chk == 0) goto t_end;
 
-                        r0.x += r[p].x;
-                        r0.y += r[p].y;
-                        r0.z += r[p].z;
+                        r0.x += M0p[p] * r[p].x;
+                        r0.y += M0p[p] * r[p].y;
+                        r0.z += M0p[p] * r[p].z;
+						Mtot += M0p[p];
 
                         mz_tot += m[p].z;
                         m_tot.x += m[p].x;
@@ -1252,17 +1262,16 @@ void ff_model_next_step(void)
 
 					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
 
-                    // TODO: need the number of existing (exist_p) particles ! 
-                    r0.x /= pN;
-                    r0.y /= pN;
-                    r0.z /= pN;
+                    // TODO: need the number of existing (exist_p) particles
+                    r0.x /= Mtot;
+                    r0.y /= Mtot;
+                    r0.z /= Mtot;
 
                     I = 0;
                     for (p = 1; p <= pN; p++)
-                        I += pow(r[p].x - r0.x, 2)
+                        I += M0p[p] * (pow(r[p].x - r0.x, 2)
                         + pow(r[p].y - r0.y, 2)
-                        + pow(r[p].z - r0.z, 2);
-
+                        + pow(r[p].z - r0.z, 2));
 
                     mz_tot *= pN / mz_tot_n; // in loop is interrupted then needs to increase
                     mz_glob += mz_tot;
@@ -1272,12 +1281,44 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
+					dt_red -= dt;					
 					
+					for (p = 1; p <= pN; p++) if (exist_p[p])
+					{
+						Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
+						Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
+					};
+
+					Ek = Ek_tr + Ek_rot;
+					ff_model_update_dT();
+
 					for (p = 1; p <= pN; p++)
 					{
 						Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 						ff_model_update_conc_in_oleic(p);
+						
+						if (dt_red <= 0)
+						{
+							ff_model_inst_random_trans_update(p);
+
+							/*dv_r[p] = sqrt(3 * kb * dT / M0p[p]);
+							dw_r[p] = sqrt(3 * kb * dT / I0p[p]);
+							
+							theta_0_r = (*var_uni)() * pi;   // rotation vector random direction
+							phi_0_r = (*var_uni)() * 2 * pi;
+							v[p].x += dv_r[p] * sin(theta_0_r) * cos(phi_0_r);
+							v[p].y += dv_r[p] * sin(theta_0_r) * sin(phi_0_r);
+							v[p].z += dv_r[p] * cos(theta_0_r);
+
+							theta_0_r = (*var_uni)() * pi;  
+							phi_0_r = (*var_uni)() * 2 * pi;
+							w[p].x += dw_r[p] * sin(theta_0_r) * cos(phi_0_r);
+							w[p].y += dw_r[p] * sin(theta_0_r) * sin(phi_0_r);
+							w[p].z += dw_r[p] * cos(theta_0_r);*/
+						}
 					}
+
+					if (dt_red <= 0) dt_red = dt0;
 
 					if (auto_reversal) ff_model_auto_hyst();
                     if (step % 10000 == 0) ff_io_autosave();
@@ -1565,7 +1606,7 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	k_force_adapt = 1;
+	//k_force_adapt = 1;
 	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
@@ -1657,14 +1698,15 @@ again:
 }
 
 // Update of the random force
-void ff_model_effective_random_force_update(long p)
+void ff_model_inst_random_trans_update(long p)
 {
-	double Px, Py, Pz, tau_r_phi; // instantiated effective random force
+	double dx, dy, dz, dphi; // instantiated effective random translation
 	double theta_0, phi_0; // random direction of the torque 
-	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
 	//double dt0;
 	double D, D_rot, gamma, gamma_rot;
 	double M0, I0;
+	double sigma;
+	double sigma_rot;
     
 	//dt0 = dt * k_bm_inst_max;
 	if (Rp_to_c[p] > R_oleic)
@@ -1677,63 +1719,73 @@ void ff_model_effective_random_force_update(long p)
 		gamma = 6 * pi * eta_oleic * Rp[p];
 		gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
 	}
-	D = kb * T / gamma;
-	D_rot = kb * T / gamma_rot;
+	D = kb * dT / gamma;
+	D_rot = kb * dT / gamma_rot;
 	M0 = M0p[p];
 	I0 = I0p[p];
 
 	// instantiation of position change
 	// [Langevin equation + Stokes' law]
-    /*dx = (*var_nor)() * sqrt(2 * D * dt * dT / T);
-	dy = (*var_nor)() * sqrt(2 * D * dt * dT / T);
-	dz = (*var_nor)() * sqrt(2 * D * dt * dT / T);*/
+	sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
+    dx = (*var_nor)() * sqrt(sigma);
+	dy = (*var_nor)() * sqrt(sigma);
+	dz = (*var_nor)() * sqrt(sigma);
+
+	drt_r[p].x = dx;
+	drt_r[p].y = dy;
+	drt_r[p].z = dz;
 
 	// instantiation of rotation of the magnetization direction
 	// [Euler-Langevin equation + Stokes' law]
-	//dphi = (*var_nor)() * sqrt(6 * D_rot * dt * dT / T); // rotation magnitude
+	sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
+	dphi = (*var_nor)() * sqrt(3 * sigma_rot); // rotation magnitude
 	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
 	phi_0 = (*var_uni)() * 2 * pi;
+
+	dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
+	dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
+	dphi_r[p].z = dphi * cos(theta_0);
 
 	/*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
+	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);*/
 
 	//printf("\n t1 = %e", M0 / gamma);
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt;
+	/*P[p].x = Px * k_force_adapt;
 	P[p].y = Py * k_force_adapt;
 	P[p].z = Pz * k_force_adapt;
 
 	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
 	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;*/
 }
 
 void ff_model_update_dT(void)
 {
 	T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
-	//dT = T - T_basic;
+	dT = T - T_basic;
 	T_mean += T_basic;
 	k_mean ++;
-	T_mean_loc += T_basic;
+	//T_mean_loc += T_basic;
 	
 	if (dT < 0)
 	{
-		//printf("\n WARNING: dT < 0");
-		//dT = 0;
+		printf("\n WARNING: dT < 0");
+		dT = 0;
 	}
 
 	//printf("\n dT = %e", dT);
 
-	if (k_bm_inst == k_bm_inst_max - 1)
+	/*if (k_bm_inst == k_bm_inst_max - 1)
 	{
 		dT_prev = dT;
 		dT = T - T_mean_loc / k_bm_inst;
@@ -1742,7 +1794,7 @@ void ff_model_update_dT(void)
 		T_mean_loc_prev_revert = T_mean_loc_prev;
 		T_mean_loc_prev = T_mean_loc;
 	}
-	k_bm_inst ++;
+	k_bm_inst ++;*/
 
 	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
 	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;

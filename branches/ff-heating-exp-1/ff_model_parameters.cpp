@@ -41,10 +41,11 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1.5E-5; // s
-long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
-long k_bm_inst = 1;
-double k_force_adapt_0 = 1.05;
+double dt0 = 1E-6; // s
+double dt = dt0;
+//long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
+//long k_bm_inst = 1;
+//double k_force_adapt_0 = 1.05;
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.2;
@@ -67,15 +68,15 @@ double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 1E-19; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
-double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
+//double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 1E5; // soft-sphere repulsion parameter
+double Ch_ss = 1E4; // soft-sphere repulsion parameter (parameter of the numerical model)
 
-int load_at_start = 0; // the best method of loading
+int load_at_start = 0;
 int auto_save = 1;
 int manual_field_control = 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ control 
 int ext_field_is_homo = 1;
