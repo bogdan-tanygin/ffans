@@ -41,7 +41,7 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt0 = 1E-6; // s
+double dt0 = 1E-7; // s
 double dt = dt0;
 //long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 //long k_bm_inst = 1;
