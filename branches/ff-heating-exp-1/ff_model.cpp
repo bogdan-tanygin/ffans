@@ -1653,9 +1653,13 @@ again:
 
         if (start_ideal)
         {
-            r[p].x = -0.4999 * Lx + 0.99 * Lx * rand() / 32768.0;
+            /*r[p].x = -0.4999 * Lx + 0.99 * Lx * rand() / 32768.0;
             r[p].y = -0.4999 * Ly + 0.99 * Ly * rand() / 32768.0;
-            r[p].z = -0.4999 * Lz + 0.99 * Lz * rand() / 32768.0;
+            r[p].z = -0.4999 * Lz + 0.99 * Lz * rand() / 32768.0;*/
+
+			r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
+			r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
+			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();
 
 			w[p].x = w[p].y = w[p].z = 0;
 
