@@ -73,6 +73,7 @@ double dw_r[pN + 1]; // extra random angular velocity magnitude
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
+double Vp[pN + 1];
 double m0p[pN + 1];
 double M0p[pN + 1];
 double I0p[pN + 1]; // particle moment of inertia
@@ -138,6 +139,8 @@ long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
 double dt_red = dt0; // reducing time indicator for the random translation
+
+double phi_vol_fract_oleic = 0;
 
 void ff_model_upgrade_ext_field(void)
 {
@@ -1053,6 +1056,7 @@ void ff_model_next_step(void)
     mz_tot_n = 0;
 	pN_oleic_drop = 0;
 	pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
+	phi_vol_fract_oleic = 0;
 
 	if (time_go)
     {
@@ -1317,6 +1321,8 @@ void ff_model_next_step(void)
 							w[p].z += dw_r[p] * cos(theta_0_r);*/
 						}
 					}
+
+					phi_vol_fract_oleic /= 100 * (4 / 3.0) * pi * pow(R_oleic, 3);
 
 					if (dt_red <= 0) dt_red = dt0;
 
@@ -1896,6 +1902,7 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 	double tm = rop * V;
 	double theta, phi;
 	
+	Vp[p] = V;
 	M0p[p] = tm;
 	I0p[p] = (2 / 5.0) * M0p[p] * R * R;
 
@@ -1939,5 +1946,7 @@ void ff_model_update_conc_in_oleic(long p)
 		if ((2 * Rp[p] >= d[1]) && (2 * Rp[p] <= d[2])) pN_oleic_drop_I++;
 		if ((2 * Rp[p] >= d[3]) && (2 * Rp[p] <= d[7])) pN_oleic_drop_II++;
 		if ((2 * Rp[p] >= d[8]) && (2 * Rp[p] <= d[14])) pN_oleic_drop_III++;
+
+		phi_vol_fract_oleic += Vp[p];
 	}
 }

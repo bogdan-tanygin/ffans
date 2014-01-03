@@ -97,6 +97,8 @@ extern long pN_oleic_drop_I;
 extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 
+extern double phi_vol_fract_oleic;
+
 //extern double k_force_adapt;
 
 // Update of the effective instantiated random force
