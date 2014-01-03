@@ -1322,7 +1322,8 @@ void ff_model_next_step(void)
 						}
 					}
 
-					phi_vol_fract_oleic /= 100 * (4 / 3.0) * pi * pow(R_oleic, 3);
+					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
+					phi_vol_fract_oleic *= 100;
 
 					if (dt_red <= 0) dt_red = dt0;
 
