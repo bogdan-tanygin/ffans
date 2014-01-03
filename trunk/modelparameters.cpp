@@ -170,4 +170,13 @@ ModelParameters::ModelParameters(QString fileName)
     double F_oleic_droplet = sigma_sf_nano_coef * sigma_sf_oleic * 2 * pi * R_mean;
     double forces_relation = F_heat_adaptive / F_oleic_droplet;
     PWRITE(forces_relation)
+
+    qDebug() << "--------------------------------";
+
+    qDebug() << "[Validation] Value of T_ch in the GPU research [arXiv:1212.2934v1]";
+
+    double T_ch = (R_mean / M_particle_mean) * sqrt(3 * rho_p / (4 * pi * mu0));
+    PWRITE(T_ch)
+
+    qDebug() << "--------------------------------";
 }
