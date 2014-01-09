@@ -991,7 +991,7 @@ ff_vect_t ff_model_force(long p)
     // Buoyancy force
     //tF.z +=   C6;
 
-	// oleic droplet surface re-creation force
+	// oleic droplet surface tension force
 	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
 	{
 		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
@@ -1653,22 +1653,25 @@ again:
 
         if (start_ideal)
         {
-            /*r[p].x = -0.4999 * Lx + 0.99 * Lx * rand() / 32768.0;
-            r[p].y = -0.4999 * Ly + 0.99 * Ly * rand() / 32768.0;
-            r[p].z = -0.4999 * Lz + 0.99 * Lz * rand() / 32768.0;*/
+            r[p].x = -0.4999 * Lx + 0.99 * Lx * (*var_uni)();
+            r[p].y = -0.4999 * Ly + 0.99 * Ly * (*var_uni)();
+            r[p].z = -0.4999 * Lz + 0.99 * Lz * (*var_uni)();
+			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
-			r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
+			/*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
 			r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
-			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();
+			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();*/
 
 			w[p].x = w[p].y = w[p].z = 0;
 
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
-
+            /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;*/
+			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > Lx / 4.0 - Rp[p]) goto again;
+			
 			for (tp = 1; tp < p; tp++)
             {
                 dr.x = r[p].x - r[tp].x;
@@ -1683,6 +1686,8 @@ again:
 
         v[p].x = v[p].y = v[p].z = 0;
 		w[p].x = w[p].y = w[p].z = 0;
+		drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
+		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;
 		//dW[p] = 0;
 		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
