@@ -34,7 +34,7 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 
-double scale = 7 * 0.15 * 0.4; // / pow(50.0, 1 / 3.0);
+double scale = 7 * 0.15 * 0.5 * 0.5; // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
@@ -52,7 +52,7 @@ double smooth_r = 0.2;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 55; // K
-double kr = 1; // particle size parameter []
+double kr = 0.5; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]
