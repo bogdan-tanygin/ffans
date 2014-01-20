@@ -1950,7 +1950,8 @@ void ff_model_brownian_validation(long p)
 
 void ff_model_update_conc_in_oleic(long p)
 {
-	if (Rp_to_c[p] <= R_oleic)
+	//if (Rp_to_c[p] <= R_oleic)
+	if (Rp_to_c[p] <= Lx / 4.0)
 	{
 		pN_oleic_drop++;
 		if ((2 * Rp[p] >= d[1]) && (2 * Rp[p] <= d[2])) pN_oleic_drop_I++;
