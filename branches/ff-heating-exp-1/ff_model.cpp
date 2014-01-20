@@ -1670,7 +1670,7 @@ again:
             /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;*/
 			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > Lx / 4.0 - Rp[p]) goto again;
+			if (Rp_to_c[p] > Lx / 4.0) goto again;
 			
 			for (tp = 1; tp < p; tp++)
             {
