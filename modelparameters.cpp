@@ -171,6 +171,15 @@ ModelParameters::ModelParameters(QString fileName)
     double forces_relation = F_heat_adaptive / F_oleic_droplet;
     PWRITE(forces_relation)
 
+    double eta_k = 0.00164; //Pa * s //kerosene
+    //R_mean *= 2;s_mean *= 8;m_mean *= 8;
+    double Fdd_order = 3 * (mu0 / (4.0 * pi)) * pow(s_mean, 2) / pow(2 * R_mean, 4);
+    double gamma_tr_mean_k = 6 * pi * eta_k * R_mean;
+    v_heat_mean = sqrt(8 * kb * T_evap_ldc / (pi * m_mean));
+    double F_heat_adaptive_k = gamma_tr_mean_k * v_heat_mean;
+    double forces_relation_2 = F_heat_adaptive_k / Fdd_order;
+    PWRITE(forces_relation_2)
+
     qDebug() << "--------------------------------";
 
     qDebug() << "[Validation] Value of T_ch in the GPU research [arXiv:1212.2934v1]";
