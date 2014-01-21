@@ -33,8 +33,8 @@ double g = 9.81;
 const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
-double gl_scale = 1.5;
-double scale = 7 * 0.15 * 0.4 * gl_scale; // / pow(50.0, 1 / 3.0);
+double gl_scale = 1;
+double scale = 2 * 7 * 0.15 * 0.4 * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz

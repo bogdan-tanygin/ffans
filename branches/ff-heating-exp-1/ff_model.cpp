@@ -338,9 +338,9 @@ int ff_model_check_smooth_dr(long p)
                 r[ps].y -= drt[ps].y;
                 r[ps].z -= drt[ps].z;
 
-				m[ps].x -= dm[ps].x;
+				/*m[ps].x -= dm[ps].x;
                 m[ps].y -= dm[ps].y;
-                m[ps].z -= dm[ps].z;
+                m[ps].z -= dm[ps].z;*/
             }
             dt /= 2.0;
             slow_steps += 10;
@@ -1116,30 +1116,30 @@ void ff_model_next_step(void)
 					I0 = I0p[p];
 
 					drt[p].x = F[p].x * dt / C2[p] +		 
-                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
-						+ drt_r[p].x * dt / dt0;
+                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+						//+ drt_r[p].x;
 
                     drt[p].y = F[p].y * dt / C2[p] +		 
-                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
-						+ drt_r[p].y * dt / dt0;
+                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+						//+ drt_r[p].y;
 
                     drt[p].z = F[p].z * dt / C2[p] +		 
-                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p]
-						+ drt_r[p].z * dt / dt0;
+                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+						//+ drt_r[p].z;
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
 					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
-                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
-					+ dphi_r[p].x * dt / dt0;
+                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+					//+ dphi_r[p].x;
 
 					dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
-                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
-					+ dphi_r[p].y * dt / dt0;
+                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+					//+ dphi_r[p].y;
 
 					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
-                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p]
-					+ dphi_r[p].z * dt / dt0;
+                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+					//+ dphi_r[p].z;
 
 					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
@@ -1152,6 +1152,29 @@ void ff_model_next_step(void)
                     r[p].x += drt[p].x;
                     r[p].y += drt[p].y;
                     r[p].z += drt[p].z;
+
+					//if (m0p[p] == 0) printf("\n !!!");
+
+					//printf("\n %e", sqrt(MUL(m[p],m[p])) / m0p[p]);
+
+                    if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
+                    if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
+                    if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
+
+                    chk = ff_model_check_smooth_dr(p);
+					if ( chk == 0)
+						{
+							//k_bm_inst = 1;
+							goto t_end;
+						}
+
+					r[p].x += drt_r[p].x;
+					r[p].y += drt_r[p].y;
+					r[p].z += drt_r[p].z;
+
+					dphi[p].x += dphi_r[p].x;
+					dphi[p].y += dphi_r[p].y;
+					dphi[p].z += dphi_r[p].z;
 
 					dm[p].x = dm[p].y = dm[p].z = 0;
 
@@ -1179,21 +1202,6 @@ void ff_model_next_step(void)
 					m[p].x *= m0p[p] / tmmag;
 					m[p].y *= m0p[p] / tmmag;
 					m[p].z *= m0p[p] / tmmag;
-
-					//if (m0p[p] == 0) printf("\n !!!");
-
-					//printf("\n %e", sqrt(MUL(m[p],m[p])) / m0p[p]);
-
-                    if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
-                    if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
-                    if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
-
-                    chk = ff_model_check_smooth_dr(p);
-					if ( chk == 0)
-						{
-							//k_bm_inst = 1;
-							goto t_end;
-						}
 
 					ff_model_check_walls(p);
 					
@@ -1301,9 +1309,9 @@ void ff_model_next_step(void)
 						Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 						ff_model_update_conc_in_oleic(p);
 						
-						if (dt_red <= 0)
+						//if (dt_red <= 0)
 						{
-							ff_model_inst_random_trans_update(p);
+							//ff_model_inst_random_trans_update(p);
 
 							/*dv_r[p] = sqrt(3 * kb * dT / M0p[p]);
 							dw_r[p] = sqrt(3 * kb * dT / I0p[p]);
@@ -1344,6 +1352,8 @@ t_end:
 
                     if (slow_steps > 0) slow_steps--;
                     if (slow_steps%10 == 1) dt *= 2;
+
+					for (p = 1; p <= pN; p++) ff_model_inst_random_trans_update(p);
 
     } // time_go
 
@@ -1670,7 +1680,7 @@ again:
             /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;*/
 			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > Lx / 4.0) goto again;
+			if (Rp_to_c[p] > Lx / 8.0) goto again;
 			
 			for (tp = 1; tp < p; tp++)
             {
@@ -1725,6 +1735,8 @@ void ff_model_inst_random_trans_update(long p)
 	double sigma_rot;
     
 	//dt0 = dt * k_bm_inst_max;
+	dt0 = dt;
+
 	if (Rp_to_c[p] > R_oleic)
 	{
 		gamma = 6 * pi * eta * Rp[p];
