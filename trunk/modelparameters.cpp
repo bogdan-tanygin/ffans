@@ -168,9 +168,11 @@ ModelParameters::ModelParameters(QString fileName)
     PWRITE(v_heat_mean)
     double F_heat_adaptive = gamma_tr_mean * v_heat_mean;
     double F_oleic_droplet = sigma_sf_nano_coef * sigma_sf_oleic * 2 * pi * R_mean;
+    double F_delta_heat = sqrt(2 * kb * T_evap_ldc * gamma_tr_mean / time_damping);
     double forces_relation = F_heat_adaptive / F_oleic_droplet;
+    double forces_relation_1 = F_heat_adaptive / F_delta_heat;
     PWRITE(forces_relation)
-
+    PWRITE(forces_relation_1)
     double eta_k = 0.00164; //Pa * s //kerosene
     //R_mean *= 2;s_mean *= 8;m_mean *= 8;
     double Fdd_order = 3 * (mu0 / (4.0 * pi)) * pow(s_mean, 2) / pow(2 * R_mean, 4);
