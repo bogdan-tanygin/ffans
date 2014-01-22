@@ -59,10 +59,10 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-double R_oleic = (Lx / 4.0) * 1E-6;
+double R_oleic = (Lx / 8.0);
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
-double sigma_sf_nano = sigma_sf * 0.5 * 5.017559E-04; // [N / m]
+double sigma_sf_nano = sigma_sf * 0.25 * 5.017559E-04; // [N / m]
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
