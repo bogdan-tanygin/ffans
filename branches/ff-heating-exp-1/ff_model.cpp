@@ -71,6 +71,7 @@ double dw_r[pN + 1]; // extra random angular velocity magnitude
 //ff_vect_t dir110[13];
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
+int is_neel[pN + 1]; // Neel relaxation
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
 double Vp[pN + 1];
@@ -699,6 +700,13 @@ ff_vect_t ff_model_nonloc_torque(long p)
 					ttau.x =   m[p].y * tBz - m[p].z * tBy;
 					ttau.y = - m[p].x * tBz + m[p].z * tBx;
 					ttau.z =   m[p].x * tBy - m[p].y * tBx;
+
+					if (is_neel[p])
+					{
+						m[p].x = m0p[p] * tBx / tBmag;
+                        m[p].y = m0p[p] * tBy / tBmag;
+                        m[p].z = m0p[p] * tBz / tBmag;
+					}
 					
 #endif
 
@@ -1184,6 +1192,8 @@ void ff_model_next_step(void)
 					dphi[p].y += dphi_r[p].y;
 					dphi[p].z += dphi_r[p].z;
 
+					if (!(is_neel[p]))
+					{
 					dm[p].x = dm[p].y = dm[p].z = 0;
 
 					mt[p] = m[p];
@@ -1210,6 +1220,7 @@ void ff_model_next_step(void)
 					m[p].x *= m0p[p] / tmmag;
 					m[p].y *= m0p[p] / tmmag;
 					m[p].z *= m0p[p] / tmmag;
+					}
 
 					ff_model_check_walls(p);
 					
@@ -1920,6 +1931,8 @@ void ff_model_size_dispersion_init(void)
 		{
 			Rp[p] = 0.5 * d[i + 1] + delta;
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
+			if (i + 1 > 5) is_neel[p] = 0; // if d[i + 1] > 10 nm
+			else is_neel[p] = 1;
 			break;
 		}
 	}
