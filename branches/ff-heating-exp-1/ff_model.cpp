@@ -75,6 +75,7 @@ int is_neel[pN + 1]; // Neel relaxation
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
 double Vp[pN + 1];
+double Vpfull[pN + 1]; // including steric layer
 double m0p[pN + 1];
 double M0p[pN + 1];
 double I0p[pN + 1]; // particle moment of inertia
@@ -1697,10 +1698,10 @@ again:
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;*/
-			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic) goto again;
+            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
+			/*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic) goto again;*/
 			
 			for (tp = 1; tp < p; tp++)
             {

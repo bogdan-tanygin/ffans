@@ -34,7 +34,7 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
 double gl_scale = 1;
-double volume_reduce = 0.35;
+double volume_reduce = 0.4;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -64,7 +64,7 @@ double R_oleic = (Lx / 8.0);
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
-double sigma_sf_nano = 1E-2 * sigma_sf;
+double sigma_sf_nano = 5E-2 * sigma_sf;
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
