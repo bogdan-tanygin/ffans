@@ -50,9 +50,9 @@ ff_vect_t mt[pN + 1];
 int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
-//ff_vect_t P[pN + 1];
+ff_vect_t P[pN + 1];
 ff_vect_t tau[pN + 1]; // torque
-//ff_vect_t tau_r[pN + 1]; // random torque
+ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
 ff_vect_t w[pN + 1]; // angular velocity vector
@@ -91,12 +91,12 @@ double Mz_hyst_n[21];
 
 double t; // time
 double dT = 0;
-//double dT_prev = 0;
+double dT_prev = 0;
 double T_basic = 0;
 double T_mean = 0;
-/*double T_mean_loc = 0;
+double T_mean_loc = 0;
 double T_mean_loc_prev = 0;
-double T_mean_loc_prev_revert = 0;*/
+double T_mean_loc_prev_revert = 0;
 long k_mean = 0;
 double Ek = 0;
 double Ek_rot = 0;
@@ -128,7 +128,7 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
-//double k_force_adapt = 0;
+double k_force_adapt = 0;
 
 ff_vect_t r_brown_valid_0;
 
@@ -138,7 +138,7 @@ long pN_oleic_drop_II = 0;
 long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
-double dt_red = dt0; // reducing time indicator for the random translation
+//double dt_red = dt0; // reducing time indicator for the random translation
 
 double phi_vol_fract_oleic = 0;
 
@@ -349,7 +349,7 @@ int ff_model_check_smooth_dr(long p)
 
 			T_mean -= T_basic;
 			k_mean --;
-			/*T_mean_loc -= T_basic;
+			T_mean_loc -= T_basic;
 			k_bm_inst --;
 			if (k_bm_inst == k_bm_inst_max - 1)
 			{
@@ -359,7 +359,7 @@ int ff_model_check_smooth_dr(long p)
 				dT= dT_prev;
 
 				T_mean_loc_prev = T_mean_loc_prev_revert;
-			}*/
+			}
         }
 
         return res;
@@ -992,16 +992,16 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
 	// oleic droplet surface tension force
-	if (fabs(Rp_to_c[p] - R_oleic) < Rp[p])
+	if ((fabs(Rp_to_c[p] - R_oleic) < Rp[p]) && (is_oleic))
 	{
 		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
 		tF.y += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
 		tF.z += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
 	}
 
-    /*tF.x += P[p].x;
+    tF.x += P[p].x;
     tF.y += P[p].y;
-    tF.z += P[p].z;*/
+    tF.z += P[p].z;
 
     return tF;
 }
@@ -1027,9 +1027,9 @@ ff_vect_t ff_model_torque(long p)
 
 	//printf("\n %e", ttau.x);
 
-    /*ttau.x += tau_r[p].x;
+    ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
-    ttau.z += tau_r[p].z;*/
+    ttau.z += tau_r[p].z;
 
     return ttau;
 }
@@ -1058,7 +1058,15 @@ void ff_model_next_step(void)
 	pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
 	phi_vol_fract_oleic = 0;
 
-	if (time_go)
+	for (p = 1; p <= pN; p++) if (exist_p[p])
+		{
+			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
+			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
+		};
+	
+	Ek = Ek_tr + Ek_rot;
+
+    if (time_go)
     {
         step++;
 		//printf("\n ============================", step);
@@ -1066,7 +1074,7 @@ void ff_model_next_step(void)
 
         //ff_model_m_setting();
 
-		//ff_model_update_dT();
+		ff_model_update_dT();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
@@ -1074,7 +1082,7 @@ void ff_model_next_step(void)
                 //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 								
 				/*if (k_bm_inst == 1)*/
-				//ff_model_inst_random_trans_update(p);
+				ff_model_effective_random_force_update(p);
 				
 				f = ff_model_force(p);
 				ttau = ff_model_torque(p);
@@ -1101,7 +1109,7 @@ void ff_model_next_step(void)
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
-                    if (Rp_to_c[p] > R_oleic)
+                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
 					{
 						C2[p] = 6 * pi * eta * Rp[p];
 						gamma_rot[p] = 8 * pi * eta * pow(Rp[p], 3);
@@ -1207,11 +1215,11 @@ void ff_model_next_step(void)
 					
 					//k_bm_inst++;
 					//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
-					/*if (k_bm_inst == k_bm_inst_max)
+					if (k_bm_inst == k_bm_inst_max)
 					{
 						k_bm_inst = 1;
 						T_mean_loc = 0;
-					}*/
+					}
                 } // end of loop for dr
 
                 r0.x = r0.y = r0.z = 0;
@@ -1285,6 +1293,7 @@ void ff_model_next_step(void)
                         + pow(r[p].y - r0.y, 2)
                         + pow(r[p].z - r0.z, 2));
 
+
                     mz_tot *= pN / mz_tot_n; // in loop is interrupted then needs to increase
                     mz_glob += mz_tot;
 
@@ -1293,7 +1302,7 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
-					dt_red -= dt;					
+					/*dt_red -= dt;					
 					
 					for (p = 1; p <= pN; p++) if (exist_p[p])
 					{
@@ -1302,7 +1311,7 @@ void ff_model_next_step(void)
 					};
 
 					Ek = Ek_tr + Ek_rot;
-					ff_model_update_dT();
+					ff_model_update_dT();*/
 
 					for (p = 1; p <= pN; p++)
 					{
@@ -1310,7 +1319,7 @@ void ff_model_next_step(void)
 						ff_model_update_conc_in_oleic(p);
 						
 						//if (dt_red <= 0)
-						{
+						//{
 							//ff_model_inst_random_trans_update(p);
 
 							/*dv_r[p] = sqrt(3 * kb * dT / M0p[p]);
@@ -1327,13 +1336,13 @@ void ff_model_next_step(void)
 							w[p].x += dw_r[p] * sin(theta_0_r) * cos(phi_0_r);
 							w[p].y += dw_r[p] * sin(theta_0_r) * sin(phi_0_r);
 							w[p].z += dw_r[p] * cos(theta_0_r);*/
-						}
+						//}
 					}
 
 					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
 					phi_vol_fract_oleic *= 100;
 
-					if (dt_red <= 0) dt_red = dt0;
+					/*if (dt_red <= 0) dt_red = dt0;*/
 
 					if (auto_reversal) ff_model_auto_hyst();
                     if (step % 10000 == 0) ff_io_autosave();
@@ -1353,7 +1362,7 @@ t_end:
                     if (slow_steps > 0) slow_steps--;
                     if (slow_steps%10 == 1) dt *= 2;
 
-					for (p = 1; p <= pN; p++) ff_model_inst_random_trans_update(p);
+					//for (p = 1; p <= pN; p++) ff_model_inst_random_trans_update(p);
 
     } // time_go
 
@@ -1623,7 +1632,7 @@ void ff_model_init(void)
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	//k_force_adapt = 1;
+	k_force_adapt = 1;
 	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
@@ -1696,8 +1705,8 @@ again:
 
         v[p].x = v[p].y = v[p].z = 0;
 		w[p].x = w[p].y = w[p].z = 0;
-		drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
-		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;
+		/*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
+		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
 		//dW[p] = 0;
 		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
@@ -1724,20 +1733,19 @@ again:
 }
 
 // Update of the random force
-void ff_model_inst_random_trans_update(long p)
+void ff_model_effective_random_force_update(long p)
 {
-	double dx, dy, dz, dphi; // instantiated effective random translation
+	double Px, Py, Pz, tau_r_phi; // instantiated effective random force
 	double theta_0, phi_0; // random direction of the torque 
+	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
 	//double dt0;
 	double D, D_rot, gamma, gamma_rot;
 	double M0, I0;
-	double sigma;
-	double sigma_rot;
     
 	//dt0 = dt * k_bm_inst_max;
-	dt0 = dt;
+	//dt0 = dt;
 
-	if (Rp_to_c[p] > R_oleic)
+	if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
 	{
 		gamma = 6 * pi * eta * Rp[p];
 		gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
@@ -1747,73 +1755,73 @@ void ff_model_inst_random_trans_update(long p)
 		gamma = 6 * pi * eta_oleic * Rp[p];
 		gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
 	}
-	D = kb * dT / gamma;
-	D_rot = kb * dT / gamma_rot;
+	D = kb * T / gamma;
+	D_rot = kb * T / gamma_rot;
 	M0 = M0p[p];
 	I0 = I0p[p];
 
 	// instantiation of position change
 	// [Langevin equation + Stokes' law]
-	sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
+	/*sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
     dx = (*var_nor)() * sqrt(sigma);
 	dy = (*var_nor)() * sqrt(sigma);
-	dz = (*var_nor)() * sqrt(sigma);
+	dz = (*var_nor)() * sqrt(sigma);*/
 
-	drt_r[p].x = dx;
+	/*drt_r[p].x = dx;
 	drt_r[p].y = dy;
-	drt_r[p].z = dz;
+	drt_r[p].z = dz;*/
 
 	// instantiation of rotation of the magnetization direction
 	// [Euler-Langevin equation + Stokes' law]
-	sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
-	dphi = (*var_nor)() * sqrt(3 * sigma_rot); // rotation magnitude
+	/*sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
+	dphi = (*var_nor)() * sqrt(3 * sigma_rot);*/ // rotation magnitude
 	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
 	phi_0 = (*var_uni)() * 2 * pi;
 
-	dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
+	/*dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
 	dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
-	dphi_r[p].z = dphi * cos(theta_0);
+	dphi_r[p].z = dphi * cos(theta_0);*/
 
 	/*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);*/
+	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
 	//printf("\n t1 = %e", M0 / gamma);
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	/*P[p].x = Px * k_force_adapt;
+	P[p].x = Px * k_force_adapt;
 	P[p].y = Py * k_force_adapt;
 	P[p].z = Pz * k_force_adapt;
 
 	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
 	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;*/
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
 }
 
 void ff_model_update_dT(void)
 {
 	T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
-	dT = T - T_basic;
+	//dT = T - T_basic;
 	T_mean += T_basic;
 	k_mean ++;
-	//T_mean_loc += T_basic;
+	T_mean_loc += T_basic;
 	
 	if (dT < 0)
 	{
-		printf("\n WARNING: dT < 0");
-		dT = 0;
+		//printf("\n WARNING: dT < 0");
+		//dT = 0;
 	}
 
 	//printf("\n dT = %e", dT);
 
-	/*if (k_bm_inst == k_bm_inst_max - 1)
+	if (k_bm_inst == k_bm_inst_max - 1)
 	{
 		dT_prev = dT;
 		dT = T - T_mean_loc / k_bm_inst;
@@ -1822,7 +1830,7 @@ void ff_model_update_dT(void)
 		T_mean_loc_prev_revert = T_mean_loc_prev;
 		T_mean_loc_prev = T_mean_loc;
 	}
-	k_bm_inst ++;*/
+	k_bm_inst ++;
 
 	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
 	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
@@ -1892,6 +1900,7 @@ void ff_model_size_dispersion_init(void)
 		random_points[i] = F[i] / Ftot;
         if (i > 1) random_points[i] += random_points[i - 1];
 	}
+
 	//printf("\n random_points[14] = %e", random_points[14]);
 	//printf("\n random_points[13] = %e", random_points[13]);
 
@@ -1907,7 +1916,7 @@ void ff_model_size_dispersion_init(void)
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
 		}
 		for (i = 1; i <= imax - 1; i++)
-		if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]))
+		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
 		{
 			Rp[p] = 0.5 * d[i + 1] + delta;
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
