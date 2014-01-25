@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 20 // number of the particles
+#define pN 50 // number of the particles
 
 // Math constants
 extern double pi;
@@ -77,7 +77,7 @@ extern double delta;
 //extern double m0; // Magnetic moment [J / T]
 
 extern int is_oleic;
-extern double R_oleic;
+extern double R_oleic_0;
 extern double eta_oleic;
 extern double sigma_sf;
 extern double sigma_sf_nano;

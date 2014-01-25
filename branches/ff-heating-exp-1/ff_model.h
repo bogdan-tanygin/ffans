@@ -100,9 +100,12 @@ extern double phi_vol_fract_oleic;
 
 extern double k_force_adapt;
 
+extern double R_oleic;
+
 // Update of the effective instantiated random force
 void ff_model_effective_random_force_update(long);
 void ff_model_update_dT(void);
+void ff_model_update_dT_p(long);
 
 void ff_model_size_dispersion_init(void);
 void ff_model_size_dispersion_param_calc(double,long);

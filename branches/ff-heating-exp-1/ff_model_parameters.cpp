@@ -33,8 +33,8 @@ double g = 9.81;
 const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 
 // Space
-double gl_scale = 1;
-double volume_reduce = 0.4;
+double gl_scale = 2;
+double volume_reduce = 0.45;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -45,7 +45,7 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 double dt = 1.5E-5; // s
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
-double k_force_adapt_0 = 1.1;
+double k_force_adapt_0 = 1.05;
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.2;
@@ -59,12 +59,13 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_oleic = 1;
-double R_oleic = (Lx / 8.0);
+int is_oleic = 0;
+double R_oleic_0 = (Lx / 8.0);
 double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
-double sigma_sf_nano = 5E-2 * sigma_sf;
+//double sigma_sf_nano = 5E-2 * sigma_sf;
+double sigma_sf_nano = 1 * sigma_sf;
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
@@ -76,7 +77,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 1 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;

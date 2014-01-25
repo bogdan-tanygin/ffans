@@ -100,9 +100,20 @@ double T_mean_loc = 0;
 double T_mean_loc_prev = 0;
 double T_mean_loc_prev_revert = 0;
 long k_mean = 0;
+
+double dT_p[pN + 1];
+double dT_prev_p[pN + 1];
+double T_basic_p[pN + 1];
+double T_mean_p[pN + 1];
+double T_mean_loc_p[pN + 1];
+double T_mean_loc_prev_p[pN + 1];
+double T_mean_loc_prev_revert_p[pN + 1];
+long k_mean_p[pN + 1];
+
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
+double Ekp[pN + 1];
 //double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
@@ -130,7 +141,8 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
-double k_force_adapt = 0;
+double k_force_adapt;
+double k_force_adapt_p[pN + 1];
 
 ff_vect_t r_brown_valid_0;
 
@@ -143,6 +155,9 @@ double d[14 + 1];
 //double dt_red = dt0; // reducing time indicator for the random translation
 
 double phi_vol_fract_oleic = 0;
+double R_oleic;
+
+long pN0 = pN;
 
 void ff_model_upgrade_ext_field(void)
 {
@@ -359,8 +374,24 @@ int ff_model_check_smooth_dr(long p)
 				else k_force_adapt /= k_force_adapt_0;
 
 				dT= dT_prev;
-
 				T_mean_loc_prev = T_mean_loc_prev_revert;
+			}
+			
+			for(ps = 1; ps <= p; ps ++)
+			{
+				T_mean_p[p] -= T_basic_p[p];
+				k_mean_p[p] --;
+				T_mean_loc_p[p] -= T_basic_p[p];
+				//k_bm_inst --;
+				if (k_bm_inst == k_bm_inst_max - 1)
+				{
+					if (dT_p[p] < 0) k_force_adapt_p[p] *= k_force_adapt_0;
+					else k_force_adapt_p[p] /= k_force_adapt_0;
+
+					dT_p[p] = dT_prev_p[p];
+
+					T_mean_loc_prev_p[p] = T_mean_loc_prev_revert_p[p];
+				}
 			}
         }
 
@@ -1001,7 +1032,7 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
 	// oleic droplet surface tension force
-	if ((fabs(Rp_to_c[p] - R_oleic) < Rp[p]) && (is_oleic))
+	if ((fabs(Rp_to_c[p] - R_oleic) < Rp[p]) && (is_oleic) && (R_oleic > Rp[p]))
 	{
 		tF.x += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
 		tF.y += - sigma_sf_nano * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
@@ -1071,6 +1102,7 @@ void ff_model_next_step(void)
 		{
 			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
 			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
+			Ekp[p] = M0p[p] * MUL(v[p],v[p]) / 2.0 + I0p[p] * MUL(w[p],w[p]) / 2.0;
 		};
 	
 	Ek = Ek_tr + Ek_rot;
@@ -1083,12 +1115,14 @@ void ff_model_next_step(void)
 
         //ff_model_m_setting();
 
-		ff_model_update_dT();
+		//ff_model_update_dT();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+                ff_model_update_dT_p(p);
+				
+				//Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 								
 				/*if (k_bm_inst == 1)*/
 				ff_model_effective_random_force_update(p);
@@ -1114,6 +1148,8 @@ void ff_model_next_step(void)
                 /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
                 /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
             }
+
+			ff_model_update_dT();
 
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
@@ -1224,15 +1260,17 @@ void ff_model_next_step(void)
 					}
 
 					ff_model_check_walls(p);
-					
-					//k_bm_inst++;
-					//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
-					if (k_bm_inst == k_bm_inst_max)
-					{
-						k_bm_inst = 1;
-						T_mean_loc = 0;
-					}
                 } // end of loop for dr
+
+				//k_bm_inst++;
+				//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
+				if (k_bm_inst == k_bm_inst_max)
+				{
+					k_bm_inst = 1;
+					T_mean_loc = 0;
+					for (p = 1; p <= pN; p++) T_mean_loc_p[p] = 0;
+					///printf("\n !!!", dT);
+				}
 
                 r0.x = r0.y = r0.z = 0;
 				Mtot = 0;
@@ -1350,6 +1388,8 @@ void ff_model_next_step(void)
 							w[p].z += dw_r[p] * cos(theta_0_r);*/
 						//}
 					}
+					
+					if (is_oleic) R_oleic = R_oleic_0 * pN_oleic_drop / (pN0 + 1E-7);
 
 					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
 					phi_vol_fract_oleic *= 100;
@@ -1530,6 +1570,130 @@ ff_vect_t Bext(double x, double y, double z)
     return tBext;
 }
 
+void ff_model_init(void)
+{
+    long p, tp;
+    double theta, phi;
+    ff_vect_t dr;
+    double dR;
+    double sigma;
+    long i,j;
+
+    R_oleic = R_oleic_0;
+	
+	// Brownian motion -  parameters
+    ///////////////////////////////////////////////////
+	
+	k_force_adapt = 1;
+	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
+	
+	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
+    sigma = 1;
+
+    srand( (unsigned)time( NULL ) );
+    rng.seed(static_cast<unsigned int>(std::time(0)));
+
+    //boost::normal_distribution<> nd(0.0, 1.0);
+    nd = new boost::normal_distribution<> (0.0, sigma);
+	ud = new boost::uniform_01<> ();
+
+    //boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, *nd);
+    var_nor = new boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > (rng, *nd);
+	var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
+
+    //ff_model_dir_init();
+
+    t = 0; // time
+
+    //printf("\n m0 = %e, N = %d", m0, pN);
+    //printf("\n %e", M0);
+    glob_start_t = start_t;
+
+    m_tot_glob.x = m_tot_glob.y = m_tot_glob.z = 0;
+
+    for (long h = 1; h <= 20; h++)
+    {
+        B_hyst[h] = B_hyst_n[h] = Mz_hyst[h] = Mz_hyst_n[h] = 0;
+    }
+
+    ff_model_size_dispersion_init();
+	p = 1;
+    while (p <= pN)
+    {
+again:
+
+        if (start_ideal)
+        {
+            r[p].x = -0.4999 * Lx + 0.99 * Lx * (*var_uni)();
+            r[p].y = -0.4999 * Ly + 0.99 * Ly * (*var_uni)();
+            r[p].z = -0.4999 * Lz + 0.99 * Lz * (*var_uni)();
+			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+
+			/*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
+			r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
+			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();*/
+
+			w[p].x = w[p].y = w[p].z = 0;
+
+            //if (p == 5)
+            //r[p].x = r[p].y = r[p].z = 0;
+
+            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
+			/*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+			if (Rp_to_c[p] > R_oleic) goto again;*/
+			
+			for (tp = 1; tp < p; tp++)
+            {
+                dr.x = r[p].x - r[tp].x;
+                dr.y = r[p].y - r[tp].y;
+                dr.z = r[p].z - r[tp].z;
+
+                dR = sqrt(MUL(dr,dr));
+
+                if (dR <= Rp[p] + Rp[tp]) goto again;
+            }
+        } // start_ideal
+
+        v[p].x = v[p].y = v[p].z = 0;
+		w[p].x = w[p].y = w[p].z = 0;
+		/*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
+		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
+		//dW[p] = 0;
+		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
+
+        /*theta = pi * rand() / 32768.0;
+        phi = 2 * pi * rand() / 32768.0;
+
+        m[p].x = m0p[p] * sin(theta) * cos(phi);
+        m[p].y = m0p[p] * sin(theta) * sin(phi);
+        m[p].z = m0p[p] * cos(theta);*/
+
+		exist_p[p] = 1;
+
+		//m_freeze[p] = 0;
+        m_sat[p] = 0;
+
+		k_force_adapt_p[p] = 1;
+		dT_p[p] = 0;
+		dT_prev_p[p] = 0;
+		T_basic_p[p] = 0;
+		T_mean_p[p] = 0;
+		T_mean_loc_p[p] = 0;
+		T_mean_loc_prev_p[p] = 0;
+		T_mean_loc_prev_revert_p[p] = 0;
+		k_mean_p[p] = 0;
+
+        p++;
+    }
+
+    if (load_at_start) ff_io_load();
+
+    //if (start_sediment) ff_model_init_sediment();
+
+	r_brown_valid_0 = r[1];
+}
+
 /*void ff_model_init_sediment(void)
 {
 long i, j, k;
@@ -1632,118 +1796,6 @@ dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 
 }*/
 
-void ff_model_init(void)
-{
-    long p, tp;
-    double theta, phi;
-    ff_vect_t dr;
-    double dR;
-    double sigma;
-    long i,j;
-
-    // Brownian motion -  parameters
-    ///////////////////////////////////////////////////
-	
-	k_force_adapt = 1;
-	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
-	
-	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
-    sigma = 1;
-
-    srand( (unsigned)time( NULL ) );
-    rng.seed(static_cast<unsigned int>(std::time(0)));
-
-    //boost::normal_distribution<> nd(0.0, 1.0);
-    nd = new boost::normal_distribution<> (0.0, sigma);
-	ud = new boost::uniform_01<> ();
-
-    //boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, *nd);
-    var_nor = new boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > (rng, *nd);
-	var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
-
-    //ff_model_dir_init();
-
-    t = 0; // time
-
-    //printf("\n m0 = %e, N = %d", m0, pN);
-    //printf("\n %e", M0);
-    glob_start_t = start_t;
-
-    m_tot_glob.x = m_tot_glob.y = m_tot_glob.z = 0;
-
-    for (long h = 1; h <= 20; h++)
-    {
-        B_hyst[h] = B_hyst_n[h] = Mz_hyst[h] = Mz_hyst_n[h] = 0;
-    }
-
-    ff_model_size_dispersion_init();
-	p = 1;
-    while (p <= pN)
-    {
-again:
-
-        if (start_ideal)
-        {
-            r[p].x = -0.4999 * Lx + 0.99 * Lx * (*var_uni)();
-            r[p].y = -0.4999 * Ly + 0.99 * Ly * (*var_uni)();
-            r[p].z = -0.4999 * Lz + 0.99 * Lz * (*var_uni)();
-			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-
-			/*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
-			r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
-			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();*/
-
-			w[p].x = w[p].y = w[p].z = 0;
-
-            //if (p == 5)
-            //r[p].x = r[p].y = r[p].z = 0;
-
-            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
-			/*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic) goto again;*/
-			
-			for (tp = 1; tp < p; tp++)
-            {
-                dr.x = r[p].x - r[tp].x;
-                dr.y = r[p].y - r[tp].y;
-                dr.z = r[p].z - r[tp].z;
-
-                dR = sqrt(MUL(dr,dr));
-
-                if (dR <= Rp[p] + Rp[tp]) goto again;
-            }
-        } // start_ideal
-
-        v[p].x = v[p].y = v[p].z = 0;
-		w[p].x = w[p].y = w[p].z = 0;
-		/*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
-		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
-		//dW[p] = 0;
-		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
-
-        /*theta = pi * rand() / 32768.0;
-        phi = 2 * pi * rand() / 32768.0;
-
-        m[p].x = m0p[p] * sin(theta) * cos(phi);
-        m[p].y = m0p[p] * sin(theta) * sin(phi);
-        m[p].z = m0p[p] * cos(theta);*/
-
-		exist_p[p] = 1;
-
-		//m_freeze[p] = 0;
-        m_sat[p] = 0;
-
-        p++;
-    }
-
-    if (load_at_start) ff_io_load();
-
-    //if (start_sediment) ff_model_init_sediment();
-
-	r_brown_valid_0 = r[1];
-}
-
 // Update of the random force
 void ff_model_effective_random_force_update(long p)
 {
@@ -1814,13 +1866,13 @@ void ff_model_effective_random_force_update(long p)
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt;
-	P[p].y = Py * k_force_adapt;
-	P[p].z = Pz * k_force_adapt;
+	P[p].x = Px * k_force_adapt_p[p];
+	P[p].y = Py * k_force_adapt_p[p];
+	P[p].z = Pz * k_force_adapt_p[p];
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt;
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt;
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p[p];
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p[p];
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p[p];
 }
 
 void ff_model_update_dT(void)
@@ -1849,6 +1901,31 @@ void ff_model_update_dT(void)
 		T_mean_loc_prev = T_mean_loc;
 	}
 	k_bm_inst ++;
+
+	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
+	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
+}
+
+void ff_model_update_dT_p(long p)
+{
+	T_basic_p[p] = (2 / 6.0) * Ekp[p] / (kb * 1); // degree of freedom number is 6
+	//dT = T - T_basic;
+	T_mean_p[p] += T_basic_p[p];
+	k_mean_p[p] ++;
+	T_mean_loc_p[p] += T_basic_p[p];
+	
+	//printf("\n dT = %e", dT);
+
+	if (k_bm_inst == k_bm_inst_max - 1)
+	{
+		dT_prev_p[p] = dT_p[p];
+		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
+		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
+		else k_force_adapt_p[p] /= k_force_adapt_0;
+		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
+		T_mean_loc_prev_p[p] = T_mean_loc_p[p];
+	}
+	//k_bm_inst ++;
 
 	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
 	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
