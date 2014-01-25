@@ -1115,7 +1115,7 @@ void ff_model_next_step(void)
 
         //ff_model_m_setting();
 
-		//ff_model_update_dT();
+		ff_model_update_dT();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
@@ -1149,7 +1149,8 @@ void ff_model_next_step(void)
                 /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
             }
 
-			ff_model_update_dT();
+			//ff_model_update_dT();
+			k_bm_inst ++;
 
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
@@ -1900,7 +1901,7 @@ void ff_model_update_dT(void)
 		T_mean_loc_prev_revert = T_mean_loc_prev;
 		T_mean_loc_prev = T_mean_loc;
 	}
-	k_bm_inst ++;
+	//k_bm_inst ++;
 
 	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
 	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
@@ -1908,6 +1909,8 @@ void ff_model_update_dT(void)
 
 void ff_model_update_dT_p(long p)
 {
+	double rel_T = 1;
+	
 	T_basic_p[p] = (2 / 6.0) * Ekp[p] / (kb * 1); // degree of freedom number is 6
 	//dT = T - T_basic;
 	T_mean_p[p] += T_basic_p[p];
@@ -1920,8 +1923,9 @@ void ff_model_update_dT_p(long p)
 	{
 		dT_prev_p[p] = dT_p[p];
 		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
+		if ((T_mean_loc_p[p] > 0) && (dT_p[p] < - 2 * T)) rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
 		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
-		else k_force_adapt_p[p] /= k_force_adapt_0;
+		else k_force_adapt_p[p] /= k_force_adapt_0 * rel_T;
 		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
 		T_mean_loc_prev_p[p] = T_mean_loc_p[p];
 	}
