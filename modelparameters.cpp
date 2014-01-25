@@ -190,4 +190,14 @@ ModelParameters::ModelParameters(QString fileName)
     PWRITE(T_ch)
 
     qDebug() << "--------------------------------";
+
+    qDebug() << "[Validation] Value of oleic nano surface tension, which stabilizes the osmotic pressure";
+    double n_p_oleic = 1.539e+023; // [m-3]
+    double p_osm = kb * T_evap_ldc * n_p_oleic;
+    double Lx1 = 2.514 * 1E-7; // [m]
+    double R_oleic = Lx1 / 8.0;
+    double sigma_estimate = p_osm * R_oleic / 2.0;
+    PWRITE(sigma_estimate)
+    double sigma_sim_empiric = 32.5 * 1E-3 * 5E-2;
+    PWRITE(sigma_sim_empiric)
 }
