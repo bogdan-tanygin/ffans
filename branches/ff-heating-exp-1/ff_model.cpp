@@ -351,8 +351,8 @@ int ff_model_check_smooth_dr(long p)
         if ((dr / rmod > smooth_r) || ((dphimag / pi > smooth_r) && (!(is_neel[p]))))
         {
 			//if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
-			if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r)", dr);
-			if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r)", dr);
+			if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
+			if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
 
 			for(ps = 1; ps <= p; ps ++)
             {
@@ -375,7 +375,7 @@ int ff_model_check_smooth_dr(long p)
 			k_bm_inst --;
 			if (k_bm_inst == k_bm_inst_max - 1)
 			{
-				if (dT < 0) k_force_adapt *= k_force_adapt_0;
+				if (dT <= 0) k_force_adapt *= k_force_adapt_0;
 				else k_force_adapt /= k_force_adapt_0;
 
 				dT= dT_prev;
@@ -384,18 +384,18 @@ int ff_model_check_smooth_dr(long p)
 			
 			for(ps = 1; ps <= p; ps ++)
 			{
-				T_mean_p[p] -= T_basic_p[p];
-				k_mean_p[p] --;
-				T_mean_loc_p[p] -= T_basic_p[p];
+				T_mean_p[ps] -= T_basic_p[ps];
+				k_mean_p[ps] --;
+				T_mean_loc_p[ps] -= T_basic_p[ps];
 				//k_bm_inst --;
 				if (k_bm_inst == k_bm_inst_max - 1)
 				{
-					if (dT_p[p] < 0) k_force_adapt_p[p] *= k_force_adapt_0;
-					else k_force_adapt_p[p] /= k_force_adapt_0;
+					if (dT_p[ps] <= 0) k_force_adapt_p[ps] *= k_force_adapt_0;
+					else k_force_adapt_p[ps] /= k_force_adapt_0;
 
-					dT_p[p] = dT_prev_p[p];
+					dT_p[ps] = dT_prev_p[ps];
 
-					T_mean_loc_prev_p[p] = T_mean_loc_prev_revert_p[p];
+					T_mean_loc_prev_p[ps] = T_mean_loc_prev_revert_p[ps];
 				}
 			}
         }
@@ -1058,17 +1058,20 @@ ff_vect_t ff_model_torque(long p)
 
     ttau.x = ttau.y = ttau.z = 0;
 
-    // non-local
+	// non-local
     dtau = ff_model_nonloc_torque(p);
-    ttau.x += dtau.x;
-    ttau.y += dtau.y;
-    ttau.z += dtau.z;
+    if (!(is_neel[p]))
+	{
+	   ttau.x += dtau.x;
+       ttau.y += dtau.y;
+       ttau.z += dtau.z;
 
-    // Gravitation
-    ttau.z += 0;
+       // Gravitation
+       ttau.z += 0;
 
-    // Buoyancy
-    ttau.z += 0;
+       // Buoyancy
+       ttau.z += 0;
+	}
 
 	//printf("\n %e", ttau.x);
 
@@ -1202,6 +1205,7 @@ void ff_model_next_step(void)
                     (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].z;
 					}
+					else dphi[p].x = dphi[p].y = dphi[p].z = 0;
 
 					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
@@ -1866,7 +1870,7 @@ void ff_model_effective_random_force_update(long p)
 
 	if ((Rp_to_c[p] > R_oleic) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic); // this is correct only for the damping mode. Inertia mode (small dt) should disable this
 	else speed_ballance = 1;
-	if (dt < 1.5E-12) speed_ballance = 1;
+	//if (dt < 1.5E-12) speed_ballance = 1;
 	
 	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
 	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
