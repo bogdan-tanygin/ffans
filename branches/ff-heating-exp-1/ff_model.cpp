@@ -1807,7 +1807,7 @@ void ff_model_effective_random_force_update(long p)
 	double D, D_rot, gamma, gamma_rot;
 	double M0, I0;
 
-	//double speed_ballance = 1;
+	double speed_ballance = 1;
     
 	//dt0 = dt * k_bm_inst_max;
 	//dt0 = dt;
@@ -1854,26 +1854,26 @@ void ff_model_effective_random_force_update(long p)
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	/*if ((Rp_to_c[p] > R_oleic) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic); // this is correct only for the damping mode. Inertia mode (small dt) should disable this
+	if ((Rp_to_c[p] > R_oleic) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic); // this is correct only for the damping mode. Inertia mode (small dt) should disable this
 	else speed_ballance = 1;
-	if (dt < 1.5E-12) speed_ballance = 1;*/
+	if (dt < 1.5E-12) speed_ballance = 1;
 	
-	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);// * speed_ballance;
-	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);// * speed_ballance;
-	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);// * speed_ballance;
-	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);// * speed_ballance;
+	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
 	//printf("\n t1 = %e", M0 / gamma);
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt_p[p];
-	P[p].y = Py * k_force_adapt_p[p];
-	P[p].z = Pz * k_force_adapt_p[p];
+	P[p].x = Px * k_force_adapt_p[p] * speed_ballance;
+	P[p].y = Py * k_force_adapt_p[p] * speed_ballance;
+	P[p].z = Pz * k_force_adapt_p[p] * speed_ballance;
 
 	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p[p];
 	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p[p];
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p[p];
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p[p] * speed_ballance;
 }
 
 void ff_model_update_dT(void)
