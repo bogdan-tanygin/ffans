@@ -157,8 +157,8 @@ double d[14 + 1];
 
 double phi_vol_fract_oleic = 0;
 double R_oleic;
-
 long pN0 = pN;
+double R0_min;
 
 void ff_model_upgrade_ext_field(void)
 {
@@ -341,15 +341,19 @@ int ff_model_check_smooth_dr(long p)
 
     dr = sqrt(MUL(drt[p], drt[p]));
     //rmod = d[4];
-	rmod = 2 * Rp[p];
+	//rmod = 2 * Rp[p];
 	//rmod = 2 * delta;
+	rmod = 2 * R0_min;
 
 	dphimag = sqrt(MUL(dphi[p], dphi[p]));
-
+	
     if (rmod > 0)
-        if ((dr / rmod > smooth_r) || (dphimag / pi > smooth_r))
+        if ((dr / rmod > smooth_r) || ((dphimag / pi > smooth_r) && (!(is_neel[p]))))
         {
 			//if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
+			if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r)", dr);
+			if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r)", dr);
+
 			for(ps = 1; ps <= p; ps ++)
             {
                 r[ps].x -= drt[ps].x;
@@ -1184,6 +1188,8 @@ void ff_model_next_step(void)
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
+					if (!(is_neel[p]))
+					{
 					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
                     (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].x;
@@ -1195,6 +1201,7 @@ void ff_model_next_step(void)
 					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
                     (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].z;
+					}
 
 					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
@@ -1926,7 +1933,7 @@ void ff_model_update_dT_p(long p)
 	{
 		dT_prev_p[p] = dT_p[p];
 		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
-		//if (dT_p[p] < - 3 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
+		//if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
 		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
 		else k_force_adapt_p[p] /= k_force_adapt_0 * rel_T;
 		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
@@ -2026,6 +2033,9 @@ void ff_model_size_dispersion_init(void)
 			else is_neel[p] = 1;
 			break;
 		}
+
+		if (p == 1) R0_min = Rp[p] - delta;
+		if (Rp[p] - delta < R0_min) R0_min = Rp[p] - delta;
 	}
 }
 

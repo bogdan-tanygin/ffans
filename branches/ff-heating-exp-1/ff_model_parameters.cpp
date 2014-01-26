@@ -48,7 +48,7 @@ long k_bm_inst = 1;
 double k_force_adapt_0 = 1.05;
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
-double smooth_r = 0.2;
+double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
@@ -65,7 +65,7 @@ double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
-double sigma_sf_nano = 1E-1 * sigma_sf;
+double sigma_sf_nano = 5E-1 * sigma_sf;
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
