@@ -65,7 +65,7 @@ double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double sigma_sf = 32.5 * 1E-3; // [N / m]
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
-double sigma_sf_nano = 5E-1 * sigma_sf;
+double sigma_sf_nano = 1.6E-1 * sigma_sf;
 
 double rop = 5240; // mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
@@ -77,7 +77,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 30 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 10 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
