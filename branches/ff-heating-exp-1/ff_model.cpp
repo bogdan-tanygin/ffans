@@ -72,6 +72,7 @@ double dw_r[pN + 1]; // extra random angular velocity magnitude
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
+int is_inside_oleic[pN + 1];
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp[pN + 1];
 double Vp[pN + 1];
@@ -1685,6 +1686,8 @@ again:
 		T_mean_loc_prev_revert_p[p] = 0;
 		k_mean_p[p] = 0;
 
+		is_inside_oleic[p] = 1;
+
         p++;
     }
 
@@ -1871,8 +1874,8 @@ void ff_model_effective_random_force_update(long p)
 	P[p].y = Py * k_force_adapt_p[p] * speed_ballance;
 	P[p].z = Pz * k_force_adapt_p[p] * speed_ballance;
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p[p];
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p[p];
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p[p] * speed_ballance;
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p[p] * speed_ballance;
 	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p[p] * speed_ballance;
 }
 
@@ -1923,7 +1926,7 @@ void ff_model_update_dT_p(long p)
 	{
 		dT_prev_p[p] = dT_p[p];
 		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
-		if ((T_mean_loc_p[p] > 0) && (dT_p[p] < - 1 * T)) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
+		//if (dT_p[p] < - 3 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
 		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
 		else k_force_adapt_p[p] /= k_force_adapt_0 * rel_T;
 		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
@@ -2075,11 +2078,18 @@ void ff_model_update_conc_in_oleic(long p)
 	if (Rp_to_c[p] <= R_oleic)
 	//if (Rp_to_c[p] <= Lx / 8.0)
 	{
+		is_inside_oleic[p] = 1;
+		
 		pN_oleic_drop++;
 		if ((2 * Rp[p] >= d[1]) && (2 * Rp[p] <= d[2])) pN_oleic_drop_I++;
 		if ((2 * Rp[p] >= d[3]) && (2 * Rp[p] <= d[7])) pN_oleic_drop_II++;
 		if ((2 * Rp[p] >= d[8]) && (2 * Rp[p] <= d[14])) pN_oleic_drop_III++;
 
 		phi_vol_fract_oleic += Vp[p];
+	}
+	else 
+	{
+		//if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
+		is_inside_oleic[p] = 0;
 	}
 }
