@@ -1923,7 +1923,7 @@ void ff_model_update_dT_p(long p)
 	{
 		dT_prev_p[p] = dT_p[p];
 		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
-		if ((T_mean_loc_p[p] > 0) && (dT_p[p] < - 2 * T)) rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
+		if ((T_mean_loc_p[p] > 0) && (dT_p[p] < - 1 * T)) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
 		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
 		else k_force_adapt_p[p] /= k_force_adapt_0 * rel_T;
 		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
