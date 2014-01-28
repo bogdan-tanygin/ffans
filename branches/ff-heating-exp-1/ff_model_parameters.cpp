@@ -72,11 +72,12 @@ double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 //double sigma_sf_nano = 5E-2 * sigma_sf;
 double sigma_sf_nano = 2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
 
-double rop = 5240; // mass density [kg / m^3]
+double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 1E-19; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
+double a0 = 0.84E-9; // [m] // magnetite unit cell size
 
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]

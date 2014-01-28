@@ -2050,7 +2050,9 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 	double d;
 	d = 2 * R;
 	double V = pi * pow(d, 3) / 6.0;
+	double Vmag = pi * pow(d - 2 * a0, 3) / 6.0; // magentic core volume
 	double tm = rop * V;
+	double tmmag = rop * Vmag;
 	double theta, phi;
 	
 	Vp[p] = V;
@@ -2059,7 +2061,7 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 
 	double m_mol_rel = 231.6;
     double m_mol = m_mol_rel * 1E-3 / Na;
-    double N_mol = tm / m_mol;
+    double N_mol = tmmag / m_mol;
 	double s_mol = 4.1 * muB;
     double s = s_mol * N_mol;
 

@@ -90,6 +90,7 @@ extern double kr;
 extern double rop;
 extern double A_H;
 extern double N_oa;
+extern double a0;
 extern double eta;
 extern double G_barrier;
 
