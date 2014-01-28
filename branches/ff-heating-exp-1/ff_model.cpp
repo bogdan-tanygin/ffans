@@ -1874,10 +1874,14 @@ void ff_model_effective_random_force_update(long p)
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	/*speed_ballance = 1;
+	speed_ballance = 1;
 	dR = Rp_to_c[p] + Rp[p] - R_oleic;
-	if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]); // this is correct only for the damping mode. Inertia mode (small dt) should disable this
-	if ((dR > 0) && (dR >  2 * Rp[p]) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic);*/
+	//if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
+	if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic))
+	{
+
+	}
+	if ((dR > 0) && (dR >  2 * Rp[p]) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic);
 	//if (dt < 1.5E-12) speed_ballance = 1;
 	
 	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
