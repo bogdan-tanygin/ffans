@@ -428,7 +428,8 @@ void ff_io_load(void)
             fscanf(file, "%f ", &tmp);
             w[p].z = tmp;
 
-			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
+			Rp0[p] = Rp[p] - delta;
+			ff_model_size_dispersion_param_calc(Rp0[p], p);
         }
         while(!feof(file));
 

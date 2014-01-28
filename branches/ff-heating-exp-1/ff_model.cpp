@@ -74,6 +74,7 @@ int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
 int is_inside_oleic[pN + 1];
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
+double Rp0[pN + 1];
 double Rp[pN + 1];
 double Vp[pN + 1];
 double Vpfull[pN + 1]; // including steric layer
@@ -1406,7 +1407,8 @@ void ff_model_next_step(void)
 					}
 					
 					if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
-					if (is_oleic) R_oleic = R_oleic_0 * (pN_oleic_drop / (pN0 + 1E-7)) * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
+					if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
+						R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
 					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
 					phi_vol_fract_oleic *= 100;
 
@@ -2028,6 +2030,7 @@ void ff_model_size_dispersion_init(void)
 		
 		if (random_value <= random_points[1])
 		{
+			Rp0[p] = 0.5 * d[1];
 			Rp[p] = 0.5 * d[1] + delta;
 			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
 		}
@@ -2100,9 +2103,9 @@ void ff_model_update_conc_in_oleic(long p)
 		is_inside_oleic[p] = 1;
 		
 		pN_oleic_drop++;
-		if ((2 * Rp[p] >= d[1]) && (2 * Rp[p] <= d[2])) pN_oleic_drop_I++;
-		if ((2 * Rp[p] >= d[3]) && (2 * Rp[p] <= d[7])) pN_oleic_drop_II++;
-		if ((2 * Rp[p] >= d[8]) && (2 * Rp[p] <= d[14])) pN_oleic_drop_III++;
+		if ((2 * Rp0[p] >= d[1]) && (2 * Rp0[p] <= d[2])) pN_oleic_drop_I++;
+		if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
+		if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
 
 		phi_vol_fract_oleic += Vp[p];
 	}

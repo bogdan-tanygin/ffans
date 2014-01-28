@@ -39,6 +39,7 @@ extern ff_vect_t m[];  //particles magneitc moment direction
 extern ff_vect_t v[];
 extern ff_vect_t w[];
 
+extern double Rp0[];
 extern double Rp[];
 
 extern ff_vect_t P[];  // effective instantiated random force

@@ -34,8 +34,8 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
 
 // Space
-double gl_scale = 1;
-double volume_reduce = 0.45;
+double gl_scale = 0.5;
+double volume_reduce = 0.5;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -71,7 +71,7 @@ double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
-double sigma_sf_nano = 0.1;//2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
+double sigma_sf_nano = 1;//2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
 
 double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
@@ -84,7 +84,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 10 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 30 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
