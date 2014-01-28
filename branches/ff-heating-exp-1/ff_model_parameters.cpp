@@ -62,7 +62,8 @@ double delta = 2.0E-9;
 // Parameters of oleic acid drop
 int is_oleic = 1;
 double R_oleic_0 = (Lx / 8.0);
-double eta_oleic = 25.6 * 1E-3; // [Pa * s]
+//double eta_oleic = 25.6 * 1E-3; // [Pa * s]
+double eta_oleic = 14.285 * 1E-3; // [Pa * s]
 //double sigma_sf = 32.5 * 1E-3; // [N / m]
 double sigma_sf = 0;
 double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
@@ -70,7 +71,7 @@ double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
-double sigma_sf_nano = 2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
+double sigma_sf_nano = 1;//2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
 
 double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
