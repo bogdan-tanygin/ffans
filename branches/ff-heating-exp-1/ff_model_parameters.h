@@ -20,18 +20,19 @@
 
 #include <math.h>
 
-#define pN 500 // number of the particles
+#define pN 100 // number of the particles
 
 // Math constants
 extern double pi;
 
 // Physics constants
-extern double mu0;
+extern const double mu0;
 extern const double muB;
-extern double R;
-extern double Na;
+extern const double R;
+extern const double Na;
 extern double g;
 extern const double kb;
+extern const double ta0;
 
 extern double C1;
 
@@ -80,6 +81,8 @@ extern int is_oleic;
 extern double R_oleic_0;
 extern double eta_oleic;
 extern double sigma_sf;
+extern double a_sigma_sf;
+extern double b_sigma_sf;
 extern double sigma_sf_nano;
 
 extern double T;
