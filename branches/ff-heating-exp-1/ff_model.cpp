@@ -156,6 +156,7 @@ double d[14 + 1];
 //double dt_red = dt0; // reducing time indicator for the random translation
 
 double phi_vol_fract_oleic = 0;
+double phi_vol_fract_oleic_0 = 0;
 double R_oleic;
 long pN0 = pN;
 double R0_min;
@@ -1404,8 +1405,8 @@ void ff_model_next_step(void)
 						//}
 					}
 					
-					if (is_oleic) R_oleic = R_oleic_0 * pN_oleic_drop / (pN0 + 1E-7);
-
+					if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
+					if (is_oleic) R_oleic = R_oleic_0 * (pN_oleic_drop / (pN0 + 1E-7)) * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
 					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
 					phi_vol_fract_oleic *= 100;
 
