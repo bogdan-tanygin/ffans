@@ -103,19 +103,37 @@ double T_mean_loc_prev = 0;
 double T_mean_loc_prev_revert = 0;
 long k_mean = 0;
 
-double dT_p[pN + 1];
-double dT_prev_p[pN + 1];
-double T_basic_p[pN + 1];
-double T_mean_p[pN + 1];
-double T_mean_loc_p[pN + 1];
-double T_mean_loc_prev_p[pN + 1];
-double T_mean_loc_prev_revert_p[pN + 1];
+double dT_p_x[pN + 1];
+double dT_p_y[pN + 1];
+double dT_p_z[pN + 1];
+double dT_p_rot[pN + 1];
+double dT_prev_p_x[pN + 1];
+double dT_prev_p_y[pN + 1];
+double dT_prev_p_z[pN + 1];
+double dT_prev_p_rot[pN + 1];
+double T_basic_p_x[pN + 1];
+double T_basic_p_y[pN + 1];
+double T_basic_p_z[pN + 1];
+double T_basic_p_rot[pN + 1];
+double T_mean_p_x[pN + 1];
+double T_mean_p_y[pN + 1];
+double T_mean_p_z[pN + 1];
+double T_mean_p_rot[pN + 1];
+double T_mean_loc_p_x[pN + 1];
+double T_mean_loc_p_y[pN + 1];
+double T_mean_loc_p_z[pN + 1];
+double T_mean_loc_p_rot[pN + 1];
+//double T_mean_loc_prev_p[pN + 1];
+//double T_mean_loc_prev_revert_p[pN + 1];
 long k_mean_p[pN + 1];
 
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
-double Ekp[pN + 1];
+double Ekp_x[pN + 1];
+double Ekp_y[pN + 1];
+double Ekp_z[pN + 1];
+double Ekp_rot[pN + 1];
 //double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
@@ -144,7 +162,10 @@ ff_vect_t m_tot;
 ff_vect_t dir110[13];
 
 double k_force_adapt;
-double k_force_adapt_p[pN + 1];
+double k_force_adapt_p_x[pN + 1];
+double k_force_adapt_p_y[pN + 1];
+double k_force_adapt_p_z[pN + 1];
+double k_force_adapt_p_rot[pN + 1];
 
 ff_vect_t r_brown_valid_0;
 
@@ -353,8 +374,8 @@ int ff_model_check_smooth_dr(long p)
         if ((dr / rmod > smooth_r) || ((dphimag / pi > smooth_r) && (!(is_neel[p]))))
         {
 			//if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
-			if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
-			if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
+			//if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
+			//if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
 
 			for(ps = 1; ps <= p; ps ++)
             {
@@ -386,18 +407,33 @@ int ff_model_check_smooth_dr(long p)
 			
 			for(ps = 1; ps <= p; ps ++)
 			{
-				T_mean_p[ps] -= T_basic_p[ps];
+				T_mean_p_x[ps] -= T_basic_p_x[ps];
+				T_mean_p_y[ps] -= T_basic_p_y[ps];
+				T_mean_p_z[ps] -= T_basic_p_z[ps];
+				T_mean_p_rot[ps] -= T_basic_p_rot[ps];
 				k_mean_p[ps] --;
-				T_mean_loc_p[ps] -= T_basic_p[ps];
+				T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
+				T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
+				T_mean_loc_p_z[ps] -= T_basic_p_z[ps];
+				T_mean_loc_p_rot[ps] -= T_basic_p_rot[ps];
 				//k_bm_inst --;
 				if (k_bm_inst == k_bm_inst_max - 1)
 				{
-					if (dT_p[ps] <= 0) k_force_adapt_p[ps] *= k_force_adapt_0;
-					else k_force_adapt_p[ps] /= k_force_adapt_0;
+					if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
+					else k_force_adapt_p_x[ps] /= k_force_adapt_0;
+					if (dT_p_y[ps] <= 0) k_force_adapt_p_y[ps] *= k_force_adapt_0;
+					else k_force_adapt_p_y[ps] /= k_force_adapt_0;
+					if (dT_p_z[ps] <= 0) k_force_adapt_p_z[ps] *= k_force_adapt_0;
+					else k_force_adapt_p_z[ps] /= k_force_adapt_0;
+					if (dT_p_rot[ps] <= 0) k_force_adapt_p_rot[ps] *= k_force_adapt_0;
+					else k_force_adapt_p_rot[ps] /= k_force_adapt_0;
 
-					dT_p[ps] = dT_prev_p[ps];
+					dT_p_x[ps] = dT_prev_p_x[ps];
+					dT_p_y[ps] = dT_prev_p_y[ps];
+					dT_p_z[ps] = dT_prev_p_z[ps];
+					dT_p_rot[ps] = dT_prev_p_rot[ps];
 
-					T_mean_loc_prev_p[ps] = T_mean_loc_prev_revert_p[ps];
+					//T_mean_loc_prev_p_x[ps] = T_mean_loc_prev_revert_p[ps];
 				}
 			}
         }
@@ -1114,7 +1150,11 @@ void ff_model_next_step(void)
 		{
 			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
 			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
-			Ekp[p] = M0p[p] * MUL(v[p],v[p]) / 2.0 + I0p[p] * MUL(w[p],w[p]) / 2.0;
+
+			Ekp_x[p] = M0p[p] * v[p].x * v[p].x / 2.0;
+			Ekp_y[p] = M0p[p] * v[p].y * v[p].y / 2.0;
+			Ekp_z[p] = M0p[p] * v[p].z * v[p].z / 2.0;
+			Ekp_rot[p] = I0p[p] * MUL(w[p],w[p]) / 2.0;
 		};
 	
 	Ek = Ek_tr + Ek_rot;
@@ -1285,7 +1325,7 @@ void ff_model_next_step(void)
 				{
 					k_bm_inst = 1;
 					T_mean_loc = 0;
-					for (p = 1; p <= pN; p++) T_mean_loc_p[p] = 0;
+					for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot[p] = 0;
 					///printf("\n !!!", dT);
 				}
 
@@ -1692,14 +1732,14 @@ again:
 		//m_freeze[p] = 0;
         m_sat[p] = 0;
 
-		k_force_adapt_p[p] = 1;
-		dT_p[p] = 0;
-		dT_prev_p[p] = 0;
-		T_basic_p[p] = 0;
-		T_mean_p[p] = 0;
-		T_mean_loc_p[p] = 0;
-		T_mean_loc_prev_p[p] = 0;
-		T_mean_loc_prev_revert_p[p] = 0;
+		k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot[p] = 1.0;
+		dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot[p] = 0;
+		dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot[p] = 0;
+		T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot[p] = 0;
+		T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p] = T_mean_p_rot[p] = 0;
+		T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot[p] = 0;
+		//T_mean_loc_prev_p[p] = 0;
+		//T_mean_loc_prev_revert_p[p] = 0;
 		k_mean_p[p] = 0;
 
 		is_inside_oleic[p] = 1;
@@ -1960,13 +2000,13 @@ void ff_model_effective_random_force_update(long p)
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt_p[p] * speed_ballance;
-	P[p].y = Py * k_force_adapt_p[p] * speed_ballance;
-	P[p].z = Pz * k_force_adapt_p[p] * speed_ballance;
+	P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
+	P[p].y = Py * k_force_adapt_p_y[p] * speed_ballance;
+	P[p].z = Pz * k_force_adapt_p_z[p] * speed_ballance;
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p[p] * speed_ballance;
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p[p] * speed_ballance;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p[p] * speed_ballance;
+	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p_rot[p] * speed_ballance;
+	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p_rot[p] * speed_ballance;
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot[p] * speed_ballance;
 }
 
 void ff_model_update_dT(void)
@@ -2004,23 +2044,49 @@ void ff_model_update_dT_p(long p)
 {
 	double rel_T = 1;
 	
-	T_basic_p[p] = (2 / 6.0) * Ekp[p] / (kb * 1); // degree of freedom number is 6
+	T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
+	T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
+	T_basic_p_z[p] = 2 * Ekp_z[p] / kb;
+	T_basic_p_rot[p] = (2 / 3.0) * Ekp_rot[p] / kb;
 	//dT = T - T_basic;
-	T_mean_p[p] += T_basic_p[p];
+	T_mean_p_x[p] += T_basic_p_x[p];
+	T_mean_p_y[p] += T_basic_p_y[p];
+	T_mean_p_z[p] += T_basic_p_z[p];
+	T_mean_p_rot[p] += T_basic_p_rot[p];
 	k_mean_p[p] ++;
-	T_mean_loc_p[p] += T_basic_p[p];
+	T_mean_loc_p_x[p] += T_basic_p_x[p];
+	T_mean_loc_p_y[p] += T_basic_p_y[p];
+	T_mean_loc_p_z[p] += T_basic_p_z[p];
+	T_mean_loc_p_rot[p] += T_basic_p_rot[p];
 	
 	//printf("\n dT = %e", dT);
 
 	if (k_bm_inst == k_bm_inst_max - 1)
 	{
-		dT_prev_p[p] = dT_p[p];
-		dT_p[p] = T - T_mean_loc_p[p] / k_bm_inst;
+		dT_prev_p_x[p] = dT_p_x[p];
+		dT_prev_p_y[p] = dT_p_y[p];
+		dT_prev_p_z[p] = dT_p_z[p];
+		dT_prev_p_rot[p] = dT_p_rot[p];
+
+		dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
+		dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
+		dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
+		dT_p_rot[p] = T - T_mean_loc_p_rot[p] / k_bm_inst;
 		//if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
-		if (dT_p[p] > 0) k_force_adapt_p[p] *= k_force_adapt_0;
-		else k_force_adapt_p[p] /= k_force_adapt_0 * rel_T;
-		T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
-		T_mean_loc_prev_p[p] = T_mean_loc_p[p];
+		if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
+		else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
+
+		if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_0;
+		else k_force_adapt_p_y[p] /= k_force_adapt_0 * rel_T;
+
+		if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_0;
+		else k_force_adapt_p_z[p] /= k_force_adapt_0 * rel_T;
+
+		if (dT_p_rot[p] > 0) k_force_adapt_p_rot[p] *= k_force_adapt_0;
+		else k_force_adapt_p_rot[p] /= k_force_adapt_0 * rel_T;
+
+		//T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
+		//T_mean_loc_prev_p[p] = T_mean_loc_p[p];
 	}
 	//k_bm_inst ++;
 
