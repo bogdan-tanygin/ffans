@@ -101,7 +101,7 @@ double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field 
 double start_ideal = 1; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
-double eta = 0.00164; //Pa * s //kerosene
+double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)
 
 //int __deprecated__brownian_shifts = 0;
 //int __deprecated__brownian_force = 1;

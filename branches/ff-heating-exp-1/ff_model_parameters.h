@@ -91,7 +91,7 @@ extern double rop;
 extern double A_H;
 extern double N_oa;
 extern double a0;
-extern double eta;
+extern double eta_car;
 extern double G_barrier;
 
 //order of magnitude of the external field but exact function is hardcoded 

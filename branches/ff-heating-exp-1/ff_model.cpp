@@ -1169,8 +1169,8 @@ void ff_model_next_step(void)
                 {
                     if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
 					{
-						C2[p] = 6 * pi * eta * Rp[p];
-						gamma_rot[p] = 8 * pi * eta * pow(Rp[p], 3);
+						C2[p] = 6 * pi * eta_car * Rp[p];
+						gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
 					}
 					else
 					{
@@ -1824,24 +1824,34 @@ void ff_model_effective_random_force_update(long p)
 	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
 	//double dt0;
 	double D, D_rot, gamma, gamma_rot;
+	double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
 	double M0, I0;
 
 	double speed_ballance = 1;
 	double dR = 0;
+
+	ff_vect_t e1, e2, e3; // dynamic coordinate system
+	double P1, P2, P3;
+	double tmp = 0;
+
+	double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
     
 	//dt0 = dt * k_bm_inst_max;
 	//dt0 = dt;
 
+	gamma_oleic = 6 * pi * eta_oleic * Rp[p];
+	gamma_car = 6 * pi * eta_car * Rp[p];
 	if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
 	{
-		gamma = 6 * pi * eta * Rp[p];
-		gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+		gamma = gamma_car;
+		gamma_rot = 8 * pi * eta_car * pow(Rp[p], 3);
 	}
 	else
 	{
-		gamma = 6 * pi * eta_oleic * Rp[p];
+		gamma = gamma_oleic;
 		gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
 	}
+
 	D = kb * T / gamma;
 	D_rot = kb * T / gamma_rot;
 	M0 = M0p[p];
@@ -1879,14 +1889,63 @@ void ff_model_effective_random_force_update(long p)
 	//if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
 	if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic))
 	{
+		tmp = sqrt(MUL(r[p], r[p]));
+		e3.x = r[p].x / tmp;
+		e3.y = r[p].y / tmp;
+		e3.z = r[p].z / tmp;
 
+		e1.x = - r[p].y;
+		e1.y =   r[p].x;
+		e1.z =   0;
+
+		if ((r[p].x == 0) && (r[p].y == 0)) e1.x = 1;
+		tmp = sqrt(MUL(e1, e1));
+		e1.x /= tmp; e1.y /= tmp; e1.z /= tmp;
+
+		e2.x = e3.y * e1.z - e3.z * e1.y;
+		e2.y = e3.z * e1.x - e3.x * e1.z;
+		e2.z = e3.x * e1.y - e3.y * e1.x;
+
+		if (dR >= Rp[p]) 
+		{
+			fract_oleic_positive = (2 * Rp[p] - dR) / Rp[p];
+			fract_oleic_negative = 0;
+			fract_car_positive = (dR - Rp[p]) / Rp[p];
+			fract_car_negative = 1;
+		}
+		else
+		{
+			fract_oleic_positive = 1;
+			fract_oleic_negative = (Rp[p] - dR) / Rp[p];
+			fract_car_positive = 0;
+			fract_car_negative = dR / Rp[p];
+		}
+
+		P3 =   fract_oleic_positive * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_oleic / dt)) * sqrt(gamma_oleic) // sqrt(gamma_oleic) is a speed_ballance (component of the k_force_adapt_p)
+			 - fract_oleic_negative * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_oleic / dt)) * sqrt(gamma_oleic)
+			 + fract_car_positive   * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_car / dt)) * sqrt(gamma_car)
+			 - fract_car_negative   * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_car / dt)) * sqrt(gamma_car);
+		P3 *= 0.5;
+		P1 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
+		P2 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
+
+		Px = e1.x * P1 + e2.x * P2 + e3.x * P3;
+		Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
+		Pz = e1.z * P1 + e2.z * P2 + e3.z * P3;
 	}
-	if ((dR > 0) && (dR >  2 * Rp[p]) && (is_oleic)) speed_ballance = sqrt(eta / eta_oleic);
+	else
+	{
+		Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+		Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+		Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+	}
+
+	if ((dR > 0) && (dR >  2 * Rp[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
 	//if (dt < 1.5E-12) speed_ballance = 1;
 	
-	Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
 	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
 	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
 	//printf("\n t1 = %e", M0 / gamma);
@@ -2089,9 +2148,9 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 	}
 }
 
-void ff_model_brownian_validation(long p)
+/*void ff_model_brownian_validation(long p)
 {
-	double gamma = 6 * pi * eta * Rp[p];
+	double gamma = 6 * pi * eta_car * Rp[p];
 	double D = kb * T / gamma;
 	double dr_root_theory = 0;
 	double dr_root_sim = 0;
@@ -2100,7 +2159,7 @@ void ff_model_brownian_validation(long p)
 	dr_root_theory = sqrt(6 * D * t);
 
 	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
-}
+}*/
 
 void ff_model_update_conc_in_oleic(long p)
 {
