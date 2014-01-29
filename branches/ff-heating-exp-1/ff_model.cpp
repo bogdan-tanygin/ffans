@@ -1835,7 +1835,8 @@ void ff_model_effective_random_force_update(long p)
 	double tmp = 0;
 
 	double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
-    
+	double N_mol_col = 0;
+
 	//dt0 = dt * k_bm_inst_max;
 	//dt0 = dt;
 
@@ -1921,11 +1922,16 @@ void ff_model_effective_random_force_update(long p)
 			fract_car_negative = dR / Rp[p];
 		}
 
-		P3 =   fract_oleic_positive * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_oleic / dt)) * sqrt(gamma_oleic) // sqrt(gamma_oleic) is a speed_ballance (component of the k_force_adapt_p)
-			 - fract_oleic_negative * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_oleic / dt)) * sqrt(gamma_oleic)
-			 + fract_car_positive   * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_car / dt)) * sqrt(gamma_car)
-			 - fract_car_negative   * fabs((*var_nor)() * sqrt(2 * kb * T * gamma_car / dt)) * sqrt(gamma_car);
-		P3 *= 0.5;
+		N_mol_col = (*var_nor)();
+
+		// dispersion of sum is a sum of dispersions
+		if (N_mol_col >= 0)
+			P3 =   N_mol_col * sqrt(kb * T * (fract_oleic_positive * gamma_oleic + fract_car_positive * gamma_car) / dt) *
+			     (sqrt(gamma_oleic) * fract_oleic_positive + sqrt(gamma_car) * fract_car_positive); // sqrt(gamma_oleic) is a speed_ballance (component of the k_force_adapt_p)
+		else
+			P3 = - N_mol_col * sqrt(kb * T * (fract_oleic_negative * gamma_oleic + fract_car_negative * gamma_car) / dt) *
+			     (sqrt(gamma_oleic) * fract_oleic_negative + sqrt(gamma_car) * fract_car_negative);
+		
 		P1 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
 		P2 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
 
