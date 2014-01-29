@@ -1931,8 +1931,9 @@ void ff_model_effective_random_force_update(long p)
 			P3 = - N_mol_col * sqrt(2 * kb * T * (fract_oleic_negative * gamma_oleic + fract_car_negative * gamma_car) / dt) *
 			     (sqrt(gamma_oleic) * fract_oleic_negative + sqrt(gamma_car) * fract_car_negative);
 		
-		P1 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
-		P2 = (*var_nor)() * (sqrt(2 * kb * T * gamma_car / dt) * (dR / (2 * Rp[p])) + sqrt(2 * kb * T * gamma_oleic / dt) * (1 - dR / (2 * Rp[p])));
+		// sum of dispersions is a dispersion of sums
+		P1 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp[p])) + gamma_oleic * (1 - dR / (2 * Rp[p]))) / dt);
+		P2 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp[p])) + gamma_oleic * (1 - dR / (2 * Rp[p]))) / dt);
 
 		Px = e1.x * P1 + e2.x * P2 + e3.x * P3;
 		Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
