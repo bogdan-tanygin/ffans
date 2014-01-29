@@ -71,7 +71,7 @@ double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
-double sigma_sf_nano = 1E-1;//2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
+double sigma_sf_nano = 0.5E-1;//2.89E-1;// * sigma_sf; // 2.875 - evap // 2.8875 - not evap // 2.88125 - evap // 2.88375 - 2.884 - 50% - yes and 50% - not
 
 double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
