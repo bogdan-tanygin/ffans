@@ -41,7 +41,7 @@ float z_off;
 float frame_rate;
 int frame_count;
 
-int window_width  = 1500;
+int window_width  = 1000;
 int window_height = 1000;
 
 GLdouble nearVal = 1;
