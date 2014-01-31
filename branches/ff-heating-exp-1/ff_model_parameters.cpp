@@ -53,7 +53,7 @@ double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
-double sigma_sf_nano = 2.35E-2;
+double sigma_sf_nano = 2.3E-2;
 double kr = gl_scale; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta = 2.0E-9;
