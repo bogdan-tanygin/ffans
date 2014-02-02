@@ -26,7 +26,7 @@ double pi = acos(-1.0);
 
 // Physics constants
 const double mu0 = 4 * pi * 1E-7;
-const const double muB = 9.27400968 * 1E-24; // Bohr magneton
+const double muB = 9.27400968 * 1E-24; // Bohr magneton
 const double R = 8.31;
 const double Na = 6.02214179 * 1E23;
 double g = 9.81;
@@ -34,8 +34,8 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
 
 // Space
-double gl_scale = 0.5;
-double volume_reduce = 0.65;
+double gl_scale = 1.0;
+double volume_reduce = 0.45;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -43,17 +43,17 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1.5E-5; // s
+double dt = 0.5E-13; // s // 1.5E-5
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
-double k_force_adapt_0 = 1.05;
+double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
-double sigma_sf_nano = 5E-4;
+double sigma_sf_nano = 1; // 1E-2; // 6E-3 - evap. // 1E-2 - not
 
 double kr = gl_scale; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
@@ -76,7 +76,7 @@ double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 
 double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
-double A_H = 1E-19; // Hamaker constant [J]
+double A_H = 4E-20; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 double a0 = 0.84E-9; // [m] // magnetite unit cell size
