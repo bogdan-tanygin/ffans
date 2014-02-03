@@ -62,7 +62,7 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_oleic = 1;
+int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 double eta_oleic = 14.285 * 1E-3; // [Pa * s]

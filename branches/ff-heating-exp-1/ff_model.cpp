@@ -76,7 +76,7 @@ int is_inside_oleic[pN + 1];
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp0[pN + 1];
 double Rp[pN + 1];
-double Vp[pN + 1];
+double Vp0[pN + 1];
 double Vpfull[pN + 1]; // including steric layer
 double m0p[pN + 1];
 double M0p[pN + 1];
@@ -889,7 +889,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
                 } 
 
-                if (dR >= Rp[p] + Rp[ps])
+                if (dR >= Rp0[p] + Rp0[ps])
 				{
 					tFx += dtFx;
 					tFy += dtFy;
@@ -906,7 +906,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
 
 #ifndef SECONDARY
-				if (dR <= Rp[p] + Rp[ps]) //soft sphere condition
+				if (dR <= Rp0[p] + Rp0[ps]) //soft sphere condition
 				{
 					/*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -920,8 +920,8 @@ ff_vect_t ff_model_nonloc_force(long p)
 						//printf("\n aggregated_p");
 					}*/
 
-					dRtemp = Rp[p] + Rp[ps];
-					dd = Rp[p] + Rp[ps];
+					dRtemp = Rp0[p] + Rp0[ps];
+					dd = Rp0[p] + Rp0[ps];
 					l = 2 * (dRtemp - dd) / dd;
 					tt = 2 * delta / dd;
 
@@ -931,7 +931,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 				}
 
                 // Entropic repulsion
-				if ((dR > Rp[p] + Rp[ps]) && (dR <= Rp[p] + Rp[ps] + 2 * delta)) 
+				if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
                 {
                     /*if (Ch > 5)
                         Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
@@ -942,7 +942,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					dd = Rp[p] + Rp[ps];
+					dd = Rp0[p] + Rp0[ps];
 					l = 2 * (dR - dd) / dd;
 					tt = 2 * delta / dd;
 
@@ -956,7 +956,8 @@ ff_vect_t ff_model_nonloc_force(long p)
                 // attraction
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
 				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
-				if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
+				//if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
+				if (dR > (Rp0[p] + Rp0[ps]))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -964,9 +965,9 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += dy * Cmod;
                     tFz += dz * Cmod;*/
 
-					tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
-					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
-					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp[p] * Rp[ps], 3) / (6 * pow(dR * dR - pow(Rp[p] - Rp[ps], 2), 2) * pow(dR * dR - pow(Rp[p] + Rp[ps], 2), 2)));
+					tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
 
 					/*if (aggregated_p[p][ps])
 					{
@@ -1029,7 +1030,7 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
-double ff_model_G_steric(long p, long ps)
+/*double ff_model_G_steric(long p, long ps)
 {
 	double G_steric = 0;
 	double z = 0;
@@ -1053,7 +1054,7 @@ double ff_model_G_steric(long p, long ps)
 	else G_steric = 0;
 
 	return G_steric;
-}
+}*/
 
 ff_vect_t ff_model_force(long p)
 {
@@ -1075,11 +1076,11 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
 	// oleic droplet surface tension force
-	if ((fabs(Rp_to_c[p] - R_oleic) < Rp[p]) && (is_oleic) && (R_oleic > Rp[p]))
+	if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
 	{
-		tF.x += - sigma_sf * 2 * pi * Rp[p] * r[p].x / Rp_to_c[p];
-		tF.y += - sigma_sf * 2 * pi * Rp[p] * r[p].y / Rp_to_c[p];
-		tF.z += - sigma_sf * 2 * pi * Rp[p] * r[p].z / Rp_to_c[p];
+		tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
+		tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
+		tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
 	}
 
     tF.x += P[p].x;
@@ -1926,9 +1927,9 @@ void ff_model_effective_random_force_update(long p)
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
 	speed_ballance = 1;
-	dR = Rp_to_c[p] + Rp[p] - R_oleic;
+	dR = Rp_to_c[p] + Rp0[p] - R_oleic;
 	//if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
-	if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic))
+	if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
 	{
 		tmp = sqrt(MUL(r[p], r[p]));
 		e3.x = r[p].x / tmp;
@@ -1947,19 +1948,19 @@ void ff_model_effective_random_force_update(long p)
 		e2.y = e3.z * e1.x - e3.x * e1.z;
 		e2.z = e3.x * e1.y - e3.y * e1.x;
 
-		if (dR >= Rp[p]) 
+		if (dR >= Rp0[p]) 
 		{
-			fract_oleic_positive = (2 * Rp[p] - dR) / Rp[p];
+			fract_oleic_positive = (2 * Rp0[p] - dR) / Rp0[p];
 			fract_oleic_negative = 0;
-			fract_car_positive = (dR - Rp[p]) / Rp[p];
+			fract_car_positive = (dR - Rp0[p]) / Rp0[p];
 			fract_car_negative = 1;
 		}
 		else
 		{
 			fract_oleic_positive = 1;
-			fract_oleic_negative = (Rp[p] - dR) / Rp[p];
+			fract_oleic_negative = (Rp0[p] - dR) / Rp0[p];
 			fract_car_positive = 0;
-			fract_car_negative = dR / Rp[p];
+			fract_car_negative = dR / Rp0[p];
 		}
 
 		N_mol_col = (*var_nor)();
@@ -1972,10 +1973,10 @@ void ff_model_effective_random_force_update(long p)
 			       (sqrt(gamma_oleic) * fract_oleic_negative + sqrt(gamma_car) * fract_car_negative);
 		
 		// sum of dispersions is a dispersion of sums
-		P1 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp[p])) + gamma_oleic * (1 - dR / (2 * Rp[p]))) / dt) *
-			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp[p])) + 1 - dR / (2 * Rp[p])); // speed_ballance (component of the k_force_adapt_p)
-		P2 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp[p])) + gamma_oleic * (1 - dR / (2 * Rp[p]))) / dt) *
-			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp[p])) + 1 - dR / (2 * Rp[p]));
+		P1 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
+			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p])); // speed_ballance (component of the k_force_adapt_p)
+		P2 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
+			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p]));
 
 		Px = e1.x * P1 + e2.x * P2 + e3.x * P3;
 		Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
@@ -1988,7 +1989,7 @@ void ff_model_effective_random_force_update(long p)
 		Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
 	}
 
-	if ((dR > 0) && (dR >  2 * Rp[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
+	if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
 	//if (dt < 1.5E-12) speed_ballance = 1;
 	
 	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
@@ -2171,35 +2172,38 @@ void ff_model_size_dispersion_init(void)
 		if (random_value <= random_points[1])
 		{
 			Rp0[p] = 0.5 * d[1];
-			Rp[p] = 0.5 * d[1] + delta;
-			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
+			Rp[p] = Rp0[p] + delta;
+			ff_model_size_dispersion_param_calc(Rp0[p], p);
 		}
 		for (i = 1; i <= imax - 1; i++)
 		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
 		{
-			Rp[p] = 0.5 * d[i + 1] + delta;
-			ff_model_size_dispersion_param_calc(Rp[p] - delta, p);
+			Rp0[p] = 0.5 * d[i + 1];
+			Rp[p] = Rp0[p] + delta;
+			ff_model_size_dispersion_param_calc(Rp0[p], p);
 			if (d[i + 1] > 10 * 1E-9) is_neel[p] = 0;
 			else is_neel[p] = 1;
 			break;
 		}
 
-		if (p == 1) R0_min = Rp[p] - delta;
-		if (Rp[p] - delta < R0_min) R0_min = Rp[p] - delta;
+		if (p == 1) R0_min = Rp0[p];
+		if (Rp0[p] < R0_min) R0_min = Rp0[p];
 	}
 }
 
-void ff_model_size_dispersion_param_calc(double R, long p)
+void ff_model_size_dispersion_param_calc(double R0, long p)
 {
-	double d;
-	d = 2 * R;
-	double V = pi * pow(d, 3) / 6.0;
-	double Vmag = pi * pow(d - 2 * a0, 3) / 6.0; // magentic core volume
-	double tm = rop * V;
-	double tmmag = rop * Vmag;
+	double d0;
+	d0 = 2 * R0; // size of core, i.e. hard part of the particle: magnetic + nonmagnetic layers
+	double V0 = pi * pow(d0, 3) / 6.0;
+	double Vfull = pi * pow(d0 + 2 * delta, 3) / 6.0;
+	double Vmag = pi * pow(d0 - 2 * a0, 3) / 6.0; // magentic core volume
+	double tm = rop * V0; // total mass
+	double tmmag = rop * Vmag; // mass of the magnetic part
 	double theta, phi;
 	
-	Vp[p] = V;
+	Vp0[p] = V0;
+	Vpfull[p] = Vfull;
 	M0p[p] = tm;
 	I0p[p] = (2 / 5.0) * M0p[p] * R * R;
 
@@ -2213,8 +2217,8 @@ void ff_model_size_dispersion_param_calc(double R, long p)
 
 	if (t == 0)
 	{
-		theta = pi * rand() / 32768.0;
-		phi = 2 * pi * rand() / 32768.0;
+		theta = pi * (*var_uni)();
+		phi = 2 * pi * (*var_uni)();
 
 		m[p].x = m0p[p] * sin(theta) * cos(phi);
 		m[p].y = m0p[p] * sin(theta) * sin(phi);
@@ -2247,7 +2251,7 @@ void ff_model_update_conc_in_oleic(long p)
 		if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
 		if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
 
-		phi_vol_fract_oleic += Vp[p];
+		phi_vol_fract_oleic += Vpfull[p];
 	}
 	else 
 	{
