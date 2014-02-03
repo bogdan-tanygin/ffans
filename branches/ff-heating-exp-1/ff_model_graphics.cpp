@@ -34,9 +34,10 @@ GLUquadric* g_quad;
 
 int show_m, show_b, show_bext;
 int show_info = 1;
-int show_droplet = 1;
+int show_droplet = 0;
 int transp;
 int show_sphere;
+int show_steric = 0;
 
 // vector parameters
 double v_len;
@@ -231,11 +232,27 @@ void ff_mgr_show_next_step()
             r1.x = space_k * r[p].x;
             r1.y = space_k * r[p].y;
             r1.z = space_k * r[p].z;
-
-            glTranslatef(r1.x, r1.y, r1.z);
+			
+			glTranslatef(r1.x, r1.y, r1.z);
 			glColor3f(1.0, 0.5, 0.5);
 			//glColor3f(0.5, 0.5, 0.5);
-			if (show_sphere) gluSphere(g_quad, space_k * Rp[p], 20, 20);
+			if (show_sphere) 
+			{
+				gluSphere(g_quad, space_k * Rp0[p], 20, 20);
+				
+				if (show_steric)
+				{
+					glEnable(GL_ALPHA_TEST);
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					
+					glColor4f(0.5, 0.5, 0.5, 0.5);
+					gluSphere(g_quad, space_k * Rp[p], 20, 20);
+					
+					glDisable(GL_BLEND);
+					glDisable(GL_ALPHA_TEST);
+				}
+			}
 	        glTranslatef(-r1.x, -r1.y, -r1.z);
 	
             //glDisable(GL_BLEND);

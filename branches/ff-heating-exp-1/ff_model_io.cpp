@@ -119,6 +119,10 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_m = show_m?0:1;
         break;
 
+	case '5':
+        show_steric = show_steric?0:1;
+        break;
+	
 	case 'O': case 'o':
         show_droplet = show_droplet?0:1;
         break;

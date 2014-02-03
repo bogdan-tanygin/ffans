@@ -31,6 +31,7 @@ extern int show_m, show_b, show_bext, show_droplet, show_info;
 extern int transp;
 
 extern int show_sphere;
+extern int show_steric;
 
 extern double space_k;
 
