@@ -1,0 +1,11 @@
+In case of using this software in your research, please cite the original research work.
+
+- First method description is published in [1]
+
+References
+
+[1] B.M. Tanygin, V.F. Kovalenko, M.V. Petrychuk, S.A. Dzyan,
+Molecular dynamics study of the primary ferrofluid aggregate formation,
+Journal of Magnetism and Magnetic Materials, Volume 324, Issue 23, November 2012, Pages 4006–4010
+
+http://dx.doi.org/10.1016/j.jmmm.2012.07.004
