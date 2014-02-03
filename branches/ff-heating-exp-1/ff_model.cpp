@@ -55,7 +55,9 @@ ff_vect_t tau[pN + 1]; // torque
 //ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
+ff_vect_t v_r[pN + 1]; // random heat component
 ff_vect_t w[pN + 1]; // angular velocity vector
+ff_vect_t w_r[pN + 1]; // random heat component
 
 ff_vect_t drt[pN + 1];
 ff_vect_t drt_r[pN + 1]; // instantiated random translation
@@ -106,15 +108,21 @@ long k_mean = 0;
 double dT_p_x[pN + 1];
 double dT_p_y[pN + 1];
 double dT_p_z[pN + 1];
-double dT_p_rot[pN + 1];
+double dT_p_rot_x[pN + 1];
+double dT_p_rot_y[pN + 1];
+double dT_p_rot_z[pN + 1];
 double dT_prev_p_x[pN + 1];
 double dT_prev_p_y[pN + 1];
 double dT_prev_p_z[pN + 1];
-double dT_prev_p_rot[pN + 1];
+double dT_prev_p_rot_x[pN + 1];
+double dT_prev_p_rot_y[pN + 1];
+double dT_prev_p_rot_z[pN + 1];
 double T_basic_p_x[pN + 1];
 double T_basic_p_y[pN + 1];
 double T_basic_p_z[pN + 1];
-double T_basic_p_rot[pN + 1];
+double T_basic_p_rot_x[pN + 1];
+double T_basic_p_rot_y[pN + 1];
+double T_basic_p_rot_z[pN + 1];
 double T_mean_p_x[pN + 1];
 double T_mean_p_y[pN + 1];
 double T_mean_p_z[pN + 1];
@@ -122,7 +130,9 @@ double T_mean_p_rot[pN + 1];
 double T_mean_loc_p_x[pN + 1];
 double T_mean_loc_p_y[pN + 1];
 double T_mean_loc_p_z[pN + 1];
-double T_mean_loc_p_rot[pN + 1];
+double T_mean_loc_p_rot_x[pN + 1];
+double T_mean_loc_p_rot_y[pN + 1];
+double T_mean_loc_p_rot_z[pN + 1];
 //double T_mean_loc_prev_p[pN + 1];
 //double T_mean_loc_prev_revert_p[pN + 1];
 long k_mean_p[pN + 1];
@@ -133,7 +143,9 @@ double Ek_tr = 0;
 double Ekp_x[pN + 1];
 double Ekp_y[pN + 1];
 double Ekp_z[pN + 1];
-double Ekp_rot[pN + 1];
+double Ekp_rot_x[pN + 1];
+double Ekp_rot_y[pN + 1];
+double Ekp_rot_z[pN + 1];
 //double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
@@ -410,12 +422,14 @@ int ff_model_check_smooth_dr(long p)
 				T_mean_p_x[ps] -= T_basic_p_x[ps];
 				T_mean_p_y[ps] -= T_basic_p_y[ps];
 				T_mean_p_z[ps] -= T_basic_p_z[ps];
-				T_mean_p_rot[ps] -= T_basic_p_rot[ps];
+				//T_mean_p_rot[ps] -= T_basic_p_rot[ps];
 				k_mean_p[ps] --;
 				T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
 				T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
 				T_mean_loc_p_z[ps] -= T_basic_p_z[ps];
-				T_mean_loc_p_rot[ps] -= T_basic_p_rot[ps];
+				T_mean_loc_p_rot_x[ps] -= T_basic_p_rot_x[ps];
+				T_mean_loc_p_rot_y[ps] -= T_basic_p_rot_y[ps];
+				T_mean_loc_p_rot_z[ps] -= T_basic_p_rot_z[ps];
 				//k_bm_inst --;
 				if (k_bm_inst == k_bm_inst_max - 1)
 				{
@@ -431,7 +445,9 @@ int ff_model_check_smooth_dr(long p)
 					dT_p_x[ps] = dT_prev_p_x[ps];
 					dT_p_y[ps] = dT_prev_p_y[ps];
 					dT_p_z[ps] = dT_prev_p_z[ps];
-					dT_p_rot[ps] = dT_prev_p_rot[ps];
+					dT_p_rot_x[ps] = dT_prev_p_rot_x[ps];
+					dT_p_rot_y[ps] = dT_prev_p_rot_y[ps];
+					dT_p_rot_z[ps] = dT_prev_p_rot_z[ps];
 
 					//T_mean_loc_prev_p_x[ps] = T_mean_loc_prev_revert_p[ps];
 				}
@@ -957,7 +973,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
 				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
 				//if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
-				if (dR > (Rp0[p] + Rp0[ps]))
+				if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -1155,7 +1171,9 @@ void ff_model_next_step(void)
 			Ekp_x[p] = M0p[p] * v[p].x * v[p].x / 2.0;
 			Ekp_y[p] = M0p[p] * v[p].y * v[p].y / 2.0;
 			Ekp_z[p] = M0p[p] * v[p].z * v[p].z / 2.0;
-			Ekp_rot[p] = I0p[p] * MUL(w[p],w[p]) / 2.0;
+			Ekp_rot_x[p] = I0p[p] * w[p].x * w[p].x / 2.0;
+			Ekp_rot_y[p] = I0p[p] * w[p].y * w[p].y / 2.0;
+			Ekp_rot_z[p] = I0p[p] * w[p].z * w[p].z / 2.0;
 		};
 	
 	Ek = Ek_tr + Ek_rot;
@@ -1222,15 +1240,15 @@ void ff_model_next_step(void)
 					M0 = M0p[p];
 					I0 = I0p[p];
 
-					drt[p].x = F[p].x * dt / C2[p] +		 
+					drt[p].x = v_r[p].x * dt + F[p].x * dt / C2[p] +		 
                         (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 						//+ drt_r[p].x;
 
-                    drt[p].y = F[p].y * dt / C2[p] +		 
+                    drt[p].y = v_r[p].y * dt + F[p].y * dt / C2[p] +		 
                         (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 						//+ drt_r[p].y;
 
-                    drt[p].z = F[p].z * dt / C2[p] +		 
+                    drt[p].z = v_r[p].z * dt + F[p].z * dt / C2[p] +		 
                         (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
 						//+ drt_r[p].z;
 
@@ -1238,15 +1256,15 @@ void ff_model_next_step(void)
 
 					if (!(is_neel[p]))
 					{
-					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
+					dphi[p].x = w_r[p].x * dt + tau[p].x * dt / gamma_rot[p] +		 
                     (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].x;
 
-					dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
+					dphi[p].y = w_r[p].y * dt + tau[p].y * dt / gamma_rot[p] +		 
                     (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].y;
 
-					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
+					dphi[p].z = w_r[p].z * dt + tau[p].z * dt / gamma_rot[p] +		 
                     (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
 					//+ dphi_r[p].z;
 					}
@@ -1326,7 +1344,7 @@ void ff_model_next_step(void)
 				{
 					k_bm_inst = 1;
 					T_mean_loc = 0;
-					for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot[p] = 0;
+					for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
 					///printf("\n !!!", dT);
 				}
 
@@ -1715,7 +1733,9 @@ again:
         } // start_ideal
 
         v[p].x = v[p].y = v[p].z = 0;
+		v_r[p].x = v_r[p].y = v_r[p].z = 0;
 		w[p].x = w[p].y = w[p].z = 0;
+		w_r[p].x = w_r[p].y = w_r[p].z = 0;
 		/*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
 		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
 		//dW[p] = 0;
@@ -1734,11 +1754,11 @@ again:
         m_sat[p] = 0;
 
 		//k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot[p] = 1.0;
-		dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot[p] = 0;
-		dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot[p] = 0;
-		T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot[p] = 0;
+		dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot_x[p] = dT_p_rot_y[p] = dT_p_rot_z[p] = T;
+		dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot_x[p] = dT_prev_p_rot_y[p] = dT_prev_p_rot_z[p] = T;
+		T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot_x[p] = T_basic_p_rot_y[p] = T_basic_p_rot_z[p] = 0;
 		T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p] = T_mean_p_rot[p] = 0;
-		T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot[p] = 0;
+		T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
 		//T_mean_loc_prev_p[p] = 0;
 		//T_mean_loc_prev_revert_p[p] = 0;
 		k_mean_p[p] = 0;
@@ -2048,17 +2068,21 @@ void ff_model_update_dT_p(long p)
 	T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
 	T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
 	T_basic_p_z[p] = 2 * Ekp_z[p] / kb;
-	T_basic_p_rot[p] = (2 / 3.0) * Ekp_rot[p] / kb;
+	T_basic_p_rot_x[p] = 2 * Ekp_rot_x[p] / kb;
+	T_basic_p_rot_y[p] = 2 * Ekp_rot_y[p] / kb;
+	T_basic_p_rot_z[p] = 2 * Ekp_rot_z[p] / kb;
 	//dT = T - T_basic;
 	T_mean_p_x[p] += T_basic_p_x[p];
 	T_mean_p_y[p] += T_basic_p_y[p];
 	T_mean_p_z[p] += T_basic_p_z[p];
-	T_mean_p_rot[p] += T_basic_p_rot[p];
+	//T_mean_p_rot[p] += T_basic_p_rot[p];
 	k_mean_p[p] ++;
 	T_mean_loc_p_x[p] += T_basic_p_x[p];
 	T_mean_loc_p_y[p] += T_basic_p_y[p];
 	T_mean_loc_p_z[p] += T_basic_p_z[p];
-	T_mean_loc_p_rot[p] += T_basic_p_rot[p];
+	T_mean_loc_p_rot_x[p] += T_basic_p_rot_x[p];
+	T_mean_loc_p_rot_y[p] += T_basic_p_rot_y[p];
+	T_mean_loc_p_rot_z[p] += T_basic_p_rot_z[p];
 	
 	//printf("\n dT = %e", dT);
 
@@ -2067,12 +2091,17 @@ void ff_model_update_dT_p(long p)
 		dT_prev_p_x[p] = dT_p_x[p];
 		dT_prev_p_y[p] = dT_p_y[p];
 		dT_prev_p_z[p] = dT_p_z[p];
-		dT_prev_p_rot[p] = dT_p_rot[p];
+		dT_prev_p_rot_x[p] = dT_p_rot_x[p];
+		dT_prev_p_rot_y[p] = dT_p_rot_y[p];
+		dT_prev_p_rot_z[p] = dT_p_rot_z[p];
 
 		dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
 		dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
 		dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
-		dT_p_rot[p] = T - T_mean_loc_p_rot[p] / k_bm_inst;
+		dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
+		dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
+		dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
+
 		//if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
 		/*if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
 		else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
@@ -2089,6 +2118,25 @@ void ff_model_update_dT_p(long p)
 		//T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
 		//T_mean_loc_prev_p[p] = T_mean_loc_p[p];
 	}
+
+	if (dT_p_x[p] > 0) v_r[p].x = (*var_nor)() * sqrt(kb * dT_p_x[p] / M0p[p]);
+	else			   v_r[p].x = 0;
+
+	if (dT_p_y[p] > 0) v_r[p].y = (*var_nor)() * sqrt(kb * dT_p_y[p] / M0p[p]);
+	else			   v_r[p].y = 0;
+
+	if (dT_p_z[p] > 0) v_r[p].z = (*var_nor)() * sqrt(kb * dT_p_z[p] / M0p[p]);
+	else			   v_r[p].z = 0;
+
+	if (dT_p_rot_x[p] > 0) w_r[p].x = (*var_nor)() * sqrt(kb * dT_p_rot_x[p] / I0p[p]);
+	else			   w_r[p].x = 0;
+
+	if (dT_p_rot_y[p] > 0) w_r[p].y = (*var_nor)() * sqrt(kb * dT_p_rot_y[p] / I0p[p]);
+	else			   w_r[p].y = 0;
+
+	if (dT_p_rot_z[p] > 0) w_r[p].z = (*var_nor)() * sqrt(kb * dT_p_rot_z[p] / I0p[p]);
+	else			   w_r[p].z = 0;
+
 	//k_bm_inst ++;
 
 	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;

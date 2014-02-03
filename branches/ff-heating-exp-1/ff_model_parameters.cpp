@@ -49,11 +49,11 @@ long k_bm_inst = 1;
 //double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
-double smooth_r = 0.2; // 0.4
+double smooth_r = 0.4; // 0.4
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
-double sigma_sf_nano = 1; // 1E-2; // 6E-3 - evap. // 1E-2 - not
+double sigma_sf_nano = 1;
 
 double kr = gl_scale; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
@@ -85,7 +85,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 1E6; //50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
