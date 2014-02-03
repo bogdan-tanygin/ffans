@@ -2300,7 +2300,7 @@ void ff_model_update_conc_in_oleic(long p)
 		if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
 		if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
 
-		phi_vol_fract_oleic += Vpfull[p];
+		phi_vol_fract_oleic += Vp0[p];
 	}
 	else 
 	{
