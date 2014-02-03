@@ -50,9 +50,9 @@ ff_vect_t mt[pN + 1];
 int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
-ff_vect_t P[pN + 1];
+//ff_vect_t P[pN + 1];
 ff_vect_t tau[pN + 1]; // torque
-ff_vect_t tau_r[pN + 1]; // random torque
+//ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
 ff_vect_t w[pN + 1]; // angular velocity vector
@@ -161,11 +161,11 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
-double k_force_adapt;
+/*double k_force_adapt;
 double k_force_adapt_p_x[pN + 1];
 double k_force_adapt_p_y[pN + 1];
 double k_force_adapt_p_z[pN + 1];
-double k_force_adapt_p_rot[pN + 1];
+double k_force_adapt_p_rot[pN + 1];*/
 
 ff_vect_t r_brown_valid_0;
 
@@ -398,8 +398,8 @@ int ff_model_check_smooth_dr(long p)
 			k_bm_inst --;
 			if (k_bm_inst == k_bm_inst_max - 1)
 			{
-				if (dT <= 0) k_force_adapt *= k_force_adapt_0;
-				else k_force_adapt /= k_force_adapt_0;
+				/*if (dT <= 0) k_force_adapt *= k_force_adapt_0;
+				else k_force_adapt /= k_force_adapt_0;*/
 
 				dT= dT_prev;
 				T_mean_loc_prev = T_mean_loc_prev_revert;
@@ -419,14 +419,14 @@ int ff_model_check_smooth_dr(long p)
 				//k_bm_inst --;
 				if (k_bm_inst == k_bm_inst_max - 1)
 				{
-					if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
+					/*if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
 					else k_force_adapt_p_x[ps] /= k_force_adapt_0;
 					if (dT_p_y[ps] <= 0) k_force_adapt_p_y[ps] *= k_force_adapt_0;
 					else k_force_adapt_p_y[ps] /= k_force_adapt_0;
 					if (dT_p_z[ps] <= 0) k_force_adapt_p_z[ps] *= k_force_adapt_0;
 					else k_force_adapt_p_z[ps] /= k_force_adapt_0;
 					if (dT_p_rot[ps] <= 0) k_force_adapt_p_rot[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_rot[ps] /= k_force_adapt_0;
+					else k_force_adapt_p_rot[ps] /= k_force_adapt_0;*/
 
 					dT_p_x[ps] = dT_prev_p_x[ps];
 					dT_p_y[ps] = dT_prev_p_y[ps];
@@ -1083,9 +1083,9 @@ ff_vect_t ff_model_force(long p)
 		tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
 	}
 
-    tF.x += P[p].x;
+    /*tF.x += P[p].x;
     tF.y += P[p].y;
-    tF.z += P[p].z;
+    tF.z += P[p].z;*/
 
     return tF;
 }
@@ -1114,9 +1114,9 @@ ff_vect_t ff_model_torque(long p)
 
 	//printf("\n %e", ttau.x);
 
-    ttau.x += tau_r[p].x;
+    /*ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
-    ttau.z += tau_r[p].z;
+    ttau.z += tau_r[p].z;*/
 
     return ttau;
 }
@@ -1178,7 +1178,7 @@ void ff_model_next_step(void)
 				//Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 								
 				/*if (k_bm_inst == 1)*/
-				ff_model_effective_random_force_update(p);
+				//ff_model_effective_random_force_update(p);
 				
 				f = ff_model_force(p);
 				ttau = ff_model_torque(p);
@@ -1643,7 +1643,7 @@ void ff_model_init(void)
 	// Brownian motion -  parameters
     ///////////////////////////////////////////////////
 	
-	k_force_adapt = 1;
+	//k_force_adapt = 1;
 	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
 	
 	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
@@ -1733,7 +1733,7 @@ again:
 		//m_freeze[p] = 0;
         m_sat[p] = 0;
 
-		k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot[p] = 1.0;
+		//k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot[p] = 1.0;
 		dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot[p] = 0;
 		dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot[p] = 0;
 		T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot[p] = 0;
@@ -1858,9 +1858,9 @@ dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 }*/
 
 // Update of the random force
-void ff_model_effective_random_force_update(long p)
-{
-	double Px, Py, Pz, tau_r_phi; // instantiated effective random force
+//void ff_model_effective_random_force_update(long p)
+//{
+	/*double Px, Py, Pz, tau_r_phi; // instantiated effective random force
 	double theta_0, phi_0; // random direction of the torque 
 	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
 	//double dt0;
@@ -1897,7 +1897,7 @@ void ff_model_effective_random_force_update(long p)
 	D = kb * T / gamma;
 	D_rot = kb * T / gamma_rot;
 	M0 = M0p[p];
-	I0 = I0p[p];
+	I0 = I0p[p];*/
 
 	// instantiation of position change
 	// [Langevin equation + Stokes' law]
@@ -1914,8 +1914,8 @@ void ff_model_effective_random_force_update(long p)
 	// [Euler-Langevin equation + Stokes' law]
 	/*sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
 	dphi = (*var_nor)() * sqrt(3 * sigma_rot);*/ // rotation magnitude
-	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
-	phi_0 = (*var_uni)() * 2 * pi;
+	//theta_0 = (*var_uni)() * pi;   // rotation vector random direction
+	//phi_0 = (*var_uni)() * 2 * pi;
 
 	/*dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
 	dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
@@ -1926,10 +1926,10 @@ void ff_model_effective_random_force_update(long p)
 	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
 	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	speed_ballance = 1;
-	dR = Rp_to_c[p] + Rp0[p] - R_oleic;
+	//speed_ballance = 1;
+	//dR = Rp_to_c[p] + Rp0[p] - R_oleic;
 	//if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
-	if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
+	/*if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
 	{
 		tmp = sqrt(MUL(r[p], r[p]));
 		e3.x = r[p].x / tmp;
@@ -1991,24 +1991,24 @@ void ff_model_effective_random_force_update(long p)
 
 	if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
 	//if (dt < 1.5E-12) speed_ballance = 1;
-	
+	*/
 	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
 	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
 	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
-	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
+	//tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
 	//printf("\n t1 = %e", M0 / gamma);
 	//printf("\n %e", gamma * dt0 / M0);
 	//printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-	P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
+	/*P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
 	P[p].y = Py * k_force_adapt_p_y[p] * speed_ballance;
 	P[p].z = Pz * k_force_adapt_p_z[p] * speed_ballance;
 
 	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p_rot[p] * speed_ballance;
 	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p_rot[p] * speed_ballance;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot[p] * speed_ballance;
-}
+	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot[p] * speed_ballance;*/
+//}
 
 void ff_model_update_dT(void)
 {
@@ -2030,8 +2030,8 @@ void ff_model_update_dT(void)
 	{
 		dT_prev = dT;
 		dT = T - T_mean_loc / k_bm_inst;
-		if (dT > 0) k_force_adapt *= k_force_adapt_0;
-		else k_force_adapt /= k_force_adapt_0;
+		//if (dT > 0) k_force_adapt *= k_force_adapt_0;
+		//else k_force_adapt /= k_force_adapt_0;
 		T_mean_loc_prev_revert = T_mean_loc_prev;
 		T_mean_loc_prev = T_mean_loc;
 	}
@@ -2074,7 +2074,7 @@ void ff_model_update_dT_p(long p)
 		dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
 		dT_p_rot[p] = T - T_mean_loc_p_rot[p] / k_bm_inst;
 		//if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
-		if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
+		/*if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
 		else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
 
 		if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_0;
@@ -2084,7 +2084,7 @@ void ff_model_update_dT_p(long p)
 		else k_force_adapt_p_z[p] /= k_force_adapt_0 * rel_T;
 
 		if (dT_p_rot[p] > 0) k_force_adapt_p_rot[p] *= k_force_adapt_0;
-		else k_force_adapt_p_rot[p] /= k_force_adapt_0 * rel_T;
+		else k_force_adapt_p_rot[p] /= k_force_adapt_0 * rel_T;*/
 
 		//T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
 		//T_mean_loc_prev_p[p] = T_mean_loc_p[p];

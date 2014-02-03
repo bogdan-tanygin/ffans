@@ -367,12 +367,12 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	///////////
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"k_force_adapt = %e", k_force_adapt);
 
     glRasterPos2i(6, shift * 20);
     shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Hysteresis mode = %d", hyst_mode);

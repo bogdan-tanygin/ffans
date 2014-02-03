@@ -43,13 +43,13 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 0.5E-13; // s // 1.5E-5
+double dt = 1.5E-5; // s // 1.5E-5
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
-double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model
+//double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
-double smooth_r = 0.4;
+double smooth_r = 0.2; // 0.4
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
@@ -85,7 +85,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 1E6; //50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;

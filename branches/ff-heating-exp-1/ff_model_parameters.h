@@ -43,7 +43,7 @@ extern double Lx, Ly, Lz; //meters
 extern double dt;
 extern long k_bm_inst_max;
 extern long k_bm_inst;
-extern double k_force_adapt_0;
+//extern double k_force_adapt_0;
 extern long slow_steps;
 //extern double smooth_v;
 extern double smooth_r;
