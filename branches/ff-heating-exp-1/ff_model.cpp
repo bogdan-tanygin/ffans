@@ -973,7 +973,8 @@ ff_vect_t ff_model_nonloc_force(long p)
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
 				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
 				//if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
-				if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
+				//if (dR > (Rp0[p] + Rp0[ps]) * (1 + smooth_r))
+				if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
