@@ -402,9 +402,9 @@ int ff_model_check_smooth_dr(long p)
                 m[ps].y -= dm[ps].y;
                 m[ps].z -= dm[ps].z;*/
 
-				if ((!(is_neel[p])) && (ps < p))
+				if ((!(is_neel[ps])) && (ps < p))
 				{
-					//m[ps] = m_prev[ps];
+					m[ps] = m_prev[ps];
 				}
             }
             dt /= 2.0;
@@ -1317,6 +1317,7 @@ void ff_model_next_step(void)
 					dphi[p].y += dphi_r[p].y;
 					dphi[p].z += dphi_r[p].z;*/
 
+					//m_prev[p] = m[p];
 					if (!(is_neel[p]))
 					{
 					//dm[p].x = dm[p].y = dm[p].z = 0;
