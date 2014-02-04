@@ -47,6 +47,7 @@ ff_vect_t r[pN + 1];  //particles positions
 double Rp_to_c[pN + 1];
 ff_vect_t m[pN + 1];  //particles magnetic moment direction
 ff_vect_t mt[pN + 1];
+ff_vect_t m_prev[pN + 1];
 int m_sat[pN + 1];
 
 ff_vect_t F[pN + 1];
@@ -400,6 +401,13 @@ int ff_model_check_smooth_dr(long p)
 				/*m[ps].x -= dm[ps].x;
                 m[ps].y -= dm[ps].y;
                 m[ps].z -= dm[ps].z;*/
+
+				if ((!(is_neel[p])) && (ps < p))
+				{
+					m[ps].x = m_prev[ps].x;
+					m[ps].y = m_prev[ps].y;
+					m[ps].z = m_prev[ps].z;
+				}
             }
             dt /= 2.0;
             slow_steps += 10;
@@ -419,7 +427,7 @@ int ff_model_check_smooth_dr(long p)
 				T_mean_loc_prev = T_mean_loc_prev_revert;
 			}
 			
-			for(ps = 1; ps <= p; ps ++)
+			for(ps = 1; ps <= pN; ps ++)
 			{
 				T_mean_p_x[ps] -= T_basic_p_x[ps];
 				T_mean_p_y[ps] -= T_basic_p_y[ps];
@@ -1313,7 +1321,7 @@ void ff_model_next_step(void)
 
 					if (!(is_neel[p]))
 					{
-					dm[p].x = dm[p].y = dm[p].z = 0;
+					//dm[p].x = dm[p].y = dm[p].z = 0;
 
 					mt[p] = m[p];
 					// turn around ex
@@ -1326,13 +1334,20 @@ void ff_model_next_step(void)
 					mt[p].x = mt[p].x * cos(dphi[p].z) - mt[p].y * sin(dphi[p].z);
 					mt[p].y = mt[p].x * sin(dphi[p].z) + mt[p].y * cos(dphi[p].z);
 
-					dm[p].x = mt[p].x - m[p].x;
-					dm[p].y = mt[p].y - m[p].y;
-					dm[p].z = mt[p].z - m[p].z;
+					//dm[p].x = mt[p].x - m[p].x;
+					//dm[p].y = mt[p].y - m[p].y;
+					//dm[p].z = mt[p].z - m[p].z;
 
-					m[p].x += dm[p].x;
-					m[p].y += dm[p].y;
-					m[p].z += dm[p].z;
+					//m[p].x += dm[p].x;
+					//m[p].y += dm[p].y;
+					//m[p].z += dm[p].z;
+
+					m_prev[p].x = m[p].x;
+					m_prev[p].y = m[p].y;
+					m_prev[p].z = m[p].z;
+					m[p].x = mt[p].x;
+					m[p].y = mt[p].y;
+					m[p].z = mt[p].z;
 
 					tmmag = sqrt(MUL(m[p], m[p]));
 
@@ -2265,7 +2280,7 @@ void ff_model_size_dispersion_param_calc(double R0, long p)
 	Vp0[p] = V0;
 	Vpfull[p] = Vfull;
 	M0p[p] = tm;
-	I0p[p] = (2 / 5.0) * M0p[p] * R * R;
+	I0p[p] = (2 / 5.0) * M0p[p] * R0 * R0;
 
 	double m_mol_rel = 231.6;
     double m_mol = m_mol_rel * 1E-3 / Na;
