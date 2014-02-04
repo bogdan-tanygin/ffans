@@ -61,15 +61,15 @@ ff_vect_t w[pN + 1]; // angular velocity vector
 //ff_vect_t w_r[pN + 1]; // random heat component
 
 ff_vect_t drt[pN + 1];
-ff_vect_t drt_r[pN + 1]; // instantiated random translation
+//ff_vect_t drt_r[pN + 1]; // instantiated random translation
 ff_vect_t dvt[pN + 1];
-ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
-double dv_r[pN + 1]; // extra random velocity magnitude
+//ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
+//double dv_r[pN + 1]; // extra random velocity magnitude
 ff_vect_t dphi[pN + 1];
-ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
-ff_vect_t dm[pN + 1];
+//ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
+//ff_vect_t dm[pN + 1];
 ff_vect_t dw[pN + 1];
-double dw_r[pN + 1]; // extra random angular velocity magnitude
+//double dw_r[pN + 1]; // extra random angular velocity magnitude
 
 //ff_vect_t dir110[13];
 
@@ -85,7 +85,7 @@ double m0p[pN + 1];
 double M0p[pN + 1];
 double I0p[pN + 1]; // particle moment of inertia
 double r0modp[pN + 1];
-double Vselfp[pN + 1];
+//double Vselfp[pN + 1];
 double C2[pN + 1];
 double gamma_rot[pN + 1];
 
@@ -404,9 +404,7 @@ int ff_model_check_smooth_dr(long p)
 
 				if ((!(is_neel[p])) && (ps < p))
 				{
-					m[ps].x = m_prev[ps].x;
-					m[ps].y = m_prev[ps].y;
-					m[ps].z = m_prev[ps].z;
+					//m[ps] = m_prev[ps];
 				}
             }
             dt /= 2.0;
@@ -1311,13 +1309,13 @@ void ff_model_next_step(void)
 							goto t_end;
 						}
 
-					r[p].x += drt_r[p].x;
+					/*r[p].x += drt_r[p].x;
 					r[p].y += drt_r[p].y;
 					r[p].z += drt_r[p].z;
 
 					dphi[p].x += dphi_r[p].x;
 					dphi[p].y += dphi_r[p].y;
-					dphi[p].z += dphi_r[p].z;
+					dphi[p].z += dphi_r[p].z;*/
 
 					if (!(is_neel[p]))
 					{
@@ -1342,12 +1340,8 @@ void ff_model_next_step(void)
 					//m[p].y += dm[p].y;
 					//m[p].z += dm[p].z;
 
-					m_prev[p].x = m[p].x;
-					m_prev[p].y = m[p].y;
-					m_prev[p].z = m[p].z;
-					m[p].x = mt[p].x;
-					m[p].y = mt[p].y;
-					m[p].z = mt[p].z;
+					m_prev[p] = m[p];
+					m[p] = mt[p];
 
 					tmmag = sqrt(MUL(m[p], m[p]));
 
