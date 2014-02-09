@@ -155,11 +155,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 
 	case 'T': case 't':
-        T += 10;
+        T += 2;
         break;
 
     case 'C': case 'c':
-        T -= 10;
+        T -= 2;
         break;
 	
 	case 'P': case 'p':

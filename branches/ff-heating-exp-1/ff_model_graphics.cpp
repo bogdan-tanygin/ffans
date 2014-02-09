@@ -499,7 +499,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
 	glColor4f(0,0,0,0.75);
-    sprintf(buf,"T = %5.3e K", T);
+    sprintf(buf,"t = %5.3e °C", T + ta0);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
