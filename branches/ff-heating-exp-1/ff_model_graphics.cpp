@@ -1,20 +1,20 @@
 /**************************************************************************
- * Copyright (C) 2011,2013 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
- * All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
+* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* All rights reserved.
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************/
 
 #include <windows.h>
 #include <stdio.h>
@@ -189,12 +189,12 @@ void ff_mgr_show_next_step()
     double kvec;
     //double space_k = 9E6;
     double kSecondary = 1;
-    
+
     //step++;
     //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
     glLineWidth(2.0f);
-	glBegin(GL_LINE_LOOP);
+    glBegin(GL_LINE_LOOP);
 
     glColor3f(0.0, 0.0, 0.0);
     glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
@@ -234,34 +234,34 @@ void ff_mgr_show_next_step()
             r1.z = space_k * r[p].z;
 
             glTranslatef(r1.x, r1.y, r1.z);
-			glColor3f(1.0, 0.5, 0.5);
-			//glColor3f(0.5, 0.5, 0.5);
-			if (show_sphere) 
-			{
-				gluSphere(g_quad, space_k * Rp0[p], 20, 20);
-				
-				if (show_steric)
-				{
-					glEnable(GL_ALPHA_TEST);
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					
-					glColor4f(0.5, 0.5, 0.5, 0.5);
-					gluSphere(g_quad, space_k * Rp[p], 20, 20);
-					
-					glDisable(GL_BLEND);
-					glDisable(GL_ALPHA_TEST);
-				}
-			}
-	        glTranslatef(-r1.x, -r1.y, -r1.z);
-	
+            glColor3f(1.0, 0.5, 0.5);
+            //glColor3f(0.5, 0.5, 0.5);
+            if (show_sphere) 
+            {
+                gluSphere(g_quad, space_k * Rp0[p], 20, 20);
+
+                if (show_steric)
+                {
+                    glEnable(GL_ALPHA_TEST);
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                    glColor4f(0.5, 0.5, 0.5, 0.5);
+                    gluSphere(g_quad, space_k * Rp[p], 20, 20);
+
+                    glDisable(GL_BLEND);
+                    glDisable(GL_ALPHA_TEST);
+                }
+            }
+            glTranslatef(-r1.x, -r1.y, -r1.z);
+
             //glDisable(GL_BLEND);
             //glDisable(GL_ALPHA_TEST);
 
-			if (show_m)
+            if (show_m)
             {
                 kvec = 2;
-				kSecondary = space_k * Rp[p] * 150;
+                kSecondary = space_k * Rp[p] * 150;
 
                 //r1.x = space_k * r[p].x / Lx;
                 //r1.y = space_k * r[p].y / Ly;
@@ -319,18 +319,18 @@ void ff_mgr_show_next_step()
             ff_mgr_draw_vector(r0, v1);
         }
 
-		if (show_droplet)
-		{
-			glEnable(GL_ALPHA_TEST);
+        if (show_droplet)
+        {
+            glEnable(GL_ALPHA_TEST);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			
-			glColor4f(0.2, 0.1, 0.6, 0.5);
-			gluSphere(g_quad, space_k * R_oleic, 20, 20);
 
-			glDisable(GL_BLEND);
-			glDisable(GL_ALPHA_TEST);
-		}
+            glColor4f(0.2, 0.1, 0.6, 0.5);
+            gluSphere(g_quad, space_k * R_oleic, 20, 20);
+
+            glDisable(GL_BLEND);
+            glDisable(GL_ALPHA_TEST);
+        }
 }
 
 void ff_mgr_print_info()
@@ -338,8 +338,8 @@ void ff_mgr_print_info()
     char buf[80];
     int shift = -1;
 
-	glDisable(GL_LIGHTING);
-	//--------------------
+    glDisable(GL_LIGHTING);
+    //--------------------
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"step = %d", step);
@@ -383,7 +383,7 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	///////////
+    ///////////
     glColor4f(0,0,0,0.75);
     sprintf(buf,"k_force_adapt = %e", k_force_adapt);
 
@@ -432,7 +432,7 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	*/
+    */
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"Hx = %5.3e Oe", BmanX);
@@ -456,19 +456,19 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"Lx = %5.3e m", Lx);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"phi_vol (oleic) = %5.3e %%", phi_vol_fract_oleic);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"Ek_tr = %5.3e J", Ek_tr);
 
     glRasterPos2i(6, (shift--) * 20);
@@ -480,32 +480,32 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"pseudo_dT = %5.3e K", dT);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"T_mean = %5.3e K", T_mean / k_mean);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"T_mean_loc = %5.3e K", T_mean_loc_prev / (k_bm_inst_max - 1));
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0,0,0,0.75);
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"t = %5.3e °C", T + ta0);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-	
-	// ------------------
-	glEnable(GL_LIGHTING);
+
+    // ------------------
+    glEnable(GL_LIGHTING);
 }
 
 void ff_mgr_init()
@@ -522,7 +522,7 @@ void ff_mgr_init()
     //y_rot = 30.0f;
     //x_rot = -60.0f;
     //z_off = -1.0f;
-	z_off = -5.0f;
+    z_off = -5.0f;
 
     //glCullFace(GL_BACK);
     //glFrontFace(GL_CCW);

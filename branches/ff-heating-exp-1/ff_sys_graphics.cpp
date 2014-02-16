@@ -1,20 +1,20 @@
 /**************************************************************************
- * Copyright (C) 2011,2013 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
- * All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
+* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* All rights reserved.
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************/
 
 #include "ff_app.h"
 #include "ff_sys_graphics.h"
@@ -68,27 +68,27 @@ void cbRenderScene(void)
 
     //glMatrixMode(GL_MODELVIEW);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity(); 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity(); 
 
     glTranslatef(0.0f,0.0f,z_off);
 
     glRotatef(x_rot,1.0f,0.0f,0.0f);
     glRotatef(y_rot,0.0f,0.0f,1.0f);
 
-	//glTranslatef(0.0f, 0.0f, 0.0f);
+    //glTranslatef(0.0f, 0.0f, 0.0f);
 
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
-	ff_model_next_step();
-	//glPopMatrix();
-	
-	//glutSwapBuffers();
+    ff_model_next_step();
+    //glPopMatrix();
 
-	// Output of information to the GL screen
-	// --------------------------------------
-	
+    //glutSwapBuffers();
+
+    // Output of information to the GL screen
+    // --------------------------------------
+
     glLoadIdentity();
 
     glMatrixMode(GL_PROJECTION);
@@ -122,28 +122,28 @@ void cbRenderScene(void)
 
     //do_fps();
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-	cbResizeScene(window_width, window_height);
+    cbResizeScene(window_width, window_height);
 }
 
 void cbResizeScene(int width, int height)
 {
     GLdouble clippingMagnitude = 0.5 * sqrt(2.0);
-	int side;
+    int side;
 
-	if (height == 0) height = 1;
-	if (width < height) side = width;
-	else side = height;
-	
+    if (height == 0) height = 1;
+    if (width < height) side = width;
+    else side = height;
+
     glViewport((width - side) / 2, (height - side) / 2, side, side);
     //glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //gluPerspective(45.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
-	if (projection_type == 1) glFrustum(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
-	else					  glOrtho  (-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
+    if (projection_type == 1) glFrustum(-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
+    else					  glOrtho  (-clippingMagnitude, +clippingMagnitude, -clippingMagnitude, +clippingMagnitude, nearVal, farVal);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -169,19 +169,19 @@ void graph_init(int width, int height)
 
 /*static void do_fps(void) 
 {
-    static clock_t last=0;
-    clock_t now;
-    float delta;
-    int frame_rate_samples = 50;
+static clock_t last=0;
+clock_t now;
+float delta;
+int frame_rate_samples = 50;
 
-    if (++(frame_count) >= frame_rate_samples) {
-        now  = clock();
-        delta= (now - last) / (float) CLOCKS_PER_SEC;
-        last = now;
+if (++(frame_count) >= frame_rate_samples) {
+now  = clock();
+delta= (now - last) / (float) CLOCKS_PER_SEC;
+last = now;
 
-        frame_rate = frame_rate_samples / delta;
-        frame_count = 0;
-    }
+frame_rate = frame_rate_samples / delta;
+frame_count = 0;
+}
 }*/
 
 void ff_gr_print(void *font, char *str)
@@ -198,10 +198,10 @@ void ff_gr_init(int argc, char **argv)
     x_speed = 0.0000f;
     y_speed = 0.0000f;
     rotating = 1;
-    
+
     frame_count = 0;
     frame_rate = 0;
-        
+
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);

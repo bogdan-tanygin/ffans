@@ -1,20 +1,20 @@
 /**************************************************************************
- * Copyright (C) 2011,2013 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
- * All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
+* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* All rights reserved.
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************/
 
 //system inclusions
 ///////////////////
@@ -362,7 +362,7 @@ void ff_model_auto_hyst(void)
         ff_model_upgrade_ext_field();
         if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
- //       ff_io_save_hyst();
+        //       ff_io_save_hyst();
 
         mz_glob = 0;
         glob_start_t = t;
@@ -379,91 +379,91 @@ int ff_model_check_smooth_dr(long p)
 
     dr = sqrt(MUL(drt[p], drt[p]));
     //rmod = d[4];
-	//rmod = 2 * Rp[p];
-	//rmod = 2 * delta;
-	rmod = 2 * R0_min;
+    //rmod = 2 * Rp[p];
+    //rmod = 2 * delta;
+    rmod = 2 * R0_min;
 
-	dphimag = sqrt(MUL(dphi[p], dphi[p]));
-	
+    dphimag = sqrt(MUL(dphi[p], dphi[p]));
+
     if (rmod > 0)
         if ((dr / rmod > smooth_r) || ((dphimag / pi > smooth_r) && (!(is_neel[p]))))
         {
-			//if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
-			//if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
-			//if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
+            //if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
+            //if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
+            //if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
 
-			for(ps = 1; ps <= p; ps ++)
+            for(ps = 1; ps <= p; ps ++)
             {
                 r[ps].x -= drt[ps].x;
                 r[ps].y -= drt[ps].y;
                 r[ps].z -= drt[ps].z;
 
-				/*m[ps].x -= dm[ps].x;
+                /*m[ps].x -= dm[ps].x;
                 m[ps].y -= dm[ps].y;
                 m[ps].z -= dm[ps].z;*/
 
-				if ((!(is_neel[ps])) && (ps < p))
-				{
-					m[ps] = m_prev[ps];
-				}
+                if ((!(is_neel[ps])) && (ps < p))
+                {
+                    m[ps] = m_prev[ps];
+                }
             }
             dt /= 2.0;
             slow_steps += 10;
             res = 0;
             step--;
 
-			T_mean -= T_basic;
-			k_mean --;
-			T_mean_loc -= T_basic;
-			k_bm_inst --;
-			if (k_bm_inst == k_bm_inst_max - 1)
-			{
-				/*if (dT <= 0) k_force_adapt *= k_force_adapt_0;
-				else k_force_adapt /= k_force_adapt_0;*/
+            T_mean -= T_basic;
+            k_mean --;
+            T_mean_loc -= T_basic;
+            k_bm_inst --;
+            if (k_bm_inst == k_bm_inst_max - 1)
+            {
+                /*if (dT <= 0) k_force_adapt *= k_force_adapt_0;
+                else k_force_adapt /= k_force_adapt_0;*/
 
-				dT= dT_prev;
-				T_mean_loc_prev = T_mean_loc_prev_revert;
-			}
-			
-			for(ps = 1; ps <= pN; ps ++)
-			{
-				T_mean_p_x[ps] -= T_basic_p_x[ps];
-				T_mean_p_y[ps] -= T_basic_p_y[ps];
-				T_mean_p_z[ps] -= T_basic_p_z[ps];
-				//T_mean_p_rot[ps] -= T_basic_p_rot[ps];
-				k_mean_p[ps] --;
-				T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
-				T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
-				T_mean_loc_p_z[ps] -= T_basic_p_z[ps];
-				T_mean_loc_p_rot_x[ps] -= T_basic_p_rot_x[ps];
-				T_mean_loc_p_rot_y[ps] -= T_basic_p_rot_y[ps];
-				T_mean_loc_p_rot_z[ps] -= T_basic_p_rot_z[ps];
-				//k_bm_inst --;
-				if (k_bm_inst == k_bm_inst_max - 1)
-				{
-					if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_x[ps] /= k_force_adapt_0;
-					if (dT_p_y[ps] <= 0) k_force_adapt_p_y[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_y[ps] /= k_force_adapt_0;
-					if (dT_p_z[ps] <= 0) k_force_adapt_p_z[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_z[ps] /= k_force_adapt_0;
-					if (dT_p_rot_x[ps] <= 0) k_force_adapt_p_rot_x[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_rot_x[ps] /= k_force_adapt_0;
-					if (dT_p_rot_y[ps] <= 0) k_force_adapt_p_rot_y[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_rot_y[ps] /= k_force_adapt_0;
-					if (dT_p_rot_z[ps] <= 0) k_force_adapt_p_rot_z[ps] *= k_force_adapt_0;
-					else k_force_adapt_p_rot_z[ps] /= k_force_adapt_0;
+                dT= dT_prev;
+                T_mean_loc_prev = T_mean_loc_prev_revert;
+            }
 
-					dT_p_x[ps] = dT_prev_p_x[ps];
-					dT_p_y[ps] = dT_prev_p_y[ps];
-					dT_p_z[ps] = dT_prev_p_z[ps];
-					dT_p_rot_x[ps] = dT_prev_p_rot_x[ps];
-					dT_p_rot_y[ps] = dT_prev_p_rot_y[ps];
-					dT_p_rot_z[ps] = dT_prev_p_rot_z[ps];
+            for(ps = 1; ps <= pN; ps ++)
+            {
+                T_mean_p_x[ps] -= T_basic_p_x[ps];
+                T_mean_p_y[ps] -= T_basic_p_y[ps];
+                T_mean_p_z[ps] -= T_basic_p_z[ps];
+                //T_mean_p_rot[ps] -= T_basic_p_rot[ps];
+                k_mean_p[ps] --;
+                T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
+                T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
+                T_mean_loc_p_z[ps] -= T_basic_p_z[ps];
+                T_mean_loc_p_rot_x[ps] -= T_basic_p_rot_x[ps];
+                T_mean_loc_p_rot_y[ps] -= T_basic_p_rot_y[ps];
+                T_mean_loc_p_rot_z[ps] -= T_basic_p_rot_z[ps];
+                //k_bm_inst --;
+                if (k_bm_inst == k_bm_inst_max - 1)
+                {
+                    if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_x[ps] /= k_force_adapt_0;
+                    if (dT_p_y[ps] <= 0) k_force_adapt_p_y[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_y[ps] /= k_force_adapt_0;
+                    if (dT_p_z[ps] <= 0) k_force_adapt_p_z[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_z[ps] /= k_force_adapt_0;
+                    if (dT_p_rot_x[ps] <= 0) k_force_adapt_p_rot_x[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_rot_x[ps] /= k_force_adapt_0;
+                    if (dT_p_rot_y[ps] <= 0) k_force_adapt_p_rot_y[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_rot_y[ps] /= k_force_adapt_0;
+                    if (dT_p_rot_z[ps] <= 0) k_force_adapt_p_rot_z[ps] *= k_force_adapt_0;
+                    else k_force_adapt_p_rot_z[ps] /= k_force_adapt_0;
 
-					//T_mean_loc_prev_p_x[ps] = T_mean_loc_prev_revert_p[ps];
-				}
-			}
+                    dT_p_x[ps] = dT_prev_p_x[ps];
+                    dT_p_y[ps] = dT_prev_p_y[ps];
+                    dT_p_z[ps] = dT_prev_p_z[ps];
+                    dT_p_rot_x[ps] = dT_prev_p_rot_x[ps];
+                    dT_p_rot_y[ps] = dT_prev_p_rot_y[ps];
+                    dT_p_rot_z[ps] = dT_prev_p_rot_z[ps];
+
+                    //T_mean_loc_prev_p_x[ps] = T_mean_loc_prev_revert_p[ps];
+                }
+            }
         }
 
         return res;
@@ -557,58 +557,58 @@ return ret_f;
 /*
 void __deprecated__ff_model_set_rand_dir(long p)
 {
-    long i;
-    double dtheta; // step in [R]andom long
-    double R_points[10 + 1];
-    long R;
-    double theta, phi;
-    double Fmag, tmag, bmag;
-    ff_vect_t Ft, t, b;
+long i;
+double dtheta; // step in [R]andom long
+double R_points[10 + 1];
+long R;
+double theta, phi;
+double Fmag, tmag, bmag;
+ff_vect_t Ft, t, b;
 
-    /*
-    dtheta = pi / 10.0;
-    for (i = 1; i <= 10; i++)
-    {
-    R_points[i] = 32768.0 * ff_model_distrib_f_r((i - 0.5) * dtheta, p);
-    if (i > 1) R_points[i] += R_points[i - 1];
-    //printf("\n i = %d, Rpoints = %f", i, R_points[i]);
-    }
+/*
+dtheta = pi / 10.0;
+for (i = 1; i <= 10; i++)
+{
+R_points[i] = 32768.0 * ff_model_distrib_f_r((i - 0.5) * dtheta, p);
+if (i > 1) R_points[i] += R_points[i - 1];
+//printf("\n i = %d, Rpoints = %f", i, R_points[i]);
+}
 
-    R = rand();
+R = rand();
 
-    theta = 0.5 * dtheta; // default for zero
-    for (i = 1; i <= 9; i++)
-    if ((R > R_points[i])&&(R <= R_points[i + 1]))
-    {
-    theta = (i - 0.5) * dtheta;
-    break;
-    }
-    *//*
-    phi = 2 * pi * rand() / 32768.0;
-    theta = pi * rand() / 32768.0;
+theta = 0.5 * dtheta; // default for zero
+for (i = 1; i <= 9; i++)
+if ((R > R_points[i])&&(R <= R_points[i + 1]))
+{
+theta = (i - 0.5) * dtheta;
+break;
+}
+*//*
+phi = 2 * pi * rand() / 32768.0;
+theta = pi * rand() / 32768.0;
 
-    Fmag = sqrt(MUL(F[p],F[p]));
+Fmag = sqrt(MUL(F[p],F[p]));
 
-    if (Fmag == 0) Fmag = 0.00000000001;
+if (Fmag == 0) Fmag = 0.00000000001;
 
-    Ft = F[p];
-    if ((F[p].x == 0)&&(F[p].y == 0)) {Ft.x = 1E-5; Ft.y = 1E-5;}
+Ft = F[p];
+if ((F[p].x == 0)&&(F[p].y == 0)) {Ft.x = 1E-5; Ft.y = 1E-5;}
 
-    t.x = - Ft.y;
-    t.y =   Ft.x;
-    t.z =   0;
+t.x = - Ft.y;
+t.y =   Ft.x;
+t.z =   0;
 
-    tmag = sqrt(MUL(t,t));
+tmag = sqrt(MUL(t,t));
 
-    b.x = t.y * Ft.z - t.z * Ft.y;
-    b.y = t.z * Ft.x - t.x * Ft.z;
-    b.z = t.x * Ft.y - t.y * Ft.x;
+b.x = t.y * Ft.z - t.z * Ft.y;
+b.y = t.z * Ft.x - t.x * Ft.z;
+b.z = t.x * Ft.y - t.y * Ft.x;
 
-    bmag = sqrt(MUL(b,b));
+bmag = sqrt(MUL(b,b));
 
-    drt[p].x += r0modp[p] * sqrt(dt) * (Ft.x * cos(theta) / Fmag + t.x * sin(theta) * cos(phi) / tmag + b.x * sin(theta) * sin(phi) / bmag);
-    drt[p].y += r0modp[p] * sqrt(dt) * (Ft.y * cos(theta) / Fmag + t.y * sin(theta) * cos(phi) / tmag + b.y * sin(theta) * sin(phi) / bmag);
-    drt[p].z += r0modp[p] * sqrt(dt) * (Ft.z * cos(theta) / Fmag + t.z * sin(theta) * cos(phi) / tmag + b.z * sin(theta) * sin(phi) / bmag);
+drt[p].x += r0modp[p] * sqrt(dt) * (Ft.x * cos(theta) / Fmag + t.x * sin(theta) * cos(phi) / tmag + b.x * sin(theta) * sin(phi) / bmag);
+drt[p].y += r0modp[p] * sqrt(dt) * (Ft.y * cos(theta) / Fmag + t.y * sin(theta) * cos(phi) / tmag + b.y * sin(theta) * sin(phi) / bmag);
+drt[p].z += r0modp[p] * sqrt(dt) * (Ft.z * cos(theta) / Fmag + t.z * sin(theta) * cos(phi) / tmag + b.z * sin(theta) * sin(phi) / bmag);
 }*/
 
 /*void ff_model_set_m(long p)
@@ -693,130 +693,130 @@ ff_vect_t ff_model_nonloc_torque(long p)
     int is_last;
 
     ff_vect_t ttB;
-	ff_vect_t ttau;
+    ff_vect_t ttau;
 
     ttau.x = ttau.y = ttau.z = 0;
-	
-	//	do
+
+    //	do
     //	{
     //for(p = 1; p <= pN; p ++)
-        if (exist_p[p])
-        {
-            ttB = Bext(r[p].x, r[p].y, r[p].z);
-            tBx = ttB.x;
-            tBy = ttB.y;
-            tBz = ttB.z;
+    if (exist_p[p])
+    {
+        ttB = Bext(r[p].x, r[p].y, r[p].z);
+        tBx = ttB.x;
+        tBy = ttB.y;
+        tBz = ttB.z;
 
-            for(ps = 1; ps <= pN; ps ++)
-                if (exist_p[ps])
-                    if (p != ps)
+        for(ps = 1; ps <= pN; ps ++)
+            if (exist_p[ps])
+                if (p != ps)
+                {
+                    /*#ifdef SECONDARY
+                    for(di = -2; di <= 2; di++)
+                    for(dj = -2; dj <= 2; dj++) // including zero!
                     {
-                        /*#ifdef SECONDARY
-                        for(di = -2; di <= 2; di++)
-                        for(dj = -2; dj <= 2; dj++) // including zero!
-                        {
-                        #endif*/
-                        dx = - r[ps].x + r[p].x;// + di * Lx;
-                        dy = - r[ps].y + r[p].y;// + dj * Ly;
-                        dz = - r[ps].z + r[p].z;
+                    #endif*/
+                    dx = - r[ps].x + r[p].x;// + di * Lx;
+                    dy = - r[ps].y + r[p].y;// + dj * Ly;
+                    dz = - r[ps].z + r[p].z;
 
-                        dR = sqrt(dx * dx + dy * dy + dz * dz);
+                    dR = sqrt(dx * dx + dy * dy + dz * dz);
 
-						dR2 = dR * dR;
+                    dR2 = dR * dR;
 
-                        if (1)
-                        {
+                    if (1)
+                    {
 
-                            mxs = m[ps].x;
-                            mys = m[ps].y;
-                            mzs = m[ps].z;
+                        mxs = m[ps].x;
+                        mys = m[ps].y;
+                        mzs = m[ps].z;
 
-                            MUL2mod = 3 * (mxs * dx + mys * dy + mzs * dz);
+                        MUL2mod = 3 * (mxs * dx + mys * dy + mzs * dz);
 
-                            dR5 = pow(dR,5);
-                            dR5mod1 = dR5 / C5;
+                        dR5 = pow(dR,5);
+                        dR5mod1 = dR5 / C5;
 
-                            MUL2mod__dR5mod1 = MUL2mod / dR5mod1;
-                            dR2__dR5mod1 = dR2 / dR5mod1;
+                        MUL2mod__dR5mod1 = MUL2mod / dR5mod1;
+                        dR2__dR5mod1 = dR2 / dR5mod1;
 
-                            dtBx = dx * MUL2mod__dR5mod1 - mxs * dR2__dR5mod1;
-                            dtBy = dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
-                            dtBz = dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
+                        dtBx = dx * MUL2mod__dR5mod1 - mxs * dR2__dR5mod1;
+                        dtBy = dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
+                        dtBz = dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
 
-                            if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs);
+                        if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs);
 
-                        } 
-                        else
-                        {
-                             
-                        }
+                    } 
+                    else
+                    {
 
-                        /*tms = sqrt(MUL(m[ps],m[ps]));
-                        esx = m[ps].x / tms;
-                        esy = m[ps].y / tms;
-                        esz = m[ps].z / tms;
+                    }
 
-                        dx_q_plus  = dx - esx * Rp[ps]; // "plus" is mag. charge
-                        dx_q_minus = dx + esx * Rp[ps];
+                    /*tms = sqrt(MUL(m[ps],m[ps]));
+                    esx = m[ps].x / tms;
+                    esy = m[ps].y / tms;
+                    esz = m[ps].z / tms;
 
-                        dy_q_plus  = dy - esy * Rp[ps];
-                        dy_q_minus = dy + esy * Rp[ps];
+                    dx_q_plus  = dx - esx * Rp[ps]; // "plus" is mag. charge
+                    dx_q_minus = dx + esx * Rp[ps];
 
-                        dz_q_plus  = dz - esz * Rp[ps];
-                        dz_q_minus = dz + esz * Rp[ps];
+                    dy_q_plus  = dy - esy * Rp[ps];
+                    dy_q_minus = dy + esy * Rp[ps];
 
-                        dR_q_plus = sqrt(dx_q_plus * dx_q_plus + dy_q_plus * dy_q_plus + dz_q_plus * dz_q_plus);
-                        dR_q_minus = sqrt(dx_q_minus * dx_q_minus + dy_q_minus * dy_q_minus + dz_q_minus * dz_q_minus);
+                    dz_q_plus  = dz - esz * Rp[ps];
+                    dz_q_minus = dz + esz * Rp[ps];
 
-                        mag_qs = tms / (4.0 * Rp[ps] / 3.0);
+                    dR_q_plus = sqrt(dx_q_plus * dx_q_plus + dy_q_plus * dy_q_plus + dz_q_plus * dz_q_plus);
+                    dR_q_minus = sqrt(dx_q_minus * dx_q_minus + dy_q_minus * dy_q_minus + dz_q_minus * dz_q_minus);
 
-                        dtBqx = C5 * mag_qs * (dx_q_plus / pow(dR_q_plus, 3) - dx_q_minus / pow(dR_q_minus, 3));
-                        dtBqy = C5 * mag_qs * (dy_q_plus / pow(dR_q_plus, 3) - dy_q_minus / pow(dR_q_minus, 3));
-                        dtBqz = C5 * mag_qs * (dz_q_plus / pow(dR_q_plus, 3) - dz_q_minus / pow(dR_q_minus, 3));
+                    mag_qs = tms / (4.0 * Rp[ps] / 3.0);
 
-                        tBx += dtBqx * tms / m0p[ps] + dtBx * (1 - tms / m0p[ps]);
-                        tBy += dtBqy * tms / m0p[ps] + dtBy * (1 - tms / m0p[ps]);
-                        tBz += dtBqz * tms / m0p[ps] + dtBz * (1 - tms / m0p[ps]);*/
+                    dtBqx = C5 * mag_qs * (dx_q_plus / pow(dR_q_plus, 3) - dx_q_minus / pow(dR_q_minus, 3));
+                    dtBqy = C5 * mag_qs * (dy_q_plus / pow(dR_q_plus, 3) - dy_q_minus / pow(dR_q_minus, 3));
+                    dtBqz = C5 * mag_qs * (dz_q_plus / pow(dR_q_plus, 3) - dz_q_minus / pow(dR_q_minus, 3));
 
-                        tBx += dtBx;
-                        tBy += dtBy;
-                        tBz += dtBz;
+                    tBx += dtBqx * tms / m0p[ps] + dtBx * (1 - tms / m0p[ps]);
+                    tBy += dtBqy * tms / m0p[ps] + dtBy * (1 - tms / m0p[ps]);
+                    tBz += dtBqz * tms / m0p[ps] + dtBz * (1 - tms / m0p[ps]);*/
 
-                        /*#ifdef SECONDARY
-                        } // di and dj
-                        #endif*/
-                    } // if (p != ps)
+                    tBx += dtBx;
+                    tBy += dtBy;
+                    tBz += dtBz;
 
-                    tBmag = sqrt(tBx * tBx + tBy * tBy + tBz * tBz);
-                    /*tm = sqrt(MUL(m[p],m[p]));
+                    /*#ifdef SECONDARY
+                    } // di and dj
+                    #endif*/
+                } // if (p != ps)
 
-                    eps = acos((m[p].x * tBx + m[p].y * tBy + m[p].z * tBz) / (tBmag * tm));
+                tBmag = sqrt(tBx * tBx + tBy * tBy + tBz * tBz);
+                /*tm = sqrt(MUL(m[p],m[p]));
 
-                    if (p == 1) max_eps = eps;
-                    else if (eps > max_eps) max_eps = eps;*/
+                eps = acos((m[p].x * tBx + m[p].y * tBy + m[p].z * tBz) / (tBmag * tm));
+
+                if (p == 1) max_eps = eps;
+                else if (eps > max_eps) max_eps = eps;*/
 
 #ifndef SECONDARY
-					/*m[p].x = m0p[p] * tBx / tBmag;
+                /*m[p].x = m0p[p] * tBx / tBmag;
+                m[p].y = m0p[p] * tBy / tBmag;
+                m[p].z = m0p[p] * tBz / tBmag;*/
+
+                ttau.x =   m[p].y * tBz - m[p].z * tBy;
+                ttau.y = - m[p].x * tBz + m[p].z * tBx;
+                ttau.z =   m[p].x * tBy - m[p].y * tBx;
+
+                if (is_neel[p])
+                {
+                    m[p].x = m0p[p] * tBx / tBmag;
                     m[p].y = m0p[p] * tBy / tBmag;
-                    m[p].z = m0p[p] * tBz / tBmag;*/
+                    m[p].z = m0p[p] * tBz / tBmag;
+                }
 
-					ttau.x =   m[p].y * tBz - m[p].z * tBy;
-					ttau.y = - m[p].x * tBz + m[p].z * tBx;
-					ttau.z =   m[p].x * tBy - m[p].y * tBx;
-
-					if (is_neel[p])
-					{
-						m[p].x = m0p[p] * tBx / tBmag;
-                        m[p].y = m0p[p] * tBy / tBmag;
-                        m[p].z = m0p[p] * tBz / tBmag;
-					}
-					
 #endif
 
-        }// if (exist_p[p])
-        //	}
-        //	while(max_eps > m_h_eff_tol);
-	return ttau;
+    }// if (exist_p[p])
+    //	}
+    //	while(max_eps > m_h_eff_tol);
+    return ttau;
 }
 
 ff_vect_t ff_model_nonloc_force(long p)
@@ -834,7 +834,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double tk;
     double sec_pow;
     ff_vect_t ttF;
-    
+
     double MUL1__dR5mod, MUL2__dR5mod, MUL3__dR5mod, MUL1_MUL2__dR2mod__dR5mod;
 
     double mx, my, mz;
@@ -846,7 +846,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
     //ff_vect_t ttau;
 
-	double dd, tt;
+    double dd, tt;
 
     //long di, dj;
 
@@ -918,11 +918,11 @@ ff_vect_t ff_model_nonloc_force(long p)
                 } 
 
                 if (dR >= Rp0[p] + Rp0[ps])
-				{
-					tFx += dtFx;
-					tFy += dtFy;
-					tFz += dtFz;
-				}
+                {
+                    tFx += dtFx;
+                    tFy += dtFy;
+                    tFz += dtFz;
+                }
 
                 /*
                 if (dR <= 5 * R0) // exp phenomenology
@@ -934,58 +934,58 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
 
 #ifndef SECONDARY
-				if (dR <= Rp0[p] + Rp0[ps]) //soft sphere condition
-				{
-					/*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
+                if (dR <= Rp0[p] + Rp0[ps]) //soft sphere condition
+                {
+                    /*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
 
-					tFx += -dx * Cmod;
+                    tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					/*if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
-					{
-						aggregated_p[p][ps] = 1;
-						//printf("\n aggregated_p");
-					}*/
+                    /*if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
+                    {
+                    aggregated_p[p][ps] = 1;
+                    //printf("\n aggregated_p");
+                    }*/
 
-					dRtemp = Rp0[p] + Rp0[ps];
-					dd = Rp0[p] + Rp0[ps];
-					l = 2 * (dRtemp - dd) / dd;
-					tt = 2 * delta / dd;
+                    dRtemp = Rp0[p] + Rp0[ps];
+                    dd = Rp0[p] + Rp0[ps];
+                    l = 2 * (dRtemp - dd) / dd;
+                    tt = 2 * delta / dd;
 
-					tFx += - Ch_ss * (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFy += - Ch_ss * (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFz += - Ch_ss * (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-				}
+                    tFx += - Ch_ss * (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFy += - Ch_ss * (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFz += - Ch_ss * (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                }
 
                 // Entropic repulsion
-				if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
+                if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
                 {
                     /*if (Ch > 5)
-                        Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
+                    Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
                     else
-                        Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);*/
+                    Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);*/
 
-					/*tFx += -dx * Cmod;
+                    /*tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
                     tFz += -dz * Cmod;*/
 
-					dd = Rp0[p] + Rp0[ps];
-					l = 2 * (dR - dd) / dd;
-					tt = 2 * delta / dd;
+                    dd = Rp0[p] + Rp0[ps];
+                    l = 2 * (dR - dd) / dd;
+                    tt = 2 * delta / dd;
 
-					tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-					tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                 }
 #endif
 
 #ifndef SECONDARY
                 // attraction
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
-				//if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
-				//if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
-				if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
+                //if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
+                //if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
+                if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -993,18 +993,18 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += dy * Cmod;
                     tFz += dz * Cmod;*/
 
-					tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
-					tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
-					tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
 
-					/*if (aggregated_p[p][ps])
-					{
-						Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
+                    /*if (aggregated_p[p][ps])
+                    {
+                    Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
 
-						tFx += dx * Cmod;
-						tFy += dy * Cmod;
-						tFz += dz * Cmod;
-					}*/
+                    tFx += dx * Cmod;
+                    tFy += dy * Cmod;
+                    tFz += dz * Cmod;
+                    }*/
                 }
 #endif
 
@@ -1060,28 +1060,28 @@ ff_vect_t ff_model_nonloc_force(long p)
 
 double ff_model_G_steric(long p, long ps)
 {
-	double G_steric = 0;
-	double z = 0;
-	double dx = 0; 
-	double dy = 0; 
-	double dz = 0;
-	double dR = 0;
-	double dRmax = 0;
+    double G_steric = 0;
+    double z = 0;
+    double dx = 0; 
+    double dy = 0; 
+    double dz = 0;
+    double dR = 0;
+    double dRmax = 0;
 
-	dx = r[p].x - r[ps].x;
-	dy = r[p].y - r[ps].y;
-	dz = r[p].z - r[ps].z;
-	dR = sqrt(dx * dx + dy * dy + dz * dz);
+    dx = r[p].x - r[ps].x;
+    dy = r[p].y - r[ps].y;
+    dz = r[p].z - r[ps].z;
+    dR = sqrt(dx * dx + dy * dy + dz * dz);
 
-	dRmax = Rp[ps] + Rp[p] + 2 * delta;
+    dRmax = Rp[ps] + Rp[p] + 2 * delta;
 
-	// Entropic repulsion
-	if (dR <= dRmax)
-		G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
-			       (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_oa * T) / ( 6 * delta * dR);
-	else G_steric = 0;
+    // Entropic repulsion
+    if (dR <= dRmax)
+        G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
+        (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_oa * T) / ( 6 * delta * dR);
+    else G_steric = 0;
 
-	return G_steric;
+    return G_steric;
 }
 
 ff_vect_t ff_model_force(long p)
@@ -1103,13 +1103,13 @@ ff_vect_t ff_model_force(long p)
     // Buoyancy force
     //tF.z +=   C6;
 
-	// oleic droplet surface tension force
-	if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
-	{
-		tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
-		tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
-		tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
-	}
+    // oleic droplet surface tension force
+    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
+    {
+        tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
+        tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
+        tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
+    }
 
     tF.x += P[p].x;
     tF.y += P[p].y;
@@ -1120,27 +1120,27 @@ ff_vect_t ff_model_force(long p)
 
 ff_vect_t ff_model_torque(long p)
 {
-	ff_vect_t ttau;
+    ff_vect_t ttau;
     ff_vect_t dtau;
 
     ttau.x = ttau.y = ttau.z = 0;
 
-	// non-local
+    // non-local
     dtau = ff_model_nonloc_torque(p);
     if (!(is_neel[p]))
-	{
-	   ttau.x += dtau.x;
-       ttau.y += dtau.y;
-       ttau.z += dtau.z;
+    {
+        ttau.x += dtau.x;
+        ttau.y += dtau.y;
+        ttau.z += dtau.z;
 
-       // Gravitation
-       ttau.z += 0;
+        // Gravitation
+        ttau.z += 0;
 
-       // Buoyancy
-       ttau.z += 0;
-	}
+        // Buoyancy
+        ttau.z += 0;
+    }
 
-	//printf("\n %e", ttau.x);
+    //printf("\n %e", ttau.x);
 
     ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
@@ -1158,68 +1158,68 @@ void ff_model_next_step(void)
     int chk;
     long mz_tot_n;
     ff_vect_t r0;
-	//double C2, gamma_rot;
-	double M0, I0;
-	ff_vect_t ex, ey, ez; // basis of rotation around ez = w
-	double tmmag;
-	double theta_0_r, phi_0_r;
-	double Mtot;
-	
+    //double C2, gamma_rot;
+    double M0, I0;
+    ff_vect_t ex, ey, ez; // basis of rotation around ez = w
+    double tmmag;
+    double theta_0_r, phi_0_r;
+    double Mtot;
+
     Ek = Ek_tr = Ek_rot = 0;
     mz_tot = 0;
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
-	pN_oleic_drop = 0;
-	pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
-	phi_vol_fract_oleic = 0;
+    pN_oleic_drop = 0;
+    pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
+    phi_vol_fract_oleic = 0;
 
-	sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * (T + ta0));
+    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * (T + ta0));
 
-	for (p = 1; p <= pN; p++) if (exist_p[p])
-		{
-			Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
-			Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
+    for (p = 1; p <= pN; p++) if (exist_p[p])
+    {
+        Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
+        Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
 
-			Ekp_x[p] = M0p[p] * v[p].x * v[p].x / 2.0;
-			Ekp_y[p] = M0p[p] * v[p].y * v[p].y / 2.0;
-			Ekp_z[p] = M0p[p] * v[p].z * v[p].z / 2.0;
-			Ekp_rot_x[p] = I0p[p] * w[p].x * w[p].x / 2.0;
-			Ekp_rot_y[p] = I0p[p] * w[p].y * w[p].y / 2.0;
-			Ekp_rot_z[p] = I0p[p] * w[p].z * w[p].z / 2.0;
-		};
-	
-	Ek = Ek_tr + Ek_rot;
+        Ekp_x[p] = M0p[p] * v[p].x * v[p].x / 2.0;
+        Ekp_y[p] = M0p[p] * v[p].y * v[p].y / 2.0;
+        Ekp_z[p] = M0p[p] * v[p].z * v[p].z / 2.0;
+        Ekp_rot_x[p] = I0p[p] * w[p].x * w[p].x / 2.0;
+        Ekp_rot_y[p] = I0p[p] * w[p].y * w[p].y / 2.0;
+        Ekp_rot_z[p] = I0p[p] * w[p].z * w[p].z / 2.0;
+    };
+
+    Ek = Ek_tr + Ek_rot;
 
     if (time_go)
     {
         step++;
-		//printf("\n ============================", step);
+        //printf("\n ============================", step);
         //printf("\n Step %d", step);
 
         //ff_model_m_setting();
 
-		ff_model_update_dT();
+        ff_model_update_dT();
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
                 ff_model_update_dT_p(p);
-				
-				//Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-								
-				/*if (k_bm_inst == 1)*/
-				ff_model_effective_random_force_update(p);
-				
-				f = ff_model_force(p);
-				ttau = ff_model_torque(p);
+
+                //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+
+                /*if (k_bm_inst == 1)*/
+                ff_model_effective_random_force_update(p);
+
+                f = ff_model_force(p);
+                ttau = ff_model_torque(p);
                 F[p].x = f.x; F[p].y = f.y; F[p].z = f.z;
-				tau[p].x = ttau.x; tau[p].y = ttau.y; tau[p].z = ttau.z;
+                tau[p].x = ttau.x; tau[p].y = ttau.y; tau[p].z = ttau.z;
 
                 /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
                 /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
                 /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
 
-				/*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
+                /*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
                 /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
                 /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
 
@@ -1227,164 +1227,164 @@ void ff_model_next_step(void)
                 /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                 /*DEBUG*/ if (v[p].z != v[p].z) printf("\n DEBUG 1.1 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
-				/*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
+                /*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
                 /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
                 /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
             }
 
-			//ff_model_update_dT();
-			k_bm_inst ++;
+            //ff_model_update_dT();
+            k_bm_inst ++;
 
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
                     if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-					{
-						C2[p] = 6 * pi * eta_car * Rp[p];
-						gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
-					}
-					else
-					{
-						C2[p] = 6 * pi * eta_oleic * Rp[p];
-						gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
-					}
+                    {
+                        C2[p] = 6 * pi * eta_car * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
+                    }
+                    else
+                    {
+                        C2[p] = 6 * pi * eta_oleic * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
+                    }
 
-					M0 = M0p[p];
-					I0 = I0p[p];
+                    M0 = M0p[p];
+                    I0 = I0p[p];
 
-					drt[p].x = F[p].x * dt / C2[p] +		 
+                    drt[p].x = F[p].x * dt / C2[p] +		 
                         (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-						//+ drt_r[p].x;
+                    //+ drt_r[p].x;
 
                     drt[p].y = F[p].y * dt / C2[p] +		 
                         (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-						//+ drt_r[p].y;
+                    //+ drt_r[p].y;
 
                     drt[p].z = F[p].z * dt / C2[p] +		 
                         (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-						//+ drt_r[p].z;
+                    //+ drt_r[p].z;
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
-					if (!(is_neel[p]))
-					{
-					dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
-                    (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-					//+ dphi_r[p].x;
+                    if (!(is_neel[p]))
+                    {
+                        dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
+                            (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        //+ dphi_r[p].x;
 
-					dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
-                    (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-					//+ dphi_r[p].y;
+                        dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
+                            (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        //+ dphi_r[p].y;
 
-					dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
-                    (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-					//+ dphi_r[p].z;
-					}
-					else dphi[p].x = dphi[p].y = dphi[p].z = 0;
+                        dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
+                            (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        //+ dphi_r[p].z;
+                    }
+                    else dphi[p].x = dphi[p].y = dphi[p].z = 0;
 
-					/*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
+                    /*DEBUG*/ if (dphi[p].x != dphi[p].x) printf("\n DEBUG 1 p = %d dphi[p].x = %e", p, dphi[p].x);
                     /*DEBUG*/ if (dphi[p].y != dphi[p].y) printf("\n DEBUG 1 p = %d dphi[p].y = %e", p, dphi[p].y);
                     /*DEBUG*/ if (dphi[p].z != dphi[p].z) printf("\n DEBUG 1 p = %d dphi[p].z = %e", p, dphi[p].z);
 
-					//ff_model_check_overlapp(p); // hard sphere condition
+                    //ff_model_check_overlapp(p); // hard sphere condition
 
-					//printf("\n %e", dphi[p].y);
+                    //printf("\n %e", dphi[p].y);
 
                     r[p].x += drt[p].x;
                     r[p].y += drt[p].y;
                     r[p].z += drt[p].z;
 
-					//if (m0p[p] == 0) printf("\n !!!");
+                    //if (m0p[p] == 0) printf("\n !!!");
 
-					//printf("\n %e", sqrt(MUL(m[p],m[p])) / m0p[p]);
+                    //printf("\n %e", sqrt(MUL(m[p],m[p])) / m0p[p]);
 
                     if (r[p].x != r[p].x) printf("\n DEBUG 2 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
                     if (r[p].y != r[p].y) printf("\n DEBUG 2 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
                     if (r[p].z != r[p].z) printf("\n DEBUG 2 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
 
                     chk = ff_model_check_smooth_dr(p);
-					if ( chk == 0)
-						{
-							//k_bm_inst = 1;
-							goto t_end;
-						}
+                    if ( chk == 0)
+                    {
+                        //k_bm_inst = 1;
+                        goto t_end;
+                    }
 
-					/*r[p].x += drt_r[p].x;
-					r[p].y += drt_r[p].y;
-					r[p].z += drt_r[p].z;
+                    /*r[p].x += drt_r[p].x;
+                    r[p].y += drt_r[p].y;
+                    r[p].z += drt_r[p].z;
 
-					dphi[p].x += dphi_r[p].x;
-					dphi[p].y += dphi_r[p].y;
-					dphi[p].z += dphi_r[p].z;*/
+                    dphi[p].x += dphi_r[p].x;
+                    dphi[p].y += dphi_r[p].y;
+                    dphi[p].z += dphi_r[p].z;*/
 
-					//m_prev[p] = m[p];
-					if (!(is_neel[p]))
-					{
-					//dm[p].x = dm[p].y = dm[p].z = 0;
+                    //m_prev[p] = m[p];
+                    if (!(is_neel[p]))
+                    {
+                        //dm[p].x = dm[p].y = dm[p].z = 0;
 
-					mt[p] = m[p];
-					// turn around ex
-					mt[p].y = mt[p].y * cos(dphi[p].x) - mt[p].z * sin(dphi[p].x);
-					mt[p].z = mt[p].y * sin(dphi[p].x) + mt[p].z * cos(dphi[p].x);
-					// turn around ey
-					mt[p].z = mt[p].z * cos(dphi[p].y) - mt[p].x * sin(dphi[p].y);
-					mt[p].x = mt[p].z * sin(dphi[p].y) + mt[p].x * cos(dphi[p].y);
-					// turn around ez
-					mt[p].x = mt[p].x * cos(dphi[p].z) - mt[p].y * sin(dphi[p].z);
-					mt[p].y = mt[p].x * sin(dphi[p].z) + mt[p].y * cos(dphi[p].z);
+                        mt[p] = m[p];
+                        // turn around ex
+                        mt[p].y = mt[p].y * cos(dphi[p].x) - mt[p].z * sin(dphi[p].x);
+                        mt[p].z = mt[p].y * sin(dphi[p].x) + mt[p].z * cos(dphi[p].x);
+                        // turn around ey
+                        mt[p].z = mt[p].z * cos(dphi[p].y) - mt[p].x * sin(dphi[p].y);
+                        mt[p].x = mt[p].z * sin(dphi[p].y) + mt[p].x * cos(dphi[p].y);
+                        // turn around ez
+                        mt[p].x = mt[p].x * cos(dphi[p].z) - mt[p].y * sin(dphi[p].z);
+                        mt[p].y = mt[p].x * sin(dphi[p].z) + mt[p].y * cos(dphi[p].z);
 
-					//dm[p].x = mt[p].x - m[p].x;
-					//dm[p].y = mt[p].y - m[p].y;
-					//dm[p].z = mt[p].z - m[p].z;
+                        //dm[p].x = mt[p].x - m[p].x;
+                        //dm[p].y = mt[p].y - m[p].y;
+                        //dm[p].z = mt[p].z - m[p].z;
 
-					//m[p].x += dm[p].x;
-					//m[p].y += dm[p].y;
-					//m[p].z += dm[p].z;
+                        //m[p].x += dm[p].x;
+                        //m[p].y += dm[p].y;
+                        //m[p].z += dm[p].z;
 
-					m_prev[p] = m[p];
-					m[p] = mt[p];
+                        m_prev[p] = m[p];
+                        m[p] = mt[p];
 
-					tmmag = sqrt(MUL(m[p], m[p]));
+                        tmmag = sqrt(MUL(m[p], m[p]));
 
-					m[p].x *= m0p[p] / tmmag;
-					m[p].y *= m0p[p] / tmmag;
-					m[p].z *= m0p[p] / tmmag;
-					}
+                        m[p].x *= m0p[p] / tmmag;
+                        m[p].y *= m0p[p] / tmmag;
+                        m[p].z *= m0p[p] / tmmag;
+                    }
 
-					ff_model_check_walls(p);
+                    ff_model_check_walls(p);
                 } // end of loop for dr
 
-				//k_bm_inst++;
-				//if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
-				if (k_bm_inst == k_bm_inst_max)
-				{
-					k_bm_inst = 1;
-					T_mean_loc = 0;
-					for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
-					///printf("\n !!!", dT);
-				}
+                //k_bm_inst++;
+                //if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
+                if (k_bm_inst == k_bm_inst_max)
+                {
+                    k_bm_inst = 1;
+                    T_mean_loc = 0;
+                    for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
+                    ///printf("\n !!!", dT);
+                }
 
                 r0.x = r0.y = r0.z = 0;
-				Mtot = 0;
-				
+                Mtot = 0;
+
                 for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-					    /*if (Rp_to_c[p] > R_oleic)
-					    {
-					    	C2 = 6 * pi * eta * Rp[p];
-					    	gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
-					    }
-					    else
-					    {
-					    	C2 = 6 * pi * eta_oleic * Rp[p];
-					    	gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
-					    }*/
-					    
-						M0 = M0p[p];
-					    I0 = I0p[p];
+                        /*if (Rp_to_c[p] > R_oleic)
+                        {
+                        C2 = 6 * pi * eta * Rp[p];
+                        gamma_rot = 8 * pi * eta * pow(Rp[p], 3);
+                        }
+                        else
+                        {
+                        C2 = 6 * pi * eta_oleic * Rp[p];
+                        gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+                        }*/
 
-						// C2 is a friction
+                        M0 = M0p[p];
+                        I0 = I0p[p];
+
+                        // C2 is a friction
                         dvt[p].x = (F[p].x / C2[p]) + (v[p].x - F[p].x / C2[p]) * exp(- C2[p] * dt / M0) - v[p].x;
                         dvt[p].y = (F[p].y / C2[p]) + (v[p].y - F[p].y / C2[p]) * exp(- C2[p] * dt / M0) - v[p].y;
                         dvt[p].z = (F[p].z / C2[p]) + (v[p].z - F[p].z / C2[p]) * exp(- C2[p] * dt / M0) - v[p].z;
@@ -1393,9 +1393,9 @@ void ff_model_next_step(void)
                         v[p].y += dvt[p].y;
                         v[p].z += dvt[p].z;
 
-						w[p].x = (tau[p].x / gamma_rot[p]) + (w[p].x - tau[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
-						w[p].y = (tau[p].y / gamma_rot[p]) + (w[p].y - tau[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
-						w[p].z = (tau[p].z / gamma_rot[p]) + (w[p].z - tau[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
+                        w[p].x = (tau[p].x / gamma_rot[p]) + (w[p].x - tau[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
+                        w[p].y = (tau[p].y / gamma_rot[p]) + (w[p].y - tau[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
+                        w[p].z = (tau[p].z / gamma_rot[p]) + (w[p].z - tau[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
 
                         if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
                         if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
@@ -1407,7 +1407,7 @@ void ff_model_next_step(void)
                         r0.x += M0p[p] * r[p].x;
                         r0.y += M0p[p] * r[p].y;
                         r0.z += M0p[p] * r[p].z;
-						Mtot += M0p[p];
+                        Mtot += M0p[p];
 
                         mz_tot += m[p].z;
                         m_tot.x += m[p].x;
@@ -1415,14 +1415,14 @@ void ff_model_next_step(void)
                         m_tot.z += m[p].z;
                         mz_tot_n++;
 
-						//if (p == 1) ff_model_brownian_validation(p);
+                        //if (p == 1) ff_model_brownian_validation(p);
 
-						/*dW[p] = MUL(F[p], drt[p]) + MUL(tau[p], dphi[p]) 
-							   - C2[p] * ((v[p].x - dvt[p].x / 2) * drt[p].x + (v[p].y - dvt[p].y / 2) * drt[p].y + (v[p].z - dvt[p].z / 2) * drt[p].z)
-							   - gamma_rot[p] * ((w[p].x - dw[p].x / 2) * dphi[p].x + (w[p].y - dw[p].y / 2) * dphi[p].y + (w[p].z - dw[p].z / 2) * dphi[p].z);*/
+                        /*dW[p] = MUL(F[p], drt[p]) + MUL(tau[p], dphi[p]) 
+                        - C2[p] * ((v[p].x - dvt[p].x / 2) * drt[p].x + (v[p].y - dvt[p].y / 2) * drt[p].y + (v[p].z - dvt[p].z / 2) * drt[p].z)
+                        - gamma_rot[p] * ((w[p].x - dw[p].x / 2) * dphi[p].x + (w[p].y - dw[p].y / 2) * dphi[p].y + (w[p].z - dw[p].z / 2) * dphi[p].z);*/
                     } // end of loop for dv
 
-					//printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
+                    //printf("\n DEBUG 5 r.x = %e v.x = %e", r[50].x, v[50].x);
 
                     // TODO: need the number of existing (exist_p) particles
                     r0.x /= Mtot;
@@ -1444,61 +1444,61 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
-					/*dt_red -= dt;					
-					
-					for (p = 1; p <= pN; p++) if (exist_p[p])
-					{
-						Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
-						Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
-					};
+                    /*dt_red -= dt;					
 
-					Ek = Ek_tr + Ek_rot;
-					ff_model_update_dT();*/
+                    for (p = 1; p <= pN; p++) if (exist_p[p])
+                    {
+                    Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
+                    Ek_rot += I0p[p] * MUL(w[p],w[p]) / 2.0;
+                    };
 
-					for (p = 1; p <= pN; p++)
-					{
-						Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-						ff_model_update_conc_in_oleic(p);
-						
-						//if (dt_red <= 0)
-						//{
-							//ff_model_inst_random_trans_update(p);
+                    Ek = Ek_tr + Ek_rot;
+                    ff_model_update_dT();*/
 
-							/*dv_r[p] = sqrt(3 * kb * dT / M0p[p]);
-							dw_r[p] = sqrt(3 * kb * dT / I0p[p]);
-							
-							theta_0_r = (*var_uni)() * pi;   // rotation vector random direction
-							phi_0_r = (*var_uni)() * 2 * pi;
-							v[p].x += dv_r[p] * sin(theta_0_r) * cos(phi_0_r);
-							v[p].y += dv_r[p] * sin(theta_0_r) * sin(phi_0_r);
-							v[p].z += dv_r[p] * cos(theta_0_r);
+                    for (p = 1; p <= pN; p++)
+                    {
+                        Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+                        ff_model_update_conc_in_oleic(p);
 
-							theta_0_r = (*var_uni)() * pi;  
-							phi_0_r = (*var_uni)() * 2 * pi;
-							w[p].x += dw_r[p] * sin(theta_0_r) * cos(phi_0_r);
-							w[p].y += dw_r[p] * sin(theta_0_r) * sin(phi_0_r);
-							w[p].z += dw_r[p] * cos(theta_0_r);*/
-						//}
-					}
-					
-					if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
-					if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
-						R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
-					phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
-					phi_vol_fract_oleic *= 100;
+                        //if (dt_red <= 0)
+                        //{
+                        //ff_model_inst_random_trans_update(p);
 
-					/*if (dt_red <= 0) dt_red = dt0;*/
+                        /*dv_r[p] = sqrt(3 * kb * dT / M0p[p]);
+                        dw_r[p] = sqrt(3 * kb * dT / I0p[p]);
 
-					if (auto_reversal) ff_model_auto_hyst();
+                        theta_0_r = (*var_uni)() * pi;   // rotation vector random direction
+                        phi_0_r = (*var_uni)() * 2 * pi;
+                        v[p].x += dv_r[p] * sin(theta_0_r) * cos(phi_0_r);
+                        v[p].y += dv_r[p] * sin(theta_0_r) * sin(phi_0_r);
+                        v[p].z += dv_r[p] * cos(theta_0_r);
+
+                        theta_0_r = (*var_uni)() * pi;  
+                        phi_0_r = (*var_uni)() * 2 * pi;
+                        w[p].x += dw_r[p] * sin(theta_0_r) * cos(phi_0_r);
+                        w[p].y += dw_r[p] * sin(theta_0_r) * sin(phi_0_r);
+                        w[p].z += dw_r[p] * cos(theta_0_r);*/
+                        //}
+                    }
+
+                    if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
+                    if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
+                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
+                    phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
+                    phi_vol_fract_oleic *= 100;
+
+                    /*if (dt_red <= 0) dt_red = dt0;*/
+
+                    if (auto_reversal) ff_model_auto_hyst();
                     if (step % 10000 == 0) ff_io_autosave();
-					else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
-					else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
+                    else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
+                    else if ((step < 1000) && (step % 100 == 0)) ff_io_autosave();
 
                     if (setting_plot)
                     {
-						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
-						else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
-						else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
+                        if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
+                        else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
+                        else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
 
                     // end for case of interrupted kinetic loops
@@ -1507,7 +1507,7 @@ t_end:
                     if (slow_steps > 0) slow_steps--;
                     if (slow_steps%10 == 1) dt *= 2;
 
-					//for (p = 1; p <= pN; p++) ff_model_inst_random_trans_update(p);
+                    //for (p = 1; p <= pN; p++) ff_model_inst_random_trans_update(p);
 
     } // time_go
 
@@ -1593,10 +1593,10 @@ if (dR <= Rp[p] + Rp[ps])
 //v[ps].x -= dvt[ps].x;
 //v[ps].y -= dvt[ps].y;
 //v[ps].z -= dvt[ps].z;
-	dr = Rp[p] + Rp[ps] - dR;
-	drt[p].x += - (dx / dR) * dr - delta * 0.1;
-	drt[p].y += - (dy / dR) * dr - delta * 0.1;
-	drt[p].z += - (dz / dR) * dr - delta * 0.1;
+dr = Rp[p] + Rp[ps] - dR;
+drt[p].x += - (dx / dR) * dr - delta * 0.1;
+drt[p].y += - (dy / dR) * dr - delta * 0.1;
+drt[p].z += - (dz / dR) * dr - delta * 0.1;
 }
 }
 }*/
@@ -1673,14 +1673,14 @@ void ff_model_init(void)
     long i,j;
 
     R_oleic = R_oleic_0;
-	
-	// Brownian motion -  parameters
+
+    // Brownian motion -  parameters
     ///////////////////////////////////////////////////
-	
-	k_force_adapt = 1;
-	//k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
-	
-	// Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
+
+    k_force_adapt = 1;
+    //k_force_adapt = k_force_adapt_0 / sqrt(1E-9); //sqrt(1E-9) is selected regular dt
+
+    // Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
     sigma = 1;
 
     srand( (unsigned)time( NULL ) );
@@ -1688,11 +1688,11 @@ void ff_model_init(void)
 
     //boost::normal_distribution<> nd(0.0, 1.0);
     nd = new boost::normal_distribution<> (0.0, sigma);
-	ud = new boost::uniform_01<> ();
+    ud = new boost::uniform_01<> ();
 
     //boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, *nd);
     var_nor = new boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > (rng, *nd);
-	var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
+    var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
 
     //ff_model_dir_init();
 
@@ -1710,7 +1710,7 @@ void ff_model_init(void)
     }
 
     ff_model_size_dispersion_init();
-	p = 1;
+    p = 1;
     while (p <= pN)
     {
 again:
@@ -1720,23 +1720,23 @@ again:
             r[p].x = -0.4999 * Lx + 0.99 * Lx * (*var_uni)();
             r[p].y = -0.4999 * Ly + 0.99 * Ly * (*var_uni)();
             r[p].z = -0.4999 * Lz + 0.99 * Lz * (*var_uni)();
-			Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
-			/*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
-			r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
-			r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();*/
+            /*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
+            r[p].y = - R_oleic + 2 * R_oleic * (*var_uni)();
+            r[p].z = - R_oleic + 2 * R_oleic * (*var_uni)();*/
 
-			w[p].x = w[p].y = w[p].z = 0;
+            w[p].x = w[p].y = w[p].z = 0;
 
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
-			/*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-			if (Rp_to_c[p] > R_oleic) goto again;*/
-			
-			for (tp = 1; tp < p; tp++)
+            if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
+            /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+            if (Rp_to_c[p] > R_oleic) goto again;*/
+
+            for (tp = 1; tp < p; tp++)
             {
                 dr.x = r[p].x - r[tp].x;
                 dr.y = r[p].y - r[tp].y;
@@ -1749,13 +1749,13 @@ again:
         } // start_ideal
 
         v[p].x = v[p].y = v[p].z = 0;
-		//v_r[p].x = v_r[p].y = v_r[p].z = 0;
-		w[p].x = w[p].y = w[p].z = 0;
-		//w_r[p].x = w_r[p].y = w_r[p].z = 0;
-		/*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
-		dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
-		//dW[p] = 0;
-		//for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
+        //v_r[p].x = v_r[p].y = v_r[p].z = 0;
+        w[p].x = w[p].y = w[p].z = 0;
+        //w_r[p].x = w_r[p].y = w_r[p].z = 0;
+        /*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
+        dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
+        //dW[p] = 0;
+        //for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
         /*theta = pi * rand() / 32768.0;
         phi = 2 * pi * rand() / 32768.0;
@@ -1764,22 +1764,22 @@ again:
         m[p].y = m0p[p] * sin(theta) * sin(phi);
         m[p].z = m0p[p] * cos(theta);*/
 
-		exist_p[p] = 1;
+        exist_p[p] = 1;
 
-		//m_freeze[p] = 0;
+        //m_freeze[p] = 0;
         m_sat[p] = 0;
 
-		k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot_x[p] = k_force_adapt_p_rot_y[p] = k_force_adapt_p_rot_z[p] = 1.0;
-		dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot_x[p] = dT_p_rot_y[p] = dT_p_rot_z[p] = T;
-		dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot_x[p] = dT_prev_p_rot_y[p] = dT_prev_p_rot_z[p] = T;
-		T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot_x[p] = T_basic_p_rot_y[p] = T_basic_p_rot_z[p] = 0;
-		T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p];// = T_mean_p_rot[p] = 0;
-		T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
-		//T_mean_loc_prev_p[p] = 0;
-		//T_mean_loc_prev_revert_p[p] = 0;
-		k_mean_p[p] = 0;
+        k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot_x[p] = k_force_adapt_p_rot_y[p] = k_force_adapt_p_rot_z[p] = 1.0;
+        dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot_x[p] = dT_p_rot_y[p] = dT_p_rot_z[p] = T;
+        dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot_x[p] = dT_prev_p_rot_y[p] = dT_prev_p_rot_z[p] = T;
+        T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot_x[p] = T_basic_p_rot_y[p] = T_basic_p_rot_z[p] = 0;
+        T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p];// = T_mean_p_rot[p] = 0;
+        T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
+        //T_mean_loc_prev_p[p] = 0;
+        //T_mean_loc_prev_revert_p[p] = 0;
+        k_mean_p[p] = 0;
 
-		is_inside_oleic[p] = 1;
+        is_inside_oleic[p] = 1;
 
         p++;
     }
@@ -1788,7 +1788,7 @@ again:
 
     //if (start_sediment) ff_model_init_sediment();
 
-	r_brown_valid_0 = r[1];
+    r_brown_valid_0 = r[1];
 }
 
 /*void ff_model_init_sediment(void)
@@ -1896,436 +1896,436 @@ dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 // Update of the random force
 void ff_model_effective_random_force_update(long p)
 {
-	double Px, Py, Pz, tau_r_phi; // instantiated effective random force
-	double theta_0, phi_0; // random direction of the torque 
-	double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
-	//double dt0;
-	double D, D_rot, gamma, gamma_rot;
-	double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
-	double M0, I0;
+    double Px, Py, Pz, tau_r_phi; // instantiated effective random force
+    double theta_0, phi_0; // random direction of the torque 
+    double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
+    //double dt0;
+    double D, D_rot, gamma, gamma_rot;
+    double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
+    double M0, I0;
 
-	double speed_ballance = 1;
-	double dR = 0;
+    double speed_ballance = 1;
+    double dR = 0;
 
-	ff_vect_t e1, e2, e3; // dynamic coordinate system
-	double P1, P2, P3;
-	double tmp = 0;
+    ff_vect_t e1, e2, e3; // dynamic coordinate system
+    double P1, P2, P3;
+    double tmp = 0;
 
-	double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
-	double N_mol_col = 0;
+    double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
+    double N_mol_col = 0;
 
-	//dt0 = dt * k_bm_inst_max;
-	//dt0 = dt;
+    //dt0 = dt * k_bm_inst_max;
+    //dt0 = dt;
 
-	gamma_oleic = 6 * pi * eta_oleic * Rp[p];
-	gamma_car = 6 * pi * eta_car * Rp[p];
-	if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-	{
-		gamma = gamma_car;
-		gamma_rot = 8 * pi * eta_car * pow(Rp[p], 3);
-	}
-	else
-	{
-		gamma = gamma_oleic;
-		gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
-	}
+    gamma_oleic = 6 * pi * eta_oleic * Rp[p];
+    gamma_car = 6 * pi * eta_car * Rp[p];
+    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
+    {
+        gamma = gamma_car;
+        gamma_rot = 8 * pi * eta_car * pow(Rp[p], 3);
+    }
+    else
+    {
+        gamma = gamma_oleic;
+        gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
+    }
 
-	D = kb * T / gamma;
-	D_rot = kb * T / gamma_rot;
-	M0 = M0p[p];
-	I0 = I0p[p];
+    D = kb * T / gamma;
+    D_rot = kb * T / gamma_rot;
+    M0 = M0p[p];
+    I0 = I0p[p];
 
-	// instantiation of position change
-	// [Langevin equation + Stokes' law]
-	/*sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
+    // instantiation of position change
+    // [Langevin equation + Stokes' law]
+    /*sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
     dx = (*var_nor)() * sqrt(sigma);
-	dy = (*var_nor)() * sqrt(sigma);
-	dz = (*var_nor)() * sqrt(sigma);*/
+    dy = (*var_nor)() * sqrt(sigma);
+    dz = (*var_nor)() * sqrt(sigma);*/
 
-	/*drt_r[p].x = dx;
-	drt_r[p].y = dy;
-	drt_r[p].z = dz;*/
+    /*drt_r[p].x = dx;
+    drt_r[p].y = dy;
+    drt_r[p].z = dz;*/
 
-	// instantiation of rotation of the magnetization direction
-	// [Euler-Langevin equation + Stokes' law]
-	/*sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
-	dphi = (*var_nor)() * sqrt(3 * sigma_rot);*/ // rotation magnitude
-	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
-	phi_0 = (*var_uni)() * 2 * pi;
+    // instantiation of rotation of the magnetization direction
+    // [Euler-Langevin equation + Stokes' law]
+    /*sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
+    dphi = (*var_nor)() * sqrt(3 * sigma_rot);*/ // rotation magnitude
+    theta_0 = (*var_uni)() * pi;   // rotation vector random direction
+    phi_0 = (*var_uni)() * 2 * pi;
 
-	/*dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
-	dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
-	dphi_r[p].z = dphi * cos(theta_0);*/
+    /*dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
+    dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
+    dphi_r[p].z = dphi * cos(theta_0);*/
 
-	/*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
-	Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
-	Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
-	tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
+    /*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+    Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+    Pz = (gamma * dz) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
+    tau_r_phi = (gamma_rot * dphi ) / (dt0 - I0 * (1 - exp(- gamma_rot * dt0 / I0)) / gamma_rot);*/
 
-	speed_ballance = 1;
-	dR = Rp_to_c[p] + Rp0[p] - R_oleic;
-	//if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
-	if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
-	{
-		tmp = sqrt(MUL(r[p], r[p]));
-		e3.x = r[p].x / tmp;
-		e3.y = r[p].y / tmp;
-		e3.z = r[p].z / tmp;
+    speed_ballance = 1;
+    dR = Rp_to_c[p] + Rp0[p] - R_oleic;
+    //if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
+    if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
+    {
+        tmp = sqrt(MUL(r[p], r[p]));
+        e3.x = r[p].x / tmp;
+        e3.y = r[p].y / tmp;
+        e3.z = r[p].z / tmp;
 
-		e1.x = - r[p].y;
-		e1.y =   r[p].x;
-		e1.z =   0;
+        e1.x = - r[p].y;
+        e1.y =   r[p].x;
+        e1.z =   0;
 
-		if ((r[p].x == 0) && (r[p].y == 0)) e1.x = 1;
-		tmp = sqrt(MUL(e1, e1));
-		e1.x /= tmp; e1.y /= tmp; e1.z /= tmp;
+        if ((r[p].x == 0) && (r[p].y == 0)) e1.x = 1;
+        tmp = sqrt(MUL(e1, e1));
+        e1.x /= tmp; e1.y /= tmp; e1.z /= tmp;
 
-		e2.x = e3.y * e1.z - e3.z * e1.y;
-		e2.y = e3.z * e1.x - e3.x * e1.z;
-		e2.z = e3.x * e1.y - e3.y * e1.x;
+        e2.x = e3.y * e1.z - e3.z * e1.y;
+        e2.y = e3.z * e1.x - e3.x * e1.z;
+        e2.z = e3.x * e1.y - e3.y * e1.x;
 
-		if (dR >= Rp0[p]) 
-		{
-			fract_oleic_positive = (2 * Rp0[p] - dR) / Rp0[p];
-			fract_oleic_negative = 0;
-			fract_car_positive = (dR - Rp0[p]) / Rp0[p];
-			fract_car_negative = 1;
-		}
-		else
-		{
-			fract_oleic_positive = 1;
-			fract_oleic_negative = (Rp0[p] - dR) / Rp0[p];
-			fract_car_positive = 0;
-			fract_car_negative = dR / Rp0[p];
-		}
+        if (dR >= Rp0[p]) 
+        {
+            fract_oleic_positive = (2 * Rp0[p] - dR) / Rp0[p];
+            fract_oleic_negative = 0;
+            fract_car_positive = (dR - Rp0[p]) / Rp0[p];
+            fract_car_negative = 1;
+        }
+        else
+        {
+            fract_oleic_positive = 1;
+            fract_oleic_negative = (Rp0[p] - dR) / Rp0[p];
+            fract_car_positive = 0;
+            fract_car_negative = dR / Rp0[p];
+        }
 
-		N_mol_col = (*var_nor)();
+        N_mol_col = (*var_nor)();
 
-		if (N_mol_col >= 0)
-			P3 =   N_mol_col * sqrt(2 * kb * T * (fract_oleic_positive * gamma_oleic + fract_car_positive * gamma_car) / dt) *
-			       (sqrt(gamma_oleic) * fract_oleic_positive + sqrt(gamma_car) * fract_car_positive);
-		else
-			P3 =   N_mol_col * sqrt(2 * kb * T * (fract_oleic_negative * gamma_oleic + fract_car_negative * gamma_car) / dt) *
-			       (sqrt(gamma_oleic) * fract_oleic_negative + sqrt(gamma_car) * fract_car_negative);
-		
-		// sum of dispersions is a dispersion of sums
-		P1 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
-			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p])); // speed_ballance (component of the k_force_adapt_p)
-		P2 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
-			 (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p]));
+        if (N_mol_col >= 0)
+            P3 =   N_mol_col * sqrt(2 * kb * T * (fract_oleic_positive * gamma_oleic + fract_car_positive * gamma_car) / dt) *
+            (sqrt(gamma_oleic) * fract_oleic_positive + sqrt(gamma_car) * fract_car_positive);
+        else
+            P3 =   N_mol_col * sqrt(2 * kb * T * (fract_oleic_negative * gamma_oleic + fract_car_negative * gamma_car) / dt) *
+            (sqrt(gamma_oleic) * fract_oleic_negative + sqrt(gamma_car) * fract_car_negative);
 
-		Px = e1.x * P1 + e2.x * P2 + e3.x * P3;
-		Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
-		Pz = e1.z * P1 + e2.z * P2 + e3.z * P3;
-	}
-	else
-	{
-		Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-		Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-		Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-	}
+        // sum of dispersions is a dispersion of sums
+        P1 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
+            (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p])); // speed_ballance (component of the k_force_adapt_p)
+        P2 = (*var_nor)() * sqrt(2 * kb * T * (gamma_car * (dR / (2 * Rp0[p])) + gamma_oleic * (1 - dR / (2 * Rp0[p]))) / dt) *
+            (sqrt(gamma_car / gamma_oleic) * (dR / (2 * Rp0[p])) + 1 - dR / (2 * Rp0[p]));
 
-	if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
-	//if (dt < 1.5E-12) speed_ballance = 1;
-	
-	/*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-	Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-	Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
-	tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
+        Px = e1.x * P1 + e2.x * P2 + e3.x * P3;
+        Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
+        Pz = e1.z * P1 + e2.z * P2 + e3.z * P3;
+    }
+    else
+    {
+        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+        Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+    }
 
-	//printf("\n t1 = %e", M0 / gamma);
-	//printf("\n %e", gamma * dt0 / M0);
-	//printf("\n %e", gamma * dx / (M0 * v[p].x));
+    if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
+    //if (dt < 1.5E-12) speed_ballance = 1;
 
-	P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
-	P[p].y = Py * k_force_adapt_p_y[p] * speed_ballance;
-	P[p].z = Pz * k_force_adapt_p_z[p] * speed_ballance;
+    /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+    Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+    Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
+    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
-	tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p_rot_x[p] * speed_ballance;
-	tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p_rot_y[p] * speed_ballance;
-	tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot_z[p] * speed_ballance;
+    //printf("\n t1 = %e", M0 / gamma);
+    //printf("\n %e", gamma * dt0 / M0);
+    //printf("\n %e", gamma * dx / (M0 * v[p].x));
+
+    P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
+    P[p].y = Py * k_force_adapt_p_y[p] * speed_ballance;
+    P[p].z = Pz * k_force_adapt_p_z[p] * speed_ballance;
+
+    tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p_rot_x[p] * speed_ballance;
+    tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p_rot_y[p] * speed_ballance;
+    tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot_z[p] * speed_ballance;
 }
 
 void ff_model_update_dT(void)
 {
-	T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
-	//dT = T - T_basic;
-	T_mean += T_basic;
-	k_mean ++;
-	T_mean_loc += T_basic;
-	
-	if (dT < 0)
-	{
-		//printf("\n WARNING: dT < 0");
-		//dT = 0;
-	}
+    T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
+    //dT = T - T_basic;
+    T_mean += T_basic;
+    k_mean ++;
+    T_mean_loc += T_basic;
 
-	//printf("\n dT = %e", dT);
+    if (dT < 0)
+    {
+        //printf("\n WARNING: dT < 0");
+        //dT = 0;
+    }
 
-	if (k_bm_inst == k_bm_inst_max - 1)
-	{
-		dT_prev = dT;
-		dT = T - T_mean_loc / k_bm_inst;
-		//if (dT > 0) k_force_adapt *= k_force_adapt_0;
-		//else k_force_adapt /= k_force_adapt_0;
-		T_mean_loc_prev_revert = T_mean_loc_prev;
-		T_mean_loc_prev = T_mean_loc;
-	}
-	//k_bm_inst ++;
+    //printf("\n dT = %e", dT);
 
-	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
-	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
+    if (k_bm_inst == k_bm_inst_max - 1)
+    {
+        dT_prev = dT;
+        dT = T - T_mean_loc / k_bm_inst;
+        //if (dT > 0) k_force_adapt *= k_force_adapt_0;
+        //else k_force_adapt /= k_force_adapt_0;
+        T_mean_loc_prev_revert = T_mean_loc_prev;
+        T_mean_loc_prev = T_mean_loc;
+    }
+    //k_bm_inst ++;
+
+    //if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
+    //if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
 }
 
 void ff_model_update_dT_p(long p)
 {
-	double rel_T = 1;
-	
-	T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
-	T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
-	T_basic_p_z[p] = 2 * Ekp_z[p] / kb;
-	T_basic_p_rot_x[p] = 2 * Ekp_rot_x[p] / kb;
-	T_basic_p_rot_y[p] = 2 * Ekp_rot_y[p] / kb;
-	T_basic_p_rot_z[p] = 2 * Ekp_rot_z[p] / kb;
-	//dT = T - T_basic;
-	T_mean_p_x[p] += T_basic_p_x[p];
-	T_mean_p_y[p] += T_basic_p_y[p];
-	T_mean_p_z[p] += T_basic_p_z[p];
-	//T_mean_p_rot[p] += T_basic_p_rot[p];
-	k_mean_p[p] ++;
-	T_mean_loc_p_x[p] += T_basic_p_x[p];
-	T_mean_loc_p_y[p] += T_basic_p_y[p];
-	T_mean_loc_p_z[p] += T_basic_p_z[p];
-	T_mean_loc_p_rot_x[p] += T_basic_p_rot_x[p];
-	T_mean_loc_p_rot_y[p] += T_basic_p_rot_y[p];
-	T_mean_loc_p_rot_z[p] += T_basic_p_rot_z[p];
-	
-	//printf("\n dT = %e", dT);
+    double rel_T = 1;
 
-	if (k_bm_inst == k_bm_inst_max - 1)
-	{
-		dT_prev_p_x[p] = dT_p_x[p];
-		dT_prev_p_y[p] = dT_p_y[p];
-		dT_prev_p_z[p] = dT_p_z[p];
-		dT_prev_p_rot_x[p] = dT_p_rot_x[p];
-		dT_prev_p_rot_y[p] = dT_p_rot_y[p];
-		dT_prev_p_rot_z[p] = dT_p_rot_z[p];
+    T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
+    T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
+    T_basic_p_z[p] = 2 * Ekp_z[p] / kb;
+    T_basic_p_rot_x[p] = 2 * Ekp_rot_x[p] / kb;
+    T_basic_p_rot_y[p] = 2 * Ekp_rot_y[p] / kb;
+    T_basic_p_rot_z[p] = 2 * Ekp_rot_z[p] / kb;
+    //dT = T - T_basic;
+    T_mean_p_x[p] += T_basic_p_x[p];
+    T_mean_p_y[p] += T_basic_p_y[p];
+    T_mean_p_z[p] += T_basic_p_z[p];
+    //T_mean_p_rot[p] += T_basic_p_rot[p];
+    k_mean_p[p] ++;
+    T_mean_loc_p_x[p] += T_basic_p_x[p];
+    T_mean_loc_p_y[p] += T_basic_p_y[p];
+    T_mean_loc_p_z[p] += T_basic_p_z[p];
+    T_mean_loc_p_rot_x[p] += T_basic_p_rot_x[p];
+    T_mean_loc_p_rot_y[p] += T_basic_p_rot_y[p];
+    T_mean_loc_p_rot_z[p] += T_basic_p_rot_z[p];
 
-		dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
-		dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
-		dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
-		dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
-		dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
-		dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
+    //printf("\n dT = %e", dT);
 
-		//if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
-		if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
-		else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
+    if (k_bm_inst == k_bm_inst_max - 1)
+    {
+        dT_prev_p_x[p] = dT_p_x[p];
+        dT_prev_p_y[p] = dT_p_y[p];
+        dT_prev_p_z[p] = dT_p_z[p];
+        dT_prev_p_rot_x[p] = dT_p_rot_x[p];
+        dT_prev_p_rot_y[p] = dT_p_rot_y[p];
+        dT_prev_p_rot_z[p] = dT_p_rot_z[p];
 
-		if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_0;
-		else k_force_adapt_p_y[p] /= k_force_adapt_0 * rel_T;
+        dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
+        dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
+        dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
+        dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
+        dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
+        dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
 
-		if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_0;
-		else k_force_adapt_p_z[p] /= k_force_adapt_0 * rel_T;
+        //if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
+        if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
+        else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
 
-		if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_0;
-		else k_force_adapt_p_rot_x[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_0;
+        else k_force_adapt_p_y[p] /= k_force_adapt_0 * rel_T;
 
-		if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_0;
-		else k_force_adapt_p_rot_y[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_0;
+        else k_force_adapt_p_z[p] /= k_force_adapt_0 * rel_T;
 
-		if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_0;
-		else k_force_adapt_p_rot_z[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_0;
+        else k_force_adapt_p_rot_x[p] /= k_force_adapt_0 * rel_T;
 
-		//T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
-		//T_mean_loc_prev_p[p] = T_mean_loc_p[p];
-	}
+        if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_0;
+        else k_force_adapt_p_rot_y[p] /= k_force_adapt_0 * rel_T;
 
-	/*if (dT_p_x[p] > 0) v_r[p].x = (*var_nor)() * sqrt(kb * dT_p_x[p] / M0p[p]);
-	else			   v_r[p].x = 0;
+        if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_0;
+        else k_force_adapt_p_rot_z[p] /= k_force_adapt_0 * rel_T;
 
-	if (dT_p_y[p] > 0) v_r[p].y = (*var_nor)() * sqrt(kb * dT_p_y[p] / M0p[p]);
-	else			   v_r[p].y = 0;
+        //T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
+        //T_mean_loc_prev_p[p] = T_mean_loc_p[p];
+    }
 
-	if (dT_p_z[p] > 0) v_r[p].z = (*var_nor)() * sqrt(kb * dT_p_z[p] / M0p[p]);
-	else			   v_r[p].z = 0;
+    /*if (dT_p_x[p] > 0) v_r[p].x = (*var_nor)() * sqrt(kb * dT_p_x[p] / M0p[p]);
+    else			   v_r[p].x = 0;
 
-	if (dT_p_rot_x[p] > 0) w_r[p].x = (*var_nor)() * sqrt(kb * dT_p_rot_x[p] / I0p[p]);
-	else			   w_r[p].x = 0;
+    if (dT_p_y[p] > 0) v_r[p].y = (*var_nor)() * sqrt(kb * dT_p_y[p] / M0p[p]);
+    else			   v_r[p].y = 0;
 
-	if (dT_p_rot_y[p] > 0) w_r[p].y = (*var_nor)() * sqrt(kb * dT_p_rot_y[p] / I0p[p]);
-	else			   w_r[p].y = 0;
+    if (dT_p_z[p] > 0) v_r[p].z = (*var_nor)() * sqrt(kb * dT_p_z[p] / M0p[p]);
+    else			   v_r[p].z = 0;
 
-	if (dT_p_rot_z[p] > 0) w_r[p].z = (*var_nor)() * sqrt(kb * dT_p_rot_z[p] / I0p[p]);
-	else			   w_r[p].z = 0;*/
+    if (dT_p_rot_x[p] > 0) w_r[p].x = (*var_nor)() * sqrt(kb * dT_p_rot_x[p] / I0p[p]);
+    else			   w_r[p].x = 0;
 
-	//k_bm_inst ++;
+    if (dT_p_rot_y[p] > 0) w_r[p].y = (*var_nor)() * sqrt(kb * dT_p_rot_y[p] / I0p[p]);
+    else			   w_r[p].y = 0;
 
-	//if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
-	//if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
+    if (dT_p_rot_z[p] > 0) w_r[p].z = (*var_nor)() * sqrt(kb * dT_p_rot_z[p] / I0p[p]);
+    else			   w_r[p].z = 0;*/
+
+    //k_bm_inst ++;
+
+    //if ((T_mean > T) && (step % 10 == 0)) k_force_adapt /= k_force_adapt_0;
+    //if ((T_mean < T) && (step % 10 == 0)) k_force_adapt *= k_force_adapt_0;
 }
 
 void ff_model_size_dispersion_init(void)
 {
-	//double d[14 + 1];
-	double F[14 + 1];
-	long i, p;
-	long imax = 14;
-	double Ftot;
-	double random_points[14 + 1];
-	double random_value;
+    //double d[14 + 1];
+    double F[14 + 1];
+    long i, p;
+    long imax = 14;
+    double Ftot;
+    double random_points[14 + 1];
+    double random_value;
 
-	d[1] = 33.33333;
-	F[1] = 0.0108843537;
+    d[1] = 33.33333;
+    F[1] = 0.0108843537;
 
-	d[2] = 50;
-	F[2] = 0.0795918367;
+    d[2] = 50;
+    F[2] = 0.0795918367;
 
-	d[3] = 66.6666;
-	F[3] = 0.1850340136;
+    d[3] = 66.6666;
+    F[3] = 0.1850340136;
 
-	d[4] = 83.333;
-	F[4] = 0.1972789116;
+    d[4] = 83.333;
+    F[4] = 0.1972789116;
 
-	d[5] = 100;
-	F[5] = 0.1925170068;
+    d[5] = 100;
+    F[5] = 0.1925170068;
 
-	d[6] = 116.66666;
-	F[6] = 0.1217687075;
+    d[6] = 116.66666;
+    F[6] = 0.1217687075;
 
-	d[7] = 133.3333;
-	F[7] = 0.1006802721;
+    d[7] = 133.3333;
+    F[7] = 0.1006802721;
 
-	d[8] = 150;
-	F[8] = 0.074829932;
+    d[8] = 150;
+    F[8] = 0.074829932;
 
-	d[9] = 166.666666;
-	F[9] = 0.056462585;
+    d[9] = 166.666666;
+    F[9] = 0.056462585;
 
-	d[10] = 183.33333;
-	F[10] = 0.0394557823;
+    d[10] = 183.33333;
+    F[10] = 0.0394557823;
 
-	d[11] = 200;
-	F[11] = 0.0278911565;
+    d[11] = 200;
+    F[11] = 0.0278911565;
 
-	d[12] = 216.66666;
-	F[12] = 0.019047619;
+    d[12] = 216.66666;
+    F[12] = 0.019047619;
 
-	d[13] = 233.33333;
-	F[13] = 0.0115646259;
+    d[13] = 233.33333;
+    F[13] = 0.0115646259;
 
-	d[14] = 250;
-	F[14] = 0.006122449;
-	
-	Ftot = 0;
-	for (i = 1; i <= imax; i++)
-	{
-		d[i] *= 1E-10 * kr; // metric system
-		Ftot += F[i];
-	}
+    d[14] = 250;
+    F[14] = 0.006122449;
 
-	for (i = 1; i <= imax; i++)
-	{
-		random_points[i] = F[i] / Ftot;
+    Ftot = 0;
+    for (i = 1; i <= imax; i++)
+    {
+        d[i] *= 1E-10 * kr; // metric system
+        Ftot += F[i];
+    }
+
+    for (i = 1; i <= imax; i++)
+    {
+        random_points[i] = F[i] / Ftot;
         if (i > 1) random_points[i] += random_points[i - 1];
-	}
+    }
 
-	//printf("\n random_points[14] = %e", random_points[14]);
-	//printf("\n random_points[13] = %e", random_points[13]);
+    //printf("\n random_points[14] = %e", random_points[14]);
+    //printf("\n random_points[13] = %e", random_points[13]);
 
-	for (p = 1; p <= pN; p++)
-	{
-		random_value = (*var_uni)();
+    for (p = 1; p <= pN; p++)
+    {
+        random_value = (*var_uni)();
 
-		//printf("\n random_value = %e", random_value);
-		
-		if (random_value <= random_points[1])
-		{
-			Rp0[p] = 0.5 * d[1];
-			Rp[p] = Rp0[p] + delta;
-			ff_model_size_dispersion_param_calc(Rp0[p], p);
-		}
-		for (i = 1; i <= imax - 1; i++)
-		if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
-		{
-			Rp0[p] = 0.5 * d[i + 1];
-			Rp[p] = Rp0[p] + delta;
-			ff_model_size_dispersion_param_calc(Rp0[p], p);
-			if (d[i + 1] > 10 * 1E-9) is_neel[p] = 0;
-			else is_neel[p] = 1;
-			break;
-		}
+        //printf("\n random_value = %e", random_value);
 
-		if (p == 1) R0_min = Rp0[p];
-		if (Rp0[p] < R0_min) R0_min = Rp0[p];
-	}
+        if (random_value <= random_points[1])
+        {
+            Rp0[p] = 0.5 * d[1];
+            Rp[p] = Rp0[p] + delta;
+            ff_model_size_dispersion_param_calc(Rp0[p], p);
+        }
+        for (i = 1; i <= imax - 1; i++)
+            if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
+            {
+                Rp0[p] = 0.5 * d[i + 1];
+                Rp[p] = Rp0[p] + delta;
+                ff_model_size_dispersion_param_calc(Rp0[p], p);
+                if (d[i + 1] > 10 * 1E-9) is_neel[p] = 0;
+                else is_neel[p] = 1;
+                break;
+            }
+
+            if (p == 1) R0_min = Rp0[p];
+            if (Rp0[p] < R0_min) R0_min = Rp0[p];
+    }
 }
 
 void ff_model_size_dispersion_param_calc(double R0, long p)
 {
-	double d0;
-	d0 = 2 * R0; // size of core, i.e. hard part of the particle: magnetic + nonmagnetic layers
-	double V0 = pi * pow(d0, 3) / 6.0;
-	double Vfull = pi * pow(d0 + 2 * delta, 3) / 6.0;
-	double Vmag = pi * pow(d0 - 2 * a0, 3) / 6.0; // magentic core volume
-	double tm = rop * V0; // total mass
-	double tmmag = rop * Vmag; // mass of the magnetic part
-	double theta, phi;
-	
-	Vp0[p] = V0;
-	Vpfull[p] = Vfull;
-	M0p[p] = tm;
-	I0p[p] = (2 / 5.0) * M0p[p] * R0 * R0;
+    double d0;
+    d0 = 2 * R0; // size of core, i.e. hard part of the particle: magnetic + nonmagnetic layers
+    double V0 = pi * pow(d0, 3) / 6.0;
+    double Vfull = pi * pow(d0 + 2 * delta, 3) / 6.0;
+    double Vmag = pi * pow(d0 - 2 * a0, 3) / 6.0; // magentic core volume
+    double tm = rop * V0; // total mass
+    double tmmag = rop * Vmag; // mass of the magnetic part
+    double theta, phi;
 
-	double m_mol_rel = 231.6;
+    Vp0[p] = V0;
+    Vpfull[p] = Vfull;
+    M0p[p] = tm;
+    I0p[p] = (2 / 5.0) * M0p[p] * R0 * R0;
+
+    double m_mol_rel = 231.6;
     double m_mol = m_mol_rel * 1E-3 / Na;
     double N_mol = tmmag / m_mol;
-	double s_mol = 4.1 * muB;
+    double s_mol = 4.1 * muB;
     double s = s_mol * N_mol;
 
-	m0p[p] = s;
+    m0p[p] = s;
 
-	if (t == 0)
-	{
-		theta = pi * (*var_uni)();
-		phi = 2 * pi * (*var_uni)();
+    if (t == 0)
+    {
+        theta = pi * (*var_uni)();
+        phi = 2 * pi * (*var_uni)();
 
-		m[p].x = m0p[p] * sin(theta) * cos(phi);
-		m[p].y = m0p[p] * sin(theta) * sin(phi);
-		m[p].z = m0p[p] * cos(theta);
-	}
+        m[p].x = m0p[p] * sin(theta) * cos(phi);
+        m[p].y = m0p[p] * sin(theta) * sin(phi);
+        m[p].z = m0p[p] * cos(theta);
+    }
 }
 
 /*void ff_model_brownian_validation(long p)
 {
-	double gamma = 6 * pi * eta_car * Rp[p];
-	double D = kb * T / gamma;
-	double dr_root_theory = 0;
-	double dr_root_sim = 0;
+double gamma = 6 * pi * eta_car * Rp[p];
+double D = kb * T / gamma;
+double dr_root_theory = 0;
+double dr_root_sim = 0;
 
-	dr_root_sim = sqrt(pow(r[p].x - r_brown_valid_0.x, 2) + pow(r[p].y - r_brown_valid_0.y, 2) + pow(r[p].z - r_brown_valid_0.z, 2));
-	dr_root_theory = sqrt(6 * D * t);
+dr_root_sim = sqrt(pow(r[p].x - r_brown_valid_0.x, 2) + pow(r[p].y - r_brown_valid_0.y, 2) + pow(r[p].z - r_brown_valid_0.z, 2));
+dr_root_theory = sqrt(6 * D * t);
 
-	//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
+//printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
 }*/
 
 void ff_model_update_conc_in_oleic(long p)
 {
-	if (Rp_to_c[p] <= R_oleic)
-	//if (Rp_to_c[p] <= Lx / 8.0)
-	{
-		is_inside_oleic[p] = 1;
-		
-		pN_oleic_drop++;
-		if ((2 * Rp0[p] >= d[1]) && (2 * Rp0[p] <= d[2])) pN_oleic_drop_I++;
-		if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
-		if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
+    if (Rp_to_c[p] <= R_oleic)
+        //if (Rp_to_c[p] <= Lx / 8.0)
+    {
+        is_inside_oleic[p] = 1;
 
-		phi_vol_fract_oleic += Vp0[p];
-	}
-	else 
-	{
-		//if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
-		is_inside_oleic[p] = 0;
-	}
+        pN_oleic_drop++;
+        if ((2 * Rp0[p] >= d[1]) && (2 * Rp0[p] <= d[2])) pN_oleic_drop_I++;
+        if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
+        if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
+
+        phi_vol_fract_oleic += Vp0[p];
+    }
+    else 
+    {
+        //if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
+        is_inside_oleic[p] = 0;
+    }
 }

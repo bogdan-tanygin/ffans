@@ -1,20 +1,20 @@
 /**************************************************************************
- * Copyright (C) 2011,2013 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
- * All rights reserved.
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
+* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* All rights reserved.
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************/
 
 #include <stdio.h>
 
@@ -77,12 +77,12 @@ void cbSpecialKeyPressed(int key, int x, int y)
 
     case GLUT_KEY_UP:
         //x_speed -= 0.01f;
-		space_k *= 1.1;
+        space_k *= 1.1;
         break;
 
     case GLUT_KEY_DOWN:
         //x_speed += 0.01f;
-		space_k /= 1.1;
+        space_k /= 1.1;
         break;
 
     case GLUT_KEY_LEFT:
@@ -119,11 +119,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_m = show_m?0:1;
         break;
 
-	case '5':
+    case '5':
         show_steric = show_steric?0:1;
         break;
-	
-	case 'O': case 'o':
+
+    case 'O': case 'o':
         show_droplet = show_droplet?0:1;
         break;
 
@@ -150,28 +150,28 @@ void cbKeyPressed(unsigned char key, int x, int y)
         ff_io_load(0);
         break;
 
-	case 'L':
+    case 'L':
         ff_io_load(100);
         break;
-    
-	case 'S': case 's':
+
+    case 'S': case 's':
         show_sphere = show_sphere?0:1;
         break;
 
-	case 'T': case 't':
+    case 'T': case 't':
         T += 2;
         break;
 
     case 'C': case 'c':
         T -= 2;
         break;
-	
-	case 'P': case 'p':
+
+    case 'P': case 'p':
         projection_type = projection_type ? 0 : 1;
-		cbResizeScene(window_width, window_height);
+        cbResizeScene(window_width, window_height);
         break;
-	
-	case 'E': case 'e':
+
+    case 'E': case 'e':
         show_bext = show_bext?0:1;
         break;
 
@@ -182,7 +182,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         ff_model_upgrade_ext_field();
         if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
-//        ff_io_save_hyst();
+        //        ff_io_save_hyst();
 
         mz_glob = 0;
         glob_start_step = step;
@@ -226,10 +226,10 @@ void cbKeyPressed(unsigned char key, int x, int y)
             BmanZ += 10;
         }
         break;
-	case '8':
+    case '8':
         show_info = show_info?0:1;
         break;
-	case '9':
+    case '9':
         Lx /= 2;
         Ly /= 2;
         Lz /= 2;
@@ -247,95 +247,95 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 /*void ff_io_save_hyst(void)
 {
-    FILE* file;
-    char s[100];
+FILE* file;
+char s[100];
 
-    if (g_hyst_start_line)
-    {
-        file = fopen("start_hyst.dat", "a");
-        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-        B_hyst_n[hyst_mode] ++;
+if (g_hyst_start_line)
+{
+file = fopen("start_hyst.dat", "a");
+B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
+B_hyst_n[hyst_mode] ++;
 
-        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-        Mz_hyst_n[hyst_mode] ++;
+Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+Mz_hyst_n[hyst_mode] ++;
 
-        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-        fclose(file);
-    }
+fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+fclose(file);
+}
 
-    if (g_hyst_up_line)
-    {
-        if (hyst_mode == 5)
-        {
-            remove("up_hyst_old.dat");
-            rename("up_hyst.dat", "up_hyst_old.dat");
-            file = fopen("up_hyst.dat", "w");
-        }
-        else file = fopen("up_hyst.dat", "a");
+if (g_hyst_up_line)
+{
+if (hyst_mode == 5)
+{
+remove("up_hyst_old.dat");
+rename("up_hyst.dat", "up_hyst_old.dat");
+file = fopen("up_hyst.dat", "w");
+}
+else file = fopen("up_hyst.dat", "a");
 
-        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-        B_hyst_n[hyst_mode] ++;
+B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
+B_hyst_n[hyst_mode] ++;
 
-        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-        Mz_hyst_n[hyst_mode] ++;
+Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+Mz_hyst_n[hyst_mode] ++;
 
-        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-        fclose(file);
-    }
+fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+fclose(file);
+}
 
-    if (g_hyst_bottom_line)
-    {
-        if (hyst_mode == 13)
-        {
-            remove("bottom_hyst_old.dat");
-            rename("bottom_hyst.dat", "bottom_hyst_old.dat");
-            file = fopen("bottom_hyst.dat", "w");
-        }
-        else file = fopen("bottom_hyst.dat", "a");
+if (g_hyst_bottom_line)
+{
+if (hyst_mode == 13)
+{
+remove("bottom_hyst_old.dat");
+rename("bottom_hyst.dat", "bottom_hyst_old.dat");
+file = fopen("bottom_hyst.dat", "w");
+}
+else file = fopen("bottom_hyst.dat", "a");
 
-        B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-        B_hyst_n[hyst_mode] ++;
+B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
+B_hyst_n[hyst_mode] ++;
 
-        Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-        Mz_hyst_n[hyst_mode] ++;
+Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
+Mz_hyst_n[hyst_mode] ++;
 
-        fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-        fclose(file);
-    }
+fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
+fclose(file);
+}
 }*/
 
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III;
-	double V_oleic = 0;
+    double V_oleic = 0;
 
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
-	file2 = fopen("setting_n_agg.dat", "a");
-	file2_phi = fopen("setting_phi_agg.dat", "a");
-	file2_I = fopen("setting_n_agg_I.dat", "a");
-	file2_II = fopen("setting_n_agg_II.dat", "a");
-	file2_III = fopen("setting_n_agg_III.dat", "a");
+    file2 = fopen("setting_n_agg.dat", "a");
+    file2_phi = fopen("setting_phi_agg.dat", "a");
+    file2_I = fopen("setting_n_agg_I.dat", "a");
+    file2_II = fopen("setting_n_agg_II.dat", "a");
+    file2_III = fopen("setting_n_agg_III.dat", "a");
 
     //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
     //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
-	fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
+    fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
     fprintf(file1, "%5.3e %5.3e \n", t, I);
 
-	V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
-	fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
-	fprintf(file2_phi, "%5.3e %5.3e \n", t, phi_vol_fract_oleic);
-	fprintf(file2_I, "%5.3e %5.3e \n", t, pN_oleic_drop_I / V_oleic);
-	fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
-	fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
+    V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
+    fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
+    fprintf(file2_phi, "%5.3e %5.3e \n", t, phi_vol_fract_oleic);
+    fprintf(file2_I, "%5.3e %5.3e \n", t, pN_oleic_drop_I / V_oleic);
+    fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
+    fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
 
     fclose(file);
     fclose(file1);
-	fclose(file2);
-	fclose(file2_phi);
-	fclose(file2_I);
-	fclose(file2_II);
-	fclose(file2_III);
+    fclose(file2);
+    fclose(file2_phi);
+    fclose(file2_I);
+    fclose(file2_II);
+    fclose(file2_III);
 }
 
 void ff_io_autosave(void)
@@ -343,40 +343,40 @@ void ff_io_autosave(void)
     FILE* file;
     char str[50];
 
-	if (auto_save)
-	{
-
-    sprintf(str, "%d.dat", step);
-
-    file  = fopen(str, "w");
-
-    fprintf(file,  "%5.3e ", t);
-
-    for(long p = 1; p <= pN; p++)
+    if (auto_save)
     {
-        fprintf(file, "%d ", p);
 
-        fprintf(file,  "%5.3e ", Rp[p]);
-		
-		fprintf(file,  "%5.3e ", r[p].x);
-        fprintf(file,  "%5.3e ", r[p].y);
-        fprintf(file,  "%5.3e ", r[p].z);
+        sprintf(str, "%d.dat", step);
 
-		fprintf(file,  "%5.3e ", m[p].x);
-        fprintf(file,  "%5.3e ", m[p].y);
-        fprintf(file,  "%5.3e ", m[p].z);
+        file  = fopen(str, "w");
 
-        fprintf(file,  "%5.3e ", v[p].x);
-        fprintf(file,  "%5.3e ", v[p].y);
-        fprintf(file,  "%5.3e ", v[p].z);
+        fprintf(file,  "%5.3e ", t);
 
-		fprintf(file,  "%5.3e ", w[p].x);
-        fprintf(file,  "%5.3e ", w[p].y);
-        fprintf(file,  "%5.3e ", w[p].z);
-    }
+        for(long p = 1; p <= pN; p++)
+        {
+            fprintf(file, "%d ", p);
 
-    fclose(file);
-	} // end of if (auto_save)
+            fprintf(file,  "%5.3e ", Rp[p]);
+
+            fprintf(file,  "%5.3e ", r[p].x);
+            fprintf(file,  "%5.3e ", r[p].y);
+            fprintf(file,  "%5.3e ", r[p].z);
+
+            fprintf(file,  "%5.3e ", m[p].x);
+            fprintf(file,  "%5.3e ", m[p].y);
+            fprintf(file,  "%5.3e ", m[p].z);
+
+            fprintf(file,  "%5.3e ", v[p].x);
+            fprintf(file,  "%5.3e ", v[p].y);
+            fprintf(file,  "%5.3e ", v[p].z);
+
+            fprintf(file,  "%5.3e ", w[p].x);
+            fprintf(file,  "%5.3e ", w[p].y);
+            fprintf(file,  "%5.3e ", w[p].z);
+        }
+
+        fclose(file);
+    } // end of if (auto_save)
 }
 
 void ff_io_load(long tstep)
@@ -388,13 +388,13 @@ void ff_io_load(long tstep)
 
     glob_start_step = step;
     glob_start_step_susc = step;
-	//k_bm_inst = 1;
+    //k_bm_inst = 1;
 
     if (tstep == 0)
-	{
-		printf("Step to load (must be > 0) = ");
-		scanf("%d", &tstep);
-	}
+    {
+        printf("Step to load (must be > 0) = ");
+        scanf("%d", &tstep);
+    }
 
     if (tstep > 0)
     {
@@ -408,12 +408,12 @@ void ff_io_load(long tstep)
         do
         {
             fscanf(file,"%d", &p);
-			// -------------------
+            // -------------------
 
             fscanf(file, "%f", &tmp);
             Rp[p] = tmp;
-			
-			fscanf(file, "%f", &tmp);
+
+            fscanf(file, "%f", &tmp);
             r[p].x = tmp;
             fscanf(file, "%f", &tmp);
             r[p].y = tmp;
@@ -434,15 +434,15 @@ void ff_io_load(long tstep)
             fscanf(file, "%f", &tmp);
             v[p].z = tmp;
 
-			fscanf(file, "%f", &tmp);
+            fscanf(file, "%f", &tmp);
             w[p].x = tmp;
             fscanf(file, "%f", &tmp);
             w[p].y = tmp;
             fscanf(file, "%f ", &tmp);
             w[p].z = tmp;
 
-			Rp0[p] = Rp[p] - delta;
-			ff_model_size_dispersion_param_calc(Rp0[p], p);
+            Rp0[p] = Rp[p] - delta;
+            ff_model_size_dispersion_param_calc(Rp0[p], p);
         }
         while(!feof(file));
 
@@ -452,81 +452,81 @@ void ff_io_load(long tstep)
 
 /*void ff_io_save_susceptX(void) // different susceptibility terms from the Bext.x
 {
-    FILE* file;
-    double Mx, My, Mz; // time-average
-    double Hx; // external field
+FILE* file;
+double Mx, My, Mz; // time-average
+double Hx; // external field
 
-    Hx = Bext(0,0,0).x / mu0;
-    Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-    My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-    Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
+Hx = Bext(0,0,0).x / mu0;
+Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
+My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
+Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
 
-    if (BmanX == 0) remove("susceptXX.dat");
-    file  = fopen("susceptXX.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hx, Mx);
-    fclose(file);
+if (BmanX == 0) remove("susceptXX.dat");
+file  = fopen("susceptXX.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hx, Mx);
+fclose(file);
 
-    if (BmanX == 0) remove("susceptXY.dat");
-    file  = fopen("susceptXY.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hx, My);
-    fclose(file);
+if (BmanX == 0) remove("susceptXY.dat");
+file  = fopen("susceptXY.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hx, My);
+fclose(file);
 
-    if (BmanX == 0) remove("susceptXZ.dat");
-    file  = fopen("susceptXZ.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hx, Mz);
-    fclose(file);
+if (BmanX == 0) remove("susceptXZ.dat");
+file  = fopen("susceptXZ.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hx, Mz);
+fclose(file);
 }
 
 void ff_io_save_susceptY(void) // different susceptibility terms from the Bext.x
 {
-    FILE* file;
-    double Mx, My, Mz; // time-average
-    double Hy; // external field
-    
-    Hy = Bext(0,0,0).y / mu0;
-    Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-    My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-    Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
+FILE* file;
+double Mx, My, Mz; // time-average
+double Hy; // external field
 
-    if (BmanY == 0) remove("susceptYX.dat");
-    file  = fopen("susceptYX.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hy, Mx);
-    fclose(file);
+Hy = Bext(0,0,0).y / mu0;
+Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
+My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
+Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
 
-    if (BmanY == 0) remove("susceptYY.dat");
-    file  = fopen("susceptYY.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hy, My);
-    fclose(file);
+if (BmanY == 0) remove("susceptYX.dat");
+file  = fopen("susceptYX.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hy, Mx);
+fclose(file);
 
-    if (BmanY == 0) remove("susceptYZ.dat");
-    file  = fopen("susceptYZ.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hy, Mz);
-    fclose(file);
+if (BmanY == 0) remove("susceptYY.dat");
+file  = fopen("susceptYY.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hy, My);
+fclose(file);
+
+if (BmanY == 0) remove("susceptYZ.dat");
+file  = fopen("susceptYZ.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hy, Mz);
+fclose(file);
 }
 
 void ff_io_save_susceptZ(void) // different susceptibility terms from the Bext.x
 {
-    FILE* file;
-    double Mx, My, Mz; // time-average
-    double Hz; // external field
+FILE* file;
+double Mx, My, Mz; // time-average
+double Hz; // external field
 
-    Hz = Bext(0,0,0).z / mu0;
-    Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-    My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-    Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
+Hz = Bext(0,0,0).z / mu0;
+Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
+My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
+Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
 
-    if (BmanZ == 0) remove("susceptZX.dat");
-    file  = fopen("susceptZX.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hz, Mx);
-    fclose(file);
+if (BmanZ == 0) remove("susceptZX.dat");
+file  = fopen("susceptZX.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hz, Mx);
+fclose(file);
 
-    if (BmanZ == 0) remove("susceptZY.dat");
-    file  = fopen("susceptZY.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hz, My);
-    fclose(file);
+if (BmanZ == 0) remove("susceptZY.dat");
+file  = fopen("susceptZY.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hz, My);
+fclose(file);
 
-    if (BmanZ == 0) remove("susceptZZ.dat");
-    file  = fopen("susceptZZ.dat", "a");
-    fprintf(file, "%5.3e %5.3e \n", Hz, Mz);
-    fclose(file);
+if (BmanZ == 0) remove("susceptZZ.dat");
+file  = fopen("susceptZZ.dat", "a");
+fprintf(file, "%5.3e %5.3e \n", Hz, Mz);
+fclose(file);
 }*/
