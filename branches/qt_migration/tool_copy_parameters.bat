@@ -1,0 +1,1 @@
+copy /Y parameters.ini ..\build-ffans-Desktop_Qt_5_0_2_MSVC2010_32bit-Release\
