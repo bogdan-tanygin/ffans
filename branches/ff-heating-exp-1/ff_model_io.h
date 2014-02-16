@@ -19,7 +19,7 @@
 //void ff_io_save_hyst(void);
 void ff_io_save_setting(ff_vect_t m_tot,double I);
 void ff_io_autosave(void);
-void ff_io_load(void);
+void ff_io_load(long);
 /*void ff_io_save_susceptX(void);
 void ff_io_save_susceptY(void);
 void ff_io_save_susceptZ(void);*/

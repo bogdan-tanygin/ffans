@@ -1784,7 +1784,7 @@ again:
         p++;
     }
 
-    if (load_at_start) ff_io_load();
+    if (load_at_start) ff_io_load(0);
 
     //if (start_sediment) ff_model_init_sediment();
 

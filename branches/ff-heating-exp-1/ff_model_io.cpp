@@ -146,11 +146,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
         m_h_eff_tol *= 1.1;
         break;*/
 
-    case 'L': case 'l':
-        ff_io_load();
+    case 'l':
+        ff_io_load(0);
         break;
 
-    case 'S': case 's':
+	case 'L':
+        ff_io_load(100);
+        break;
+    
+	case 'S': case 's':
         show_sphere = show_sphere?0:1;
         break;
 
@@ -375,10 +379,9 @@ void ff_io_autosave(void)
 	} // end of if (auto_save)
 }
 
-void ff_io_load(void)
+void ff_io_load(long tstep)
 {
     FILE* file;
-    long tstep, tstep1;
     float tmp;
     char str[50];
     long p;
@@ -387,8 +390,11 @@ void ff_io_load(void)
     glob_start_step_susc = step;
 	//k_bm_inst = 1;
 
-    printf("Step to load (must be > 0) = ");
-    scanf("%d", &tstep);
+    if (tstep == 0)
+	{
+		printf("Step to load (must be > 0) = ");
+		scanf("%d", &tstep);
+	}
 
     if (tstep > 0)
     {
