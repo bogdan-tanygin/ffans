@@ -2246,18 +2246,13 @@ void ff_model_size_dispersion_init(void)
             ff_model_size_dispersion_param_calc(Rp0[p], p);
         }
         for (i = 1; i <= imax - 1; i++)
-            if ((random_value > random_points[i])&&(random_value <= random_points[i + 1]))
+            if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]))
             {
                 Rp0[p] = 0.5 * d[i + 1];
                 Rp[p] = Rp0[p] + delta;
                 ff_model_size_dispersion_param_calc(Rp0[p], p);
-                if (d[i + 1] > 10 * 1E-9) is_neel[p] = 0;
-                else is_neel[p] = 1;
                 break;
             }
-
-            if (p == 1) R0_min = Rp0[p];
-            if (Rp0[p] < R0_min) R0_min = Rp0[p];
     }
 }
 
@@ -2272,6 +2267,12 @@ void ff_model_size_dispersion_param_calc(double R0, long p)
     double tmmag = rop * Vmag; // mass of the magnetic part
     double theta, phi;
 
+    if (2 * Rp0[p] > 10 * 1E-9) is_neel[p] = 0;
+    else is_neel[p] = 1;
+
+    if (p == 1) R0_min = Rp0[p];
+    if (Rp0[p] < R0_min) R0_min = Rp0[p];
+    
     Vp0[p] = V0;
     Vpfull[p] = Vfull;
     M0p[p] = tm;
@@ -2317,13 +2318,13 @@ void ff_model_update_conc_in_oleic(long p)
         is_inside_oleic[p] = 1;
 
         pN_oleic_drop++;
-        if ((2 * Rp0[p] >= d[1]) && (2 * Rp0[p] <= d[2])) pN_oleic_drop_I++;
-        if ((2 * Rp0[p] >= d[3]) && (2 * Rp0[p] <= d[7])) pN_oleic_drop_II++;
-        if ((2 * Rp0[p] >= d[8]) && (2 * Rp0[p] <= d[14])) pN_oleic_drop_III++;
+        if ((2 * Rp0[p] >= d[1] * 0.99) && (2 * Rp0[p] <= d[2] * 1.01)) pN_oleic_drop_I++;
+        if ((2 * Rp0[p] >= d[3] * 0.99) && (2 * Rp0[p] <= d[7] * 1.01)) pN_oleic_drop_II++;
+        if ((2 * Rp0[p] >= d[8] * 0.99) && (2 * Rp0[p] <= d[14] * 1.01)) pN_oleic_drop_III++;
 
         phi_vol_fract_oleic += Vp0[p];
     }
-    else 
+    else
     {
         //if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
         is_inside_oleic[p] = 0;

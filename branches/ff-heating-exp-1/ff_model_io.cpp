@@ -159,11 +159,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 
     case 'T': case 't':
-        T += 2;
+        T += 1;
         break;
 
     case 'C': case 'c':
-        T -= 2;
+        T -= 1;
         break;
 
     case 'P': case 'p':
@@ -354,7 +354,7 @@ void ff_io_autosave(void)
 
         for(long p = 1; p <= pN; p++)
         {
-            fprintf(file, "%d ", p);
+            fprintf(file, "p = %d ", p);
 
             fprintf(file,  "%5.3e ", Rp[p]);
 
@@ -407,7 +407,7 @@ void ff_io_load(long tstep)
 
         do
         {
-            fscanf(file,"%d", &p);
+            fscanf(file,"p = %d", &p);
             // -------------------
 
             fscanf(file, "%f", &tmp);
