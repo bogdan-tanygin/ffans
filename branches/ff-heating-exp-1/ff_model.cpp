@@ -75,6 +75,7 @@ ff_vect_t dw[pN + 1];
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
+int is_temp_sat[pN + 1]; // temperature saturation flag
 int is_inside_oleic[pN + 1];
 //int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp0[pN + 1];
@@ -127,7 +128,9 @@ double T_basic_p_rot_z[pN + 1];
 double T_mean_p_x[pN + 1];
 double T_mean_p_y[pN + 1];
 double T_mean_p_z[pN + 1];
-//double T_mean_p_rot[pN + 1];
+double T_mean_p_rot_x[pN + 1];
+double T_mean_p_rot_y[pN + 1];
+double T_mean_p_rot_z[pN + 1];
 double T_mean_loc_p_x[pN + 1];
 double T_mean_loc_p_y[pN + 1];
 double T_mean_loc_p_z[pN + 1];
@@ -430,7 +433,9 @@ int ff_model_check_smooth_dr(long p)
                 T_mean_p_x[ps] -= T_basic_p_x[ps];
                 T_mean_p_y[ps] -= T_basic_p_y[ps];
                 T_mean_p_z[ps] -= T_basic_p_z[ps];
-                //T_mean_p_rot[ps] -= T_basic_p_rot[ps];
+                T_mean_p_rot_x[ps] -= T_basic_p_rot_x[ps];
+                T_mean_p_rot_y[ps] -= T_basic_p_rot_y[ps];
+                T_mean_p_rot_z[ps] -= T_basic_p_rot_z[ps];
                 k_mean_p[ps] --;
                 T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
                 T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
@@ -1773,13 +1778,14 @@ again:
         dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot_x[p] = dT_p_rot_y[p] = dT_p_rot_z[p] = T;
         dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot_x[p] = dT_prev_p_rot_y[p] = dT_prev_p_rot_z[p] = T;
         T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot_x[p] = T_basic_p_rot_y[p] = T_basic_p_rot_z[p] = 0;
-        T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p];// = T_mean_p_rot[p] = 0;
+        T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p] = T_mean_p_rot_x[p] = T_mean_p_rot_y[p] = T_mean_p_rot_z[p] = 0;
         T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
         //T_mean_loc_prev_p[p] = 0;
         //T_mean_loc_prev_revert_p[p] = 0;
         k_mean_p[p] = 0;
 
         is_inside_oleic[p] = 1;
+        is_temp_sat[p] = 0;
 
         p++;
     }
@@ -2091,8 +2097,13 @@ void ff_model_update_dT_p(long p)
     T_mean_p_x[p] += T_basic_p_x[p];
     T_mean_p_y[p] += T_basic_p_y[p];
     T_mean_p_z[p] += T_basic_p_z[p];
-    //T_mean_p_rot[p] += T_basic_p_rot[p];
+    T_mean_p_rot_x[p] += T_basic_p_rot_x[p];
+    T_mean_p_rot_y[p] += T_basic_p_rot_y[p];
+    T_mean_p_rot_z[p] += T_basic_p_rot_z[p];
     k_mean_p[p] ++;
+    
+    if (T_mean_p_x[p] / k_mean_p[p] >= T) is_temp_sat[p] = 1;
+
     T_mean_loc_p_x[p] += T_basic_p_x[p];
     T_mean_loc_p_y[p] += T_basic_p_y[p];
     T_mean_loc_p_z[p] += T_basic_p_z[p];
@@ -2111,12 +2122,24 @@ void ff_model_update_dT_p(long p)
         dT_prev_p_rot_y[p] = dT_p_rot_y[p];
         dT_prev_p_rot_z[p] = dT_p_rot_z[p];
 
-        dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
-        dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
-        dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
-        dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
-        dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
-        dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
+        if (!(is_temp_sat[p]))
+        {
+            dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
+            dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
+            dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
+            dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
+            dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
+            dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
+        }
+        else
+        {
+            dT_p_x[p] = T - T_mean_p_x[p] / k_mean_p[p];
+            dT_p_y[p] = T - T_mean_p_y[p] / k_mean_p[p];
+            dT_p_z[p] = T - T_mean_p_z[p] / k_mean_p[p];
+            dT_p_rot_x[p] = T - T_mean_p_rot_x[p] / k_mean_p[p];
+            dT_p_rot_y[p] = T - T_mean_p_rot_y[p] / k_mean_p[p];
+            dT_p_rot_z[p] = T - T_mean_p_rot_z[p] / k_mean_p[p];
+        }
 
         //if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
         if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
