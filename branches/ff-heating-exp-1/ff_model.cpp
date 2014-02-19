@@ -2109,7 +2109,7 @@ void ff_model_update_dT_p(long p)
     T_mean_p_tol = (T_mean_p_x[p] + T_mean_p_y[p] + T_mean_p_z[p] + T_mean_p_rot_x[p] + T_mean_p_rot_y[p] + T_mean_p_rot_z[p]) / (6.0 * k_mean_p[p]);
     if (T_mean_p_tol >= T) is_temp_sat[p] = 1;
 
-    if (is_temp_sat[p]) k_force_adapt_p_0[p] = 1 + k_bm_inst_max * (k_force_adapt_0 - 1.0) / k_mean_p[p];
+    //if (is_temp_sat[p]) k_force_adapt_p_0[p] = 1 + k_bm_inst_max * (k_force_adapt_0 - 1.0) / k_mean_p[p];
 
     T_mean_loc_p_x[p] += T_basic_p_x[p];
     T_mean_loc_p_y[p] += T_basic_p_y[p];
