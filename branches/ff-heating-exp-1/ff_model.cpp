@@ -177,6 +177,8 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
+double k_force_adapt_p_0[pN + 1];
+
 double k_force_adapt;
 double k_force_adapt_p_x[pN + 1];
 double k_force_adapt_p_y[pN + 1];
@@ -1786,6 +1788,7 @@ again:
 
         is_inside_oleic[p] = 1;
         is_temp_sat[p] = 0;
+        k_force_adapt_p_0[p] = k_force_adapt_0;
 
         p++;
     }
@@ -2086,6 +2089,7 @@ void ff_model_update_dT(void)
 void ff_model_update_dT_p(long p)
 {
     double rel_T = 1;
+    double T_mean_p_tol = 0;
 
     T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
     T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
@@ -2102,7 +2106,10 @@ void ff_model_update_dT_p(long p)
     T_mean_p_rot_z[p] += T_basic_p_rot_z[p];
     k_mean_p[p] ++;
     
-    if (T_mean_p_x[p] / k_mean_p[p] >= T) is_temp_sat[p] = 1;
+    T_mean_p_tol = (T_mean_p_x[p] + T_mean_p_y[p] + T_mean_p_z[p] + T_mean_p_rot_x[p] + T_mean_p_rot_y[p] + T_mean_p_rot_z[p]) / (6.0 * k_mean_p[p]);
+    if (T_mean_p_tol >= T) is_temp_sat[p] = 1;
+
+    if (is_temp_sat[p]) k_force_adapt_p_0[p] = 1 + k_bm_inst_max * (k_force_adapt_0 - 1.0) / k_mean_p[p];
 
     T_mean_loc_p_x[p] += T_basic_p_x[p];
     T_mean_loc_p_y[p] += T_basic_p_y[p];
@@ -2142,23 +2149,23 @@ void ff_model_update_dT_p(long p)
         }
 
         //if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
-        if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_0;
-        else k_force_adapt_p_x[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_x[p] /= k_force_adapt_p_0[p];
 
-        if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_0;
-        else k_force_adapt_p_y[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_y[p] /= k_force_adapt_p_0[p];
 
-        if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_0;
-        else k_force_adapt_p_z[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_z[p] /= k_force_adapt_p_0[p];
 
-        if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_0;
-        else k_force_adapt_p_rot_x[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_rot_x[p] /= k_force_adapt_p_0[p];
 
-        if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_0;
-        else k_force_adapt_p_rot_y[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_rot_y[p] /= k_force_adapt_p_0[p];
 
-        if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_0;
-        else k_force_adapt_p_rot_z[p] /= k_force_adapt_0 * rel_T;
+        if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_p_0[p];
+        else k_force_adapt_p_rot_z[p] /= k_force_adapt_p_0[p];
 
         //T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
         //T_mean_loc_prev_p[p] = T_mean_loc_p[p];
