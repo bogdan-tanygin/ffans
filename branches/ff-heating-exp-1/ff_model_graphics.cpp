@@ -481,6 +481,12 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
+    sprintf(buf,"k_force_adapt_mean = %5.3e", k_force_adapt_mean_print);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    
+    glColor4f(0,0,0,0.75);
     sprintf(buf,"pseudo_dT = %5.3e K", dT);
 
     glRasterPos2i(6, (shift--) * 20);

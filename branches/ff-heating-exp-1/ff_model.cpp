@@ -186,6 +186,8 @@ double k_force_adapt_p_z[pN + 1];
 double k_force_adapt_p_rot_x[pN + 1];
 double k_force_adapt_p_rot_y[pN + 1];
 double k_force_adapt_p_rot_z[pN + 1];
+double k_force_adapt_mean = 0;
+double k_force_adapt_mean_print = 0;
 
 ff_vect_t r_brown_valid_0;
 
@@ -1369,6 +1371,9 @@ void ff_model_next_step(void)
                     k_bm_inst = 1;
                     T_mean_loc = 0;
                     for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
+                    k_force_adapt_mean /= (6 * pN);
+                    k_force_adapt_mean_print = k_force_adapt_mean;
+                    k_force_adapt_mean = 0;
                     ///printf("\n !!!", dT);
                 }
 
@@ -2153,21 +2158,33 @@ void ff_model_update_dT_p(long p)
         if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_x[p] /= k_force_adapt_p_0[p];
 
+        k_force_adapt_mean += k_force_adapt_p_x[p];
+
         if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_y[p] /= k_force_adapt_p_0[p];
+
+        k_force_adapt_mean += k_force_adapt_p_y[p];
 
         if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_z[p] /= k_force_adapt_p_0[p];
 
+        k_force_adapt_mean += k_force_adapt_p_z[p];
+
         if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_rot_x[p] /= k_force_adapt_p_0[p];
+
+        k_force_adapt_mean += k_force_adapt_p_rot_x[p];
 
         if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_rot_y[p] /= k_force_adapt_p_0[p];
 
+        k_force_adapt_mean += k_force_adapt_p_rot_y[p];
+
         if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_p_0[p];
         else k_force_adapt_p_rot_z[p] /= k_force_adapt_p_0[p];
 
+        k_force_adapt_mean += k_force_adapt_p_rot_z[p];
+        
         //T_mean_loc_prev_revert_p[p] = T_mean_loc_prev_p[p];
         //T_mean_loc_prev_p[p] = T_mean_loc_p[p];
     }
