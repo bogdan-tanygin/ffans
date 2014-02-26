@@ -58,6 +58,7 @@ extern double t;
 extern double dT;
 extern double T_mean;
 extern long k_mean;
+extern double k_force_adapt_mean_print;
 extern double T_mean_loc_prev;
 
 extern double Ek;
