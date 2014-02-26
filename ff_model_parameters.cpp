@@ -35,7 +35,7 @@ const double ta0 = -273.15; // [°C]
 
 // Space
 double gl_scale = 1;
-double volume_reduce = 0.45;
+double volume_reduce = 0.40;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -46,7 +46,7 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 double dt = 1.5E-5; // s // 1.5E-5
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
-double k_force_adapt_0 = 1.05; // 1.05 is a regular value for the adaptive force model
+double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
 long slow_steps = 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r = 0.4;
