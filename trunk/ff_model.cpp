@@ -968,17 +968,8 @@ ff_vect_t ff_model_nonloc_force(long p)
                 }
 
                 // Entropic repulsion
-                if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
+                /*if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
                 {
-                    /*if (Ch > 5)
-                    Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
-                    else
-                    Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);*/
-
-                    /*tFx += -dx * Cmod;
-                    tFy += -dy * Cmod;
-                    tFz += -dz * Cmod;*/
-
                     dd = Rp0[p] + Rp0[ps];
                     l = 2 * (dR - dd) / dd;
                     tt = 2 * delta / dd;
@@ -986,7 +977,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                }
+                }*/
 #endif
 
 #ifndef SECONDARY
@@ -994,8 +985,8 @@ ff_vect_t ff_model_nonloc_force(long p)
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
                 //if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
                 //if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
-                //if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
-                if (dR > (Rp0[p] + Rp0[ps] + a0))
+                if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
+                //if (dR > (Rp0[p] + Rp0[ps] + a0))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -2040,7 +2031,7 @@ void ff_model_effective_random_force_update(long p)
         Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
     }
 
-    if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
+    //if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
     //if (dt < 1.5E-12) speed_ballance = 1;
 
     /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 

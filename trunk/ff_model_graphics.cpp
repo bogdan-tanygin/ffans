@@ -34,7 +34,7 @@ GLUquadric* g_quad;
 
 int show_m, show_b, show_bext;
 int show_info = 1;
-int show_droplet = 0;
+int show_droplet = 1;
 int transp;
 int show_sphere;
 int show_steric = 0;
