@@ -98,6 +98,7 @@ double B_hyst_n[21];
 double Mz_hyst_n[21];
 
 double t; // time
+double t_temp = 0; // temperature, [C]
 double dT = 0;
 double dT_prev = 0;
 double T_basic = 0;
@@ -1152,7 +1153,6 @@ ff_vect_t ff_model_torque(long p)
 
 void ff_model_next_step(void)
 { 
-
     ff_vect_t f, ttau;
     double I;
     long p;
@@ -1165,6 +1165,7 @@ void ff_model_next_step(void)
     double tmmag;
     double theta_0_r, phi_0_r;
     double Mtot;
+    double t_temp_1 = 0;
 
     Ek = Ek_tr = Ek_rot = 0;
     mz_tot = 0;
@@ -1174,7 +1175,11 @@ void ff_model_next_step(void)
     pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
     phi_vol_fract_oleic = 0;
 
-    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * (T + ta0));
+    t_temp = T + ta0;
+    if (t_temp > 90) t_temp_1 = 90;
+    if (t_temp < 20) t_temp_1 = 20;
+    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
+    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     for (p = 1; p <= pN; p++) if (exist_p[p])
     {
@@ -1675,8 +1680,15 @@ void ff_model_init(void)
     double dR;
     double sigma;
     long i,j;
+    double t_temp_1 = 0;
 
     R_oleic = R_oleic_0;
+    
+    t_temp = T + ta0;
+    if (t_temp > 90) t_temp_1 = 90;
+    if (t_temp < 20) t_temp_1 = 20;
+    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
+    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////

@@ -62,10 +62,15 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_oleic = 1;
+int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
-double eta_oleic = 14.285 * 1E-3; // [Pa * s]
+//double eta_oleic = 14.285 * 1E-3; // [Pa * s]
+double eta_oleic = 0;
+double a3_eta_oleic = - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
+double a2_eta_oleic = 3E-05;
+double a1_eta_oleic = - 0.0024;
+double a0_eta_oleic = 0.0769;
 //double sigma_sf = 32.5 * 1E-3; // [N / m]
 double sigma_sf = 0;
 double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
