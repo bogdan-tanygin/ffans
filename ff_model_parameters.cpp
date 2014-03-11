@@ -53,7 +53,7 @@ double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
-double sigma_sf_nano = 1;
+double sigma_sf_nano = 1E-4;
 
 double kr = gl_scale; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
@@ -62,7 +62,7 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_oleic = 0;
+int is_oleic = 1;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 //double eta_oleic = 14.285 * 1E-3; // [Pa * s]
