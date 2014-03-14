@@ -2220,11 +2220,13 @@ void ff_model_size_dispersion_init(void)
 {
     //double d[14 + 1];
     double F[14 + 1];
-    long i, p;
+    long i, p, i_min = 1;
     long imax = 14;
     double Ftot;
     double random_points[14 + 1];
     double random_value;
+    double large_fraction_tmp = 0;
+    int is_set = 0;
 
     d[1] = 33.33333;
     F[1] = 0.0108843537;
@@ -2275,6 +2277,17 @@ void ff_model_size_dispersion_init(void)
         Ftot += F[i];
     }
 
+    large_fraction_tmp = 0;
+    if (is_large_mode) for (i = imax; i >= 1; i--)
+    {
+        large_fraction_tmp += F[i] / Ftot;
+        if (large_fraction_tmp > large_fraction)
+        {
+            i_min = i + 1;
+            break;
+        }
+    }
+
     for (i = 1; i <= imax; i++)
     {
         random_points[i] = F[i] / Ftot;
@@ -2286,24 +2299,30 @@ void ff_model_size_dispersion_init(void)
 
     for (p = 1; p <= pN; p++)
     {
+        is_set = 0;
+
+        again_size_disp:
         random_value = (*var_uni)();
 
         //printf("\n random_value = %e", random_value);
 
-        if (random_value <= random_points[1])
+        if ((random_value <= random_points[1]) && (i_min == 1))
         {
             Rp0[p] = 0.5 * d[1];
             Rp[p] = Rp0[p] + delta;
             ff_model_size_dispersion_param_calc(Rp0[p], p);
+            is_set = 1;
         }
         for (i = 1; i <= imax - 1; i++)
-            if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]))
+            if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]) && (i + 1 >= i_min))
             {
                 Rp0[p] = 0.5 * d[i + 1];
                 Rp[p] = Rp0[p] + delta;
                 ff_model_size_dispersion_param_calc(Rp0[p], p);
+                is_set = 1;
                 break;
             }
+        if (is_set == 0) goto again_size_disp;
     }
 }
 
