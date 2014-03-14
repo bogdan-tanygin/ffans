@@ -77,6 +77,8 @@ extern double delta;
 //extern double M0; // mass [kg]
 //extern double m0; // Magnetic moment [J / T]
 
+extern int is_large_mode;
+extern double large_fraction;
 extern int is_oleic;
 extern double R_oleic_0;
 extern double eta_oleic;

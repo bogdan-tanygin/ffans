@@ -35,7 +35,7 @@ const double ta0 = -273.15; // [°C]
 
 // Space
 double gl_scale = 1;
-double volume_reduce = 0.40;
+double volume_reduce = 0.8;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -62,7 +62,9 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_oleic = 1;
+int is_large_mode = 1; // large particles mode
+double large_fraction = 6.92E-02; // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
+int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 //double eta_oleic = 14.285 * 1E-3; // [Pa * s]
@@ -90,7 +92,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 1E4; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
