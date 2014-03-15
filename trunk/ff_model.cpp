@@ -788,9 +788,12 @@ ff_vect_t ff_model_nonloc_torque(long p)
                     tBy += dtBqy * tms / m0p[ps] + dtBy * (1 - tms / m0p[ps]);
                     tBz += dtBqz * tms / m0p[ps] + dtBz * (1 - tms / m0p[ps]);*/
 
-                    tBx += dtBx;
-                    tBy += dtBy;
-                    tBz += dtBz;
+                    if (dR >= Rp0[p] + Rp0[ps]) // soft-sphere model related correction
+                    {
+                        tBx += dtBx;
+                        tBy += dtBy;
+                        tBz += dtBz;
+                    }
 
                     /*#ifdef SECONDARY
                     } // di and dj
