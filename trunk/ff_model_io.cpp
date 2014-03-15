@@ -226,7 +226,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
             BmanZ += 10;
         }
         break;
-    case '8':
+    case 'i':case 'I':
         show_info = show_info?0:1;
         break;
     case '9':
