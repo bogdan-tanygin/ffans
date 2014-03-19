@@ -26,7 +26,8 @@ void ff_mgr_print_info(void);
 
 void ff_mgr_show_next_step(void);
 
-extern int show_m, show_b, show_bext, show_droplet, show_info;
+extern int show_m, show_b, show_bext, show_droplet, show_info, show_cube;
+extern double scaling_cube;
 
 extern int transp;
 

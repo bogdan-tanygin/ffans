@@ -104,6 +104,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
     int tmp;
     double tmpd;
     switch (key) {
+    
     case 'Q': case 'q': case 27:
         glutDestroyWindow(window_id);
         //        exit(1);
@@ -117,6 +118,10 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
     case 'M': case 'm':
         show_m = show_m?0:1;
+        break;
+
+    case 'X': case 'x':
+        show_cube = show_cube ? 0 : 1;
         break;
 
     case '5':
@@ -239,6 +244,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 
         break; 
+    
+    case '[':
+        scaling_cube /= 1.05;
+        break;
+    
+    case ']':
+        scaling_cube *= 1.05;
+        break;
+    
     default:
         printf ("KP: No action assigned for %d.\n", key);
         break;

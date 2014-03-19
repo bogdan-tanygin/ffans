@@ -38,6 +38,8 @@ int show_droplet = 0;
 int transp;
 int show_sphere;
 int show_steric = 0;
+int show_cube = 1;
+double scaling_cube = 1.0;
 
 // vector parameters
 double v_len;
@@ -193,31 +195,54 @@ void ff_mgr_show_next_step()
     //step++;
     //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
-    glLineWidth(2.0f);
-    glBegin(GL_LINE_LOOP);
+    if (show_cube)
+    {
+        glLineWidth(2.0f);
+        glBegin(GL_LINE_LOOP);
 
-    glColor3f(0.0, 0.0, 0.0);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-    glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-    glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glColor3f(0.0, 0.0, 0.0);
 
-    glEnd();
+        space_k *= scaling_cube;
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
+        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+        space_k /= scaling_cube;
+
+        glEnd();
+    }
+    else
+    {
+        glLineWidth(4.0f);
+        glBegin(GL_LINE_LOOP);
+
+        glColor3f(0.0, 0.0, 0.0);
+
+        glVertex3d(space_k * R_oleic, 0.0, 0.0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, space_k * R_oleic, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, 0, space_k * R_oleic);
+        glVertex3d(0, 0, 0);
+
+        glEnd();
+
+    }
 
     for (long p = 1; p <= pN; p++)
         if (exist_p[p])
@@ -457,7 +482,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Lx = %5.3e m", Lx);
+    sprintf(buf,"Lx * scaling_cube = %5.3e m", Lx * scaling_cube);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
