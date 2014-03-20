@@ -40,6 +40,8 @@ int show_sphere;
 int show_steric = 0;
 int show_cube = 1;
 double scaling_cube = 1.0;
+long gr_quality = 20;
+double gr_x0 = 0, gr_y0 = 0, gr_z0 = 0;
 
 // vector parameters
 double v_len;
@@ -203,25 +205,27 @@ void ff_mgr_show_next_step()
         glColor3f(0.0, 0.0, 0.0);
 
         space_k *= scaling_cube;
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
-        glVertex3d( space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx ,  space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly , -space_k * 0.5 * Lz);
-        glVertex3d(-space_k * 0.5 * Lx , -space_k * 0.5 * Ly ,  space_k * 0.5 * Lz);
+
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+        glVertex3d( space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 ,  space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 , -space_k * 0.5 * Lz + gr_z0);
+        glVertex3d(-space_k * 0.5 * Lx + gr_x0 , -space_k * 0.5 * Ly + gr_y0 ,  space_k * 0.5 * Lz + gr_z0);
+
         space_k /= scaling_cube;
 
         glEnd();
@@ -263,7 +267,7 @@ void ff_mgr_show_next_step()
             //glColor3f(0.5, 0.5, 0.5);
             if (show_sphere) 
             {
-                gluSphere(g_quad, space_k * Rp0[p], 20, 20);
+                gluSphere(g_quad, space_k * Rp0[p], gr_quality, gr_quality);
 
                 if (show_steric)
                 {
@@ -272,7 +276,7 @@ void ff_mgr_show_next_step()
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
                     glColor4f(0.5, 0.5, 0.5, 0.5);
-                    gluSphere(g_quad, space_k * Rp[p], 20, 20);
+                    gluSphere(g_quad, space_k * Rp[p], gr_quality, gr_quality);
 
                     glDisable(GL_BLEND);
                     glDisable(GL_ALPHA_TEST);
@@ -302,15 +306,15 @@ void ff_mgr_show_next_step()
                 glTranslatef(r1.x, r1.y, r1.z);
                 glRotatef(theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
 
-                glutSolidCone(0.002 * kvec * kSecondary, 0.01 * kSecondary, 20, 20);
+                glutSolidCone(0.002 * kvec * kSecondary, 0.01 * kSecondary, gr_quality, gr_quality);
                 glRotatef(180, 1, 0, 0);
-                gluDisk(g_quad, 0, 0.002 * kvec * kSecondary, 20, 20);
+                gluDisk(g_quad, 0, 0.002 * kvec * kSecondary, gr_quality, gr_quality);
                 glRotatef(-180, 1, 0, 0);
 
                 glTranslatef(0, 0, -0.01 * kSecondary);
-                gluCylinder(g_quad, 0.0005 * kvec * 2 * kSecondary, 0.0005 * kvec * 2 * kSecondary, 0.01 * kSecondary, 20, 20);
+                gluCylinder(g_quad, 0.0005 * kvec * 2 * kSecondary, 0.0005 * kvec * 2 * kSecondary, 0.01 * kSecondary, gr_quality, gr_quality);
                 glRotatef(180, 1, 0, 0);
-                gluDisk(g_quad, 0, 0.0005 * kvec * 2 * kSecondary, 20, 20);
+                gluDisk(g_quad, 0, 0.0005 * kvec * 2 * kSecondary, gr_quality, gr_quality);
                 glRotatef(-180, 1, 0, 0);
                 glTranslatef(0, 0,  0.01 * kSecondary);
 

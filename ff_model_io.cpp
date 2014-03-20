@@ -180,7 +180,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         show_bext = show_bext?0:1;
         break;
 
-    case 'h':
+    /*case 'h':
         hyst_mode++;
         tmp = 0;
         if (hyst_mode == 21) {hyst_mode = 5; tmp = 1;}
@@ -192,7 +192,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         mz_glob = 0;
         glob_start_step = step;
 
-        break;
+        break;*/
 
     case '0':
         BmanX = BmanY = BmanZ = 0;
@@ -252,7 +252,39 @@ void cbKeyPressed(unsigned char key, int x, int y)
     case ']':
         scaling_cube *= 1.05;
         break;
+
+    case ',':
+        gr_quality --;
+        break;
     
+    case '.':
+        gr_quality ++;
+        break;
+
+    case 'g':
+        gr_x0 -= 0.05;
+        break;
+    
+    case 'h':
+        gr_x0 += 0.05;
+        break;
+    
+    case 'j':
+        gr_y0 -= 0.05;
+        break;
+    
+    case 'k':
+        gr_y0 += 0.05;
+        break;
+
+    case ';':
+        gr_z0 -= 0.05;
+        break;
+    
+    case '\'':
+        gr_z0 += 0.05;
+        break;
+
     default:
         printf ("KP: No action assigned for %d.\n", key);
         break;
