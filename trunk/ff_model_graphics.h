@@ -28,6 +28,8 @@ void ff_mgr_show_next_step(void);
 
 extern int show_m, show_b, show_bext, show_droplet, show_info, show_cube;
 extern double scaling_cube;
+extern long gr_quality;
+extern double gr_x0, gr_y0, gr_z0;
 
 extern int transp;
 
