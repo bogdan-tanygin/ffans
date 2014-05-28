@@ -2041,8 +2041,8 @@ void ff_model_effective_random_force_update(long p)
     }
     else
     {
-        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
-        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
+        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
         Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
     }
 
