@@ -35,7 +35,7 @@ const double ta0 = -273.15; // [°C]
 
 // Space
 double gl_scale = 1;
-double volume_reduce = 0.45;
+double volume_reduce = 1;
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -62,7 +62,7 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_large_mode = 0; // large particles mode
+int is_large_mode = 1; // large particles mode
 double large_fraction = 6.92E-02; // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
 int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
