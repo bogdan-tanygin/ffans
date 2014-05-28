@@ -1109,12 +1109,12 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
     // oleic droplet surface tension force
-    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
+    /*if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
     {
         tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
         tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
         tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
-    }
+    }*/
 
     tF.x += P[p].x;
     tF.y += P[p].y;
@@ -1494,8 +1494,8 @@ void ff_model_next_step(void)
                     }
 
                     if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
-                    if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
-                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
+                    /*if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
+                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);*/
                     phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
                     phi_vol_fract_oleic *= 100;
 
@@ -1810,6 +1810,8 @@ again:
     //if (start_sediment) ff_model_init_sediment();
 
     r_brown_valid_0 = r[1];
+
+    R_oleic *= 8;
 }
 
 /*void ff_model_init_sediment(void)
@@ -1986,7 +1988,8 @@ void ff_model_effective_random_force_update(long p)
     speed_ballance = 1;
     dR = Rp_to_c[p] + Rp0[p] - R_oleic;
     //if ((dR > 0) && (dR <= 2 * Rp[p]) && (is_oleic)) speed_ballance = 1 + (sqrt(eta / eta_oleic) - 1) * dR / (2 * Rp[p]);*/ // this is correct only for the damping mode. Inertia mode (small dt) should disable this
-    if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
+    
+    /*if ((dR > 0) && (dR <= 2 * Rp0[p]) && (is_oleic))
     {
         tmp = sqrt(MUL(r[p], r[p]));
         e3.x = r[p].x / tmp;
@@ -2039,12 +2042,12 @@ void ff_model_effective_random_force_update(long p)
         Py = e1.y * P1 + e2.y * P2 + e3.y * P3;
         Pz = e1.z * P1 + e2.z * P2 + e3.z * P3;
     }
-    else
-    {
+    else*/
+    //{
         Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
         Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
         Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-    }
+    //}
 
     //if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
     //if (dt < 1.5E-12) speed_ballance = 1;

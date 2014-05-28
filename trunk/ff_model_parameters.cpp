@@ -64,7 +64,7 @@ double delta = 2.0E-9;
 // Parameters of oleic acid drop
 int is_large_mode = 1; // large particles mode
 double large_fraction = 6.92E-02; // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
-int is_oleic = 0;
+int is_oleic = 1;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 //double eta_oleic = 14.285 * 1E-3; // [Pa * s]
