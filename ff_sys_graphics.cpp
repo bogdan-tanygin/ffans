@@ -42,7 +42,7 @@ float frame_rate;
 int frame_count;
 
 int window_width  = 300;
-int window_height = 300;
+int window_height = 500;
 
 GLdouble nearVal = 1;
 GLdouble farVal = 100;
