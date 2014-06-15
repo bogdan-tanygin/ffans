@@ -1704,6 +1704,8 @@ void ff_model_init(void)
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
+    printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
+    
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 
@@ -2068,7 +2070,7 @@ void ff_model_effective_random_force_update(long p)
     /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
-    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
+    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt_red);
 
     //printf("\n t1 = %e", M0 / gamma);
     //printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
