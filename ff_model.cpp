@@ -2070,7 +2070,7 @@ void ff_model_effective_random_force_update(long p)
     /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
-    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
+    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt_red);
 
     //printf("\n t1 = %e", M0 / gamma);
     //printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
