@@ -54,6 +54,7 @@ extern double B_hyst_n[];
 extern double Mz_hyst_n[];
 
 extern long step;
+extern double dt;
 extern double t;
 extern double dT;
 extern double T_mean;
