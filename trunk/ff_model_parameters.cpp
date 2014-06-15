@@ -32,6 +32,7 @@ const double Na = 6.02214179 * 1E23;
 double g = 9.81;
 const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
+const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Space
 double gl_scale = 1; // special paramter, see usage
@@ -45,7 +46,8 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold, (Fertman-p-62)
 const double dt0 = 100 * dt_neel; // s // old approach 1.5E-5
-double d_neel = 10 * 1E-9; // m // Neel relaxation diameter threashold, (Fertman-p-62)
+double d_neel = 10 * 1E-9; // [m] // Neel relaxation diameter threashold, (Fertman-p-62)
+double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
 double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
@@ -88,10 +90,11 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
-double a0 = 0.84E-9; // [m] // magnetite unit cell size [Fertman]
-
+double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with pace group Fd3m (above the Verwey temperature)
+double K1 = 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
+double Ms = 478 * 1E3; // [A / m]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
 double Ch_ss = 3E4; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
@@ -141,5 +144,4 @@ double C5 = mu0 / (4 * pi);
 
 //double C6 = ro0 * Vself * g;
 
-//double gamma_e = 1.7609 * (1E11); //s^-1 T^-1
-//double alpha   = 0.05; //magnetization dynamic damping
+double alpha_damp = 0.05; //magnetization dynamic damping

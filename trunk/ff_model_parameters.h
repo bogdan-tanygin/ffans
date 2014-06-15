@@ -33,6 +33,7 @@ extern const double Na;
 extern double g;
 extern const double kb;
 extern const double ta0;
+extern const double gamma_e;
 
 extern double C1;
 
@@ -124,5 +125,7 @@ extern double Vself;
 
 //extern double C6;
 
-extern double gamma_e;
-extern double alpha;
+extern double alpha_damp;
+
+extern double Ms;
+extern double K1;
