@@ -34,8 +34,8 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
 
 // Space
-double gl_scale = 1;
-double volume_reduce = 1;
+double gl_scale = 1; // special paramter, see usage
+double volume_reduce = 1; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -43,7 +43,9 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
-double dt = 1.5E-5; // s // 1.5E-5
+double dt_neel = 1E-9; // [s] // Neel relaxation time threashold, (Fertman-p-62)
+const double dt0 = 100 * dt_neel; // s // old approach 1.5E-5
+double d_neel = 10 * 1E-9; // m // Neel relaxation diameter threashold, (Fertman-p-62)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
 long k_bm_inst = 1;
 double k_force_adapt_0 = 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
@@ -62,9 +64,9 @@ double delta = 2.0E-9;
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 // Parameters of oleic acid drop
-int is_large_mode = 1; // large particles mode
+int is_large_mode = 1; // largest particles mode
 double large_fraction = 6.92E-02; // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
-int is_oleic = 1;
+int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 //double eta_oleic = 14.285 * 1E-3; // [Pa * s]

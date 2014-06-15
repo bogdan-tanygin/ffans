@@ -40,7 +40,8 @@ extern double C1;
 extern double Lx, Ly, Lz; //meters
 
 // Basic physical model parameters
-extern double dt;
+extern const double dt0;
+extern double d_neel;
 extern long k_bm_inst_max;
 extern long k_bm_inst;
 extern double k_force_adapt_0;

@@ -97,7 +97,8 @@ double Mz_hyst[21];
 double B_hyst_n[21];
 double Mz_hyst_n[21];
 
-double t; // time
+double dt = 0;
+double t = 0; // time
 double t_temp = 0; // temperature, [C]
 double dT = 0;
 double dT_prev = 0;
@@ -198,7 +199,7 @@ long pN_oleic_drop_II = 0;
 long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
-//double dt_red = dt0; // reducing time indicator for the random translation
+double dt_red = 0; // reducing time indicator for the random translation
 
 double phi_vol_fract_oleic = 0;
 double phi_vol_fract_oleic_0 = 0;
@@ -1208,17 +1209,25 @@ void ff_model_next_step(void)
         //ff_model_m_setting();
 
         ff_model_update_dT();
+        for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_update_dT_p(p);
+
+        if (dt_red <= 0)
+        {
+            dt_red = dt0;
+            for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_force_update(p);
+        }
 
         for (p = 1; p <= pN; p++)
             if (exist_p[p])
             {
-                ff_model_update_dT_p(p);
+                //ff_model_update_dT_p(p);
 
                 //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
                 /*if (k_bm_inst == 1)*/
-                ff_model_effective_random_force_update(p);
-
+                
+                //ff_model_effective_random_force_update(p);
+                
                 f = ff_model_force(p);
                 ttau = ff_model_torque(p);
                 F[p].x = f.x; F[p].y = f.y; F[p].z = f.z;
@@ -1456,8 +1465,8 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
-                    /*dt_red -= dt;					
-
+                    dt_red -= dt;					
+                    /*
                     for (p = 1; p <= pN; p++) if (exist_p[p])
                     {
                     Ek_tr  += M0p[p] * MUL(v[p],v[p]) / 2.0;
@@ -1499,7 +1508,7 @@ void ff_model_next_step(void)
                     phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
                     phi_vol_fract_oleic *= 100;
 
-                    /*if (dt_red <= 0) dt_red = dt0;*/
+                    //if (dt_red <= 0) dt_red = dt0;
 
                     if (auto_reversal) ff_model_auto_hyst();
                     if (step % 10000 == 0) ff_io_autosave();
@@ -1684,6 +1693,8 @@ void ff_model_init(void)
     double sigma;
     long i,j;
     double t_temp_1 = 0;
+
+    dt = dt0;
 
     R_oleic = R_oleic_0;
     
@@ -2044,10 +2055,12 @@ void ff_model_effective_random_force_update(long p)
     }
     else*/
     //{
-        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
-        Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt);
+        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
+        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
+        Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
     //}
+
+    //printf("\n %e", sqrt(6 * D * 1) / (2 * Rp0[p]));
 
     //if ((dR > 0) && (dR >  2 * Rp0[p]) && (is_oleic)) speed_ballance = sqrt(eta_car / eta_oleic); // component of the k_force_adapt_p
     //if (dt < 1.5E-12) speed_ballance = 1;
@@ -2058,7 +2071,8 @@ void ff_model_effective_random_force_update(long p)
     tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt);
 
     //printf("\n t1 = %e", M0 / gamma);
-    //printf("\n %e", gamma * dt0 / M0);
+    //printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
+    //printf("\n Viscous limit - saturation of angular velocity time %e", I0 / gamma_rot);
     //printf("\n %e", gamma * dx / (M0 * v[p].x));
 
     P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
@@ -2329,6 +2343,11 @@ void ff_model_size_dispersion_init(void)
                 break;
             }
         if (is_set == 0) goto again_size_disp;
+
+        // fixed size option
+        /*Rp0[p] = 0.5 * d[6];
+        Rp[p] = Rp0[p] + delta;
+        ff_model_size_dispersion_param_calc(Rp0[p], p);*/
     }
 }
 
@@ -2343,7 +2362,7 @@ void ff_model_size_dispersion_param_calc(double R0, long p)
     double tmmag = rop * Vmag; // mass of the magnetic part
     double theta, phi;
 
-    if (2 * Rp0[p] > 10 * 1E-9) is_neel[p] = 0;
+    if (2 * Rp0[p] > d_neel) is_neel[p] = 0;
     else is_neel[p] = 1;
 
     if (p == 1) R0_min = Rp0[p];
