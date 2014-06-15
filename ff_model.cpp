@@ -1704,6 +1704,8 @@ void ff_model_init(void)
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
+    printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
+    
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
 
