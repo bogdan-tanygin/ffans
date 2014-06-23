@@ -1824,7 +1824,7 @@ again:
 
     r_brown_valid_0 = r[1];
 
-    R_oleic *= 8;
+    //R_oleic *= 8;
 }
 
 /*void ff_model_init_sediment(void)

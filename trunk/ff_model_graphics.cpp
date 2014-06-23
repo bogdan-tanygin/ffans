@@ -492,7 +492,13 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol (oleic) = %5.3e %%", phi_vol_fract_oleic);
+    sprintf(buf,"phi_vol (drop) = %5.3e %%", phi_vol_fract_oleic);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic / large_fraction);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
