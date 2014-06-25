@@ -34,9 +34,10 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
+double gl_scale = 1; // particle diameter scale parameter
+
 // Space
-double gl_scale = 1; // special scale paramter, see usage
-double volume_reduce = 1; // initial density set
+double volume_reduce = 2.75; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 

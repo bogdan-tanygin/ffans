@@ -498,7 +498,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic / large_fraction);
+    sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -547,6 +547,24 @@ void ff_mgr_print_info()
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"T = %5.3e K", T);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_tot = %5.3e m^-3", V0_tot);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_tot_EV = %5.3e m^-3", V0_tot_EV);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_largest_EV = %5.3e m^-3", V0_largest_EV);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
