@@ -73,6 +73,11 @@ ff_vect_t dw[pN + 1];
 
 //ff_vect_t dir110[13];
 
+long i_min = 1;
+double V0_tot = 0; // total volume of the dispersed phase
+double V0_largest_EV = 0; // mathematical expected value of largest particles total volume // see is_large_mode variable
+double V0_tot_EV = 0; // mathematical expected value of particles total volume
+
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
 int is_temp_sat[pN + 1]; // temperature saturation flag
@@ -2242,7 +2247,7 @@ void ff_model_size_dispersion_init(void)
 {
     //double d[14 + 1];
     double F[14 + 1];
-    long i, p, i_min = 1;
+    long i, p;
     long imax = 14;
     double Ftot;
     double random_points[14 + 1];
@@ -2310,6 +2315,22 @@ void ff_model_size_dispersion_init(void)
         }
     }
 
+    V0_tot_EV = V0_largest_EV = 0;
+    // particle p = 1 parameters must be redefined below in next cycles
+    for (i = 1; i <= imax; i++)
+    {
+        Rp0[1] = 0.5 * d[i];
+        ff_model_size_dispersion_param_calc(Rp0[1], 1);
+        V0_tot_EV += Vp0[1] * F[i] / Ftot;
+        if (i >= i_min) V0_largest_EV += Vp0[1] * F[i] / Ftot;
+    }
+
+    if (is_large_mode) V0_tot_EV *= pN / large_fraction;
+    else V0_tot_EV *= pN;
+
+    if (is_large_mode) V0_largest_EV *= pN / large_fraction;
+    else V0_largest_EV *= pN;
+
     for (i = 1; i <= imax; i++)
     {
         random_points[i] = F[i] / Ftot;
@@ -2318,6 +2339,8 @@ void ff_model_size_dispersion_init(void)
 
     //printf("\n random_points[14] = %e", random_points[14]);
     //printf("\n random_points[13] = %e", random_points[13]);
+
+    V0_tot = 0;
 
     for (p = 1; p <= pN; p++)
     {
@@ -2334,6 +2357,8 @@ void ff_model_size_dispersion_init(void)
             Rp[p] = Rp0[p] + delta;
             ff_model_size_dispersion_param_calc(Rp0[p], p);
             is_set = 1;
+
+            V0_tot += Vp0[p];
         }
         for (i = 1; i <= imax - 1; i++)
             if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]) && (i + 1 >= i_min))
@@ -2342,6 +2367,8 @@ void ff_model_size_dispersion_init(void)
                 Rp[p] = Rp0[p] + delta;
                 ff_model_size_dispersion_param_calc(Rp0[p], p);
                 is_set = 1;
+
+                V0_tot += Vp0[p];
                 break;
             }
         if (is_set == 0) goto again_size_disp;
