@@ -105,6 +105,10 @@ extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 extern double phi_vol_fract_oleic;
 
+extern double k_delta_force_rel_tot;
+extern double k_delta_force_rel_p;
+extern double k_delta_torque_rel_tot;
+extern double k_delta_torque_rel_p;
 extern double k_force_adapt;
 
 extern double R_oleic;
