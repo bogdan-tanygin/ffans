@@ -48,12 +48,17 @@ double Rp_to_c[pN + 1];
 ff_vect_t m[pN + 1];  //particles magnetic moment direction
 ff_vect_t mt[pN + 1];
 ff_vect_t m_prev[pN + 1];
+ff_vect_t m_prev_before_r[pN + 1]; // magnetic moment direction before random motion
 int m_sat[pN + 1];
 
-ff_vect_t F[pN + 1];
-ff_vect_t P[pN + 1];
-ff_vect_t tau[pN + 1]; // torque
-ff_vect_t tau_r[pN + 1]; // random torque
+ff_vect_t F[pN + 1]; // mean force
+ff_vect_t F1[pN + 1]; // force at the t = t
+ff_vect_t F2[pN + 1]; // force at the t = t + dt
+//ff_vect_t P[pN + 1];
+ff_vect_t tau[pN + 1]; // mean torque
+ff_vect_t tau1[pN + 1]; // torque at the t = t
+ff_vect_t tau2[pN + 1]; // // torque at the t = t + dt
+//ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
 //ff_vect_t v_r[pN + 1]; // random heat component
@@ -61,12 +66,12 @@ ff_vect_t w[pN + 1]; // angular velocity vector
 //ff_vect_t w_r[pN + 1]; // random heat component
 
 ff_vect_t drt[pN + 1];
-//ff_vect_t drt_r[pN + 1]; // instantiated random translation
+ff_vect_t drt_r[pN + 1]; // instantiated random translation
 ff_vect_t dvt[pN + 1];
 //ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
 //double dv_r[pN + 1]; // extra random velocity magnitude
 ff_vect_t dphi[pN + 1];
-//ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
+ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
 //ff_vect_t dm[pN + 1];
 ff_vect_t dw[pN + 1];
 //double dw_r[pN + 1]; // extra random angular velocity magnitude
@@ -208,7 +213,7 @@ double dt_red = 0; // reducing time indicator for the random translation
 double k_delta_force_rel[pN + 1]; // relation of random force to attractive forces sum
 double k_delta_force_rel_tot = 0;
 double k_delta_force_rel_p = 0;
-double k_delta_torque_rel[pN + 1]; // relation of random force to attractive forces sum
+double k_delta_torque_rel[pN + 1];
 double k_delta_torque_rel_tot = 0;
 double k_delta_torque_rel_p = 0;
 
@@ -411,7 +416,7 @@ int ff_model_check_smooth_dr(long p)
             //if ((dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e", dr);
             //if ((dt < 1E-15) && (dr / rmod > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dr / rmod > smooth_r), k_force_adapt_p[p] = %e, Fx[p] = %e, Fy[p] = %e, Fz[p] = %e, Px[p] = %e, Py[p] = %e, Pz[p] = %e, vx[p] = %e, vy[p] = %e, vz[p] = %e", dr, k_force_adapt_p[p], F[p].x, F[p].y, F[p].z, P[p].x, P[p].y, P[p].z, v[p].x, v[p].y, v[p].z);
             //if ((dt < 1E-15) && (dphimag / pi > smooth_r)) printf("\n DEBUG SMOOTH dr = %e, (dphimag / pi > smooth_r), taux[p] = %e, tauy[p] = %e, tauz[p] = %e, taux_r[p] = %e, tauy_r[p] = %e, tauz_r[p] = %e, wx[p] = %e, wy[p] = %e, wz[p] = %e", dr, tau[p].x, tau[p].y, tau[p].z, tau_r[p].x, tau_r[p].y, tau_r[p].z, w[p].x, w[p].y, w[p].z);
-
+            
             for(ps = 1; ps <= p; ps ++)
             {
                 r[ps].x -= drt[ps].x;
@@ -427,6 +432,19 @@ int ff_model_check_smooth_dr(long p)
                     m[ps] = m_prev[ps];
                 }
             }
+
+            for(ps = 1; ps <= pN; ps ++)
+            {
+                r[ps].x -= drt_r[ps].x;
+                r[ps].y -= drt_r[ps].y;
+                r[ps].z -= drt_r[ps].z;
+
+                if (!(is_neel[ps]))
+                {
+                    m[ps] = m_prev[ps];
+                }
+            }
+
             dt /= 2.0;
             slow_steps += 10;
             res = 0;
@@ -1132,15 +1150,15 @@ ff_vect_t ff_model_force(long p)
         tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
     }*/
 
-    tF.x += P[p].x;
+    /*tF.x += P[p].x;
     tF.y += P[p].y;
-    tF.z += P[p].z;
+    tF.z += P[p].z;*/
 
-    R_mag = sqrt(MUL(P[p],P[p]));
+    //R_mag = sqrt(MUL(P[p],P[p]));
 
-    k_delta_force_rel[p] = R_mag / F_nonloc_mag;
+    /*k_delta_force_rel[p] = R_mag / F_nonloc_mag;
     k_delta_force_rel_tot += k_delta_force_rel[p];
-    k_delta_force_rel_p ++;
+    k_delta_force_rel_p ++;*/
 
     return tF;
 }
@@ -1174,7 +1192,7 @@ ff_vect_t ff_model_torque(long p)
 
     //printf("\n %e", ttau.x);
 
-    ttau.x += tau_r[p].x;
+    /*ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
     ttau.z += tau_r[p].z;
 
@@ -1184,7 +1202,7 @@ ff_vect_t ff_model_torque(long p)
         k_delta_torque_rel[p] = tau_r_mag / ttau_nonloc_mag;
         k_delta_torque_rel_tot += k_delta_torque_rel[p];
         k_delta_torque_rel_p ++;
-    }
+    }*/
 
     return ttau;
 }
@@ -1247,44 +1265,105 @@ void ff_model_next_step(void)
         ff_model_update_dT();
         for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_update_dT_p(p);
 
+        for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_motion_update(p);
         if (dt_red <= 0)
         {
             dt_red = dt0;
-            for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_force_update(p);
+            //for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_motion_update(p);
         }
 
         for (p = 1; p <= pN; p++)
-            if (exist_p[p])
+        if (exist_p[p])
+        {
+            //ff_model_update_dT_p(p);
+
+            //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+
+            /*if (k_bm_inst == 1)*/
+            
+            //ff_model_effective_random_force_update(p);
+            
+            f = ff_model_force(p);
+            ttau = ff_model_torque(p);
+            F1[p].x = f.x; F1[p].y = f.y; F1[p].z = f.z;
+            tau1[p].x = ttau.x; tau1[p].y = ttau.y; tau1[p].z = ttau.z;
+        }
+
+        for (p = 1; p <= pN; p++) if (exist_p[p])
+        {
+            r[p].x += drt_r[p].x;
+            r[p].y += drt_r[p].y;
+            r[p].z += drt_r[p].z;
+
+            dphi[p].x = dphi_r[p].x;
+            dphi[p].y = dphi_r[p].y;
+            dphi[p].z = dphi_r[p].z;
+
+            if (!(is_neel[p]))
             {
-                //ff_model_update_dT_p(p);
+                //dm[p].x = dm[p].y = dm[p].z = 0;
 
-                //Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+                mt[p] = m[p];
+                // turn around ex
+                mt[p].y = mt[p].y * cos(dphi[p].x) - mt[p].z * sin(dphi[p].x);
+                mt[p].z = mt[p].y * sin(dphi[p].x) + mt[p].z * cos(dphi[p].x);
+                // turn around ey
+                mt[p].z = mt[p].z * cos(dphi[p].y) - mt[p].x * sin(dphi[p].y);
+                mt[p].x = mt[p].z * sin(dphi[p].y) + mt[p].x * cos(dphi[p].y);
+                // turn around ez
+                mt[p].x = mt[p].x * cos(dphi[p].z) - mt[p].y * sin(dphi[p].z);
+                mt[p].y = mt[p].x * sin(dphi[p].z) + mt[p].y * cos(dphi[p].z);
 
-                /*if (k_bm_inst == 1)*/
-                
-                //ff_model_effective_random_force_update(p);
-                
-                f = ff_model_force(p);
-                ttau = ff_model_torque(p);
-                F[p].x = f.x; F[p].y = f.y; F[p].z = f.z;
-                tau[p].x = ttau.x; tau[p].y = ttau.y; tau[p].z = ttau.z;
+                //dm[p].x = mt[p].x - m[p].x;
+                //dm[p].y = mt[p].y - m[p].y;
+                //dm[p].z = mt[p].z - m[p].z;
 
-                /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
-                /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
-                /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
+                //m[p].x += dm[p].x;
+                //m[p].y += dm[p].y;
+                //m[p].z += dm[p].z;
 
-                /*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
-                /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
-                /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
+                m_prev_before_r[p] = m[p];
+                m[p] = mt[p];
 
-                /*DEBUG*/ if (v[p].x != v[p].x) printf("\n DEBUG 1.1 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
-                /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
-                /*DEBUG*/ if (v[p].z != v[p].z) printf("\n DEBUG 1.1 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
+                tmmag = sqrt(MUL(m[p], m[p]));
 
-                /*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
-                /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
-                /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
+                m[p].x *= m0p[p] / tmmag;
+                m[p].y *= m0p[p] / tmmag;
+                m[p].z *= m0p[p] / tmmag;
             }
+        }
+                
+        for (p = 1; p <= pN; p++) if (exist_p[p])
+        {
+            f = ff_model_force(p);
+            ttau = ff_model_torque(p);
+            F2[p].x = f.x; F2[p].y = f.y; F2[p].z = f.z;
+            tau2[p].x = ttau.x; tau2[p].y = ttau.y; tau2[p].z = ttau.z;
+
+            F[p].x = (F1[p].x + F2[p].x) / 2.0;
+            F[p].y = (F1[p].y + F2[p].y) / 2.0;
+            F[p].z = (F1[p].z + F2[p].z) / 2.0;
+
+            tau[p].x = (tau1[p].x + tau2[p].x) / 2.0;
+            tau[p].y = (tau1[p].y + tau2[p].y) / 2.0;
+            tau[p].z = (tau1[p].z + tau2[p].z) / 2.0;
+
+            /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
+            /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
+            /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
+
+            /*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
+            /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
+            /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
+
+            /*DEBUG*/ if (v[p].x != v[p].x) printf("\n DEBUG 1.1 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
+            /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
+            /*DEBUG*/ if (v[p].z != v[p].z) printf("\n DEBUG 1.1 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
+
+            /*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
+            /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
+            /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
+        }
 
             //ff_model_update_dT();
             k_bm_inst ++;
@@ -1308,15 +1387,15 @@ void ff_model_next_step(void)
 
                     drt[p].x = F[p].x * dt / C2[p] +		 
                         (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-                    //+ drt_r[p].x;
+                    //+ drt_r[p].x * dt / dt0;
 
                     drt[p].y = F[p].y * dt / C2[p] +		 
                         (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-                    //+ drt_r[p].y;
+                    //+ drt_r[p].y * dt / dt0;
 
                     drt[p].z = F[p].z * dt / C2[p] +		 
                         (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
-                    //+ drt_r[p].z;
+                    //+ drt_r[p].z * dt / dt0;
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
@@ -1324,15 +1403,15 @@ void ff_model_next_step(void)
                     {
                         dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
                             (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-                        //+ dphi_r[p].x;
+                        //+ dphi_r[p].x * dt / dt0;
 
                         dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
                             (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-                        //+ dphi_r[p].y;
+                        //+ dphi_r[p].y * dt / dt0;
 
                         dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
                             (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
-                        //+ dphi_r[p].z;
+                        //+ dphi_r[p].z * dt / dt0;
                     }
                     else dphi[p].x = dphi[p].y = dphi[p].z = 0;
 
@@ -1501,7 +1580,8 @@ void ff_model_next_step(void)
                     m_tot_glob.z += m_tot.z;
 
                     t += dt;
-                    dt_red -= dt;					
+                    dt_red -= dt;
+
                     /*
                     for (p = 1; p <= pN; p++) if (exist_p[p])
                     {
@@ -1820,8 +1900,8 @@ again:
         //v_r[p].x = v_r[p].y = v_r[p].z = 0;
         w[p].x = w[p].y = w[p].z = 0;
         //w_r[p].x = w_r[p].y = w_r[p].z = 0;
-        /*drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
-        dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;*/
+        drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
+        dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;
         //dW[p] = 0;
         //for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
@@ -1966,8 +2046,8 @@ dir110[i].x =  0; dir110[i].y = 1; dir110[i].z = -1;
 
 }*/
 
-// Update of the random force
-void ff_model_effective_random_force_update(long p)
+// Update of the random motion
+void ff_model_effective_random_motion_update(long p)
 {
     double Px, Py, Pz, tau_r_phi; // instantiated effective random force
     double theta_0, phi_0; // random direction of the torque 
@@ -1986,6 +2066,8 @@ void ff_model_effective_random_force_update(long p)
 
     double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
     double N_mol_col = 0;
+
+    double sigma = 0, sigma_rot = 0;
 
     //dt0 = dt * k_bm_inst_max;
     //dt0 = dt;
@@ -2010,25 +2092,25 @@ void ff_model_effective_random_force_update(long p)
 
     // instantiation of position change
     // [Langevin equation + Stokes' law]
-    /*sigma = D * (2 * dt0 + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt0 / M0) - exp(- 2 * gamma * dt0 / M0)));
+    sigma = D * (2 * dt + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt / M0) - exp(- 2 * gamma * dt / M0)));
     dx = (*var_nor)() * sqrt(sigma);
     dy = (*var_nor)() * sqrt(sigma);
-    dz = (*var_nor)() * sqrt(sigma);*/
+    dz = (*var_nor)() * sqrt(sigma);
 
-    /*drt_r[p].x = dx;
+    drt_r[p].x = dx;
     drt_r[p].y = dy;
-    drt_r[p].z = dz;*/
+    drt_r[p].z = dz;
 
     // instantiation of rotation of the magnetization direction
     // [Euler-Langevin equation + Stokes' law]
-    /*sigma_rot = D_rot * (2 * dt0 + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt0 / I0) - exp(- 2 * gamma_rot * dt0 / I0)));
-    dphi = (*var_nor)() * sqrt(3 * sigma_rot);*/ // rotation magnitude
+    sigma_rot = D_rot * (2 * dt + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
+    dphi = (*var_nor)() * sqrt(3 * sigma_rot); // rotation magnitude
     theta_0 = (*var_uni)() * pi;   // rotation vector random direction
     phi_0 = (*var_uni)() * 2 * pi;
 
-    /*dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
+    dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
     dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
-    dphi_r[p].z = dphi * cos(theta_0);*/
+    dphi_r[p].z = dphi * cos(theta_0);
 
     /*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
     Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
@@ -2094,10 +2176,10 @@ void ff_model_effective_random_force_update(long p)
     }
     else*/
     //{
-        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
+        /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
         Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
         Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
-        tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt0);
+        tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt0);*/
     //}
 
     //printf("\n %e", sqrt(6 * D * 1) / (2 * Rp0[p]));
@@ -2115,13 +2197,13 @@ void ff_model_effective_random_force_update(long p)
     //printf("\n Viscous limit - saturation of angular velocity time %e", I0 / gamma_rot);
     //printf("\n %e", gamma * dx / (M0 * v[p].x));
 
-    P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
+    /*P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
     P[p].y = Py * k_force_adapt_p_y[p] * speed_ballance;
     P[p].z = Pz * k_force_adapt_p_z[p] * speed_ballance;
 
     tau_r[p].x = tau_r_phi * sin(theta_0) * cos(phi_0) * k_force_adapt_p_rot_x[p] * speed_ballance;
     tau_r[p].y = tau_r_phi * sin(theta_0) * sin(phi_0) * k_force_adapt_p_rot_y[p] * speed_ballance;
-    tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot_z[p] * speed_ballance;
+    tau_r[p].z = tau_r_phi * cos(theta_0) * k_force_adapt_p_rot_z[p] * speed_ballance;*/
 }
 
 void ff_model_update_dT(void)

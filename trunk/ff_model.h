@@ -42,7 +42,7 @@ extern ff_vect_t w[];
 extern double Rp0[];
 extern double Rp[];
 
-extern ff_vect_t P[];  // effective instantiated random force
+//extern ff_vect_t P[];  // effective instantiated random force
 
 //extern ff_vect_t F0[];
 
@@ -114,7 +114,7 @@ extern double k_force_adapt;
 extern double R_oleic;
 
 // Update of the effective instantiated random force
-void ff_model_effective_random_force_update(long);
+void ff_model_effective_random_motion_update(long);
 void ff_model_update_dT(void);
 void ff_model_update_dT_p(long);
 
