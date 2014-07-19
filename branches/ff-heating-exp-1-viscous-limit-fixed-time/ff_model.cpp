@@ -73,6 +73,11 @@ ff_vect_t dw[pN + 1];
 
 //ff_vect_t dir110[13];
 
+long i_min = 1;
+double V0_tot = 0; // total volume of the dispersed phase
+double V0_largest_EV = 0; // mathematical expected value of largest particles total volume // see is_large_mode variable
+double V0_tot_EV = 0; // mathematical expected value of particles total volume
+
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
 int is_temp_sat[pN + 1]; // temperature saturation flag
@@ -200,6 +205,12 @@ long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
 double dt_red = 0; // reducing time indicator for the random translation
+double k_delta_force_rel[pN + 1]; // relation of random force to attractive forces sum
+double k_delta_force_rel_tot = 0;
+double k_delta_force_rel_p = 0;
+double k_delta_torque_rel[pN + 1]; // relation of random force to attractive forces sum
+double k_delta_torque_rel_tot = 0;
+double k_delta_torque_rel_p = 0;
 
 double phi_vol_fract_oleic = 0;
 double phi_vol_fract_oleic_0 = 0;
@@ -1094,6 +1105,8 @@ ff_vect_t ff_model_force(long p)
 {
     ff_vect_t tF;
     ff_vect_t tddF;
+    double F_nonloc_mag = 0; // nonlocal force magnitude
+    double R_mag = 0; // random force magnitude
 
     tF.x = tF.y = tF.z = 0;
 
@@ -1102,6 +1115,8 @@ ff_vect_t ff_model_force(long p)
     tF.x += tddF.x;
     tF.y += tddF.y;
     tF.z += tddF.z;
+
+    F_nonloc_mag = sqrt(MUL(tddF,tddF));
 
     // Gravitation
     //tF.z += - C3;
@@ -1121,6 +1136,12 @@ ff_vect_t ff_model_force(long p)
     tF.y += P[p].y;
     tF.z += P[p].z;
 
+    R_mag = sqrt(MUL(P[p],P[p]));
+
+    k_delta_force_rel[p] = R_mag / F_nonloc_mag;
+    k_delta_force_rel_tot += k_delta_force_rel[p];
+    k_delta_force_rel_p ++;
+
     return tF;
 }
 
@@ -1128,11 +1149,16 @@ ff_vect_t ff_model_torque(long p)
 {
     ff_vect_t ttau;
     ff_vect_t dtau;
+    double ttau_nonloc_mag = 0; // nonlocal torque magnitude
+    double tau_r_mag = 0; // random torque magnitude
 
     ttau.x = ttau.y = ttau.z = 0;
 
     // non-local
     dtau = ff_model_nonloc_torque(p);
+
+    ttau_nonloc_mag = sqrt(MUL(dtau,dtau));
+
     if (!(is_neel[p]))
     {
         ttau.x += dtau.x;
@@ -1151,6 +1177,14 @@ ff_vect_t ff_model_torque(long p)
     ttau.x += tau_r[p].x;
     ttau.y += tau_r[p].y;
     ttau.z += tau_r[p].z;
+
+    tau_r_mag = sqrt(MUL(tau_r[p],tau_r[p]));
+    if (!(is_neel[p]))
+    {
+        k_delta_torque_rel[p] = tau_r_mag / ttau_nonloc_mag;
+        k_delta_torque_rel_tot += k_delta_torque_rel[p];
+        k_delta_torque_rel_p ++;
+    }
 
     return ttau;
 }
@@ -1178,6 +1212,8 @@ void ff_model_next_step(void)
     pN_oleic_drop = 0;
     pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
     phi_vol_fract_oleic = 0;
+    k_delta_force_rel_tot = 0;
+    k_delta_force_rel_p = 0;
 
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
@@ -1810,6 +1846,7 @@ again:
         //T_mean_loc_prev_p[p] = 0;
         //T_mean_loc_prev_revert_p[p] = 0;
         k_mean_p[p] = 0;
+        k_delta_force_rel[p] = 0;
 
         is_inside_oleic[p] = 1;
         is_temp_sat[p] = 0;
@@ -1824,7 +1861,7 @@ again:
 
     r_brown_valid_0 = r[1];
 
-    R_oleic *= 8;
+    //R_oleic *= 8;
 }
 
 /*void ff_model_init_sediment(void)
@@ -2057,9 +2094,10 @@ void ff_model_effective_random_force_update(long p)
     }
     else*/
     //{
-        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
-        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
-        Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt_red);
+        Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
+        Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
+        Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt0);
+        tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt0);
     //}
 
     //printf("\n %e", sqrt(6 * D * 1) / (2 * Rp0[p]));
@@ -2070,7 +2108,7 @@ void ff_model_effective_random_force_update(long p)
     /*Px = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Py = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); 
     Pz = (*var_nor)() * sqrt(2 * kb * T * gamma / dt); */
-    tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt_red);
+    //tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt_red);
 
     //printf("\n t1 = %e", M0 / gamma);
     //printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
@@ -2242,7 +2280,7 @@ void ff_model_size_dispersion_init(void)
 {
     //double d[14 + 1];
     double F[14 + 1];
-    long i, p, i_min = 1;
+    long i, p;
     long imax = 14;
     double Ftot;
     double random_points[14 + 1];
@@ -2310,6 +2348,22 @@ void ff_model_size_dispersion_init(void)
         }
     }
 
+    V0_tot_EV = V0_largest_EV = 0;
+    // particle p = 1 parameters must be redefined below in next cycles
+    for (i = 1; i <= imax; i++)
+    {
+        Rp0[1] = 0.5 * d[i];
+        ff_model_size_dispersion_param_calc(Rp0[1], 1);
+        V0_tot_EV += Vp0[1] * F[i] / Ftot;
+        if (i >= i_min) V0_largest_EV += Vp0[1] * F[i] / Ftot;
+    }
+
+    if (is_large_mode) V0_tot_EV *= pN / large_fraction;
+    else V0_tot_EV *= pN;
+
+    if (is_large_mode) V0_largest_EV *= pN / large_fraction;
+    else V0_largest_EV *= pN;
+
     for (i = 1; i <= imax; i++)
     {
         random_points[i] = F[i] / Ftot;
@@ -2318,6 +2372,8 @@ void ff_model_size_dispersion_init(void)
 
     //printf("\n random_points[14] = %e", random_points[14]);
     //printf("\n random_points[13] = %e", random_points[13]);
+
+    V0_tot = 0;
 
     for (p = 1; p <= pN; p++)
     {
@@ -2330,18 +2386,27 @@ void ff_model_size_dispersion_init(void)
 
         if ((random_value <= random_points[1]) && (i_min == 1))
         {
-            Rp0[p] = 0.5 * d[1];
+            if (is_large_mode) Rp0[p] = 0.5 * d[1] * k_large;
+            else Rp0[p] = 0.5 * d[1];
+
             Rp[p] = Rp0[p] + delta;
             ff_model_size_dispersion_param_calc(Rp0[p], p);
             is_set = 1;
+
+            V0_tot += Vp0[p];
         }
+        
         for (i = 1; i <= imax - 1; i++)
             if ((random_value > random_points[i]) && (random_value <= random_points[i + 1]) && (i + 1 >= i_min))
             {
-                Rp0[p] = 0.5 * d[i + 1];
+                if (is_large_mode) Rp0[p] = 0.5 * d[i + 1] * k_large;
+                else Rp0[p] = 0.5 * d[i + 1];
+
                 Rp[p] = Rp0[p] + delta;
                 ff_model_size_dispersion_param_calc(Rp0[p], p);
                 is_set = 1;
+
+                V0_tot += Vp0[p];
                 break;
             }
         if (is_set == 0) goto again_size_disp;

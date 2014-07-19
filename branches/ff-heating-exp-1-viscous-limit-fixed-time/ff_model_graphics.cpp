@@ -38,7 +38,7 @@ int show_droplet = 0;
 int transp;
 int show_sphere;
 int show_steric = 0;
-int show_cube = 1;
+int show_cube = 0;
 double scaling_cube = 1.0;
 long gr_quality = 20;
 double gr_x0 = 0, gr_y0 = 0, gr_z0 = 0;
@@ -230,7 +230,7 @@ void ff_mgr_show_next_step()
 
         glEnd();
     }
-    else
+    /*else
     {
         glLineWidth(4.0f);
         glBegin(GL_LINE_LOOP);
@@ -246,7 +246,7 @@ void ff_mgr_show_next_step()
 
         glEnd();
 
-    }
+    }*/
 
     for (long p = 1; p <= pN; p++)
         if (exist_p[p])
@@ -478,7 +478,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Hz =%5.3e Oe", BmanZ);
+    sprintf(buf,"Hz = %5.3e Oe", BmanZ);
 
     glRasterPos2i(6, shift * 20);
     shift--;
@@ -492,7 +492,13 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol (oleic) = %5.3e %%", phi_vol_fract_oleic);
+    sprintf(buf,"phi_vol (drop) = %5.3e %%", phi_vol_fract_oleic);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -511,6 +517,18 @@ void ff_mgr_print_info()
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"k_force_adapt_mean = %5.3e", k_force_adapt_mean_print);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"k_delta_force_rel_mean = %5.3e", k_delta_force_rel_tot / k_delta_force_rel_p);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"k_delta_torque_rel_mean = %5.3e", k_delta_torque_rel_tot / k_delta_torque_rel_p);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -541,6 +559,24 @@ void ff_mgr_print_info()
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"T = %5.3e K", T);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_tot = %5.3e m^-3", V0_tot);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_tot_EV = %5.3e m^-3", V0_tot_EV);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"V0_largest_EV = %5.3e m^-3", V0_largest_EV);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);

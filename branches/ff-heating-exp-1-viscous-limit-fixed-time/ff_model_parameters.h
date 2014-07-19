@@ -81,6 +81,7 @@ extern double delta;
 
 extern int is_large_mode;
 extern double large_fraction;
+extern double k_large;
 extern int is_oleic;
 extern double R_oleic_0;
 extern double eta_oleic;

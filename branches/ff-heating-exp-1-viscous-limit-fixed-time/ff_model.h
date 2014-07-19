@@ -92,6 +92,10 @@ extern double BmanZ;
 
 extern ff_vect_t m_tot;
 
+extern double V0_tot;
+extern double V0_largest_EV; // mathematical expected value of largest particles total volume // see is_large_mode variable
+extern double V0_tot_EV; // mathematical expected value of particles total volume
+
 extern int exist_p[];
 extern double Rp[];
 
@@ -101,6 +105,10 @@ extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 extern double phi_vol_fract_oleic;
 
+extern double k_delta_force_rel_tot;
+extern double k_delta_force_rel_p;
+extern double k_delta_torque_rel_tot;
+extern double k_delta_torque_rel_p;
 extern double k_force_adapt;
 
 extern double R_oleic;
