@@ -21,7 +21,7 @@
 #include <math.h>
 #include "ff_model_parameters.h"
 
-double gl_scale = 1; // particle diameter scale parameter
+double gl_scale = 1.0; // particle diameter scale parameter
 
 // Math constants
 double pi = acos(-1.0);
@@ -46,7 +46,7 @@ double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 10 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -69,7 +69,7 @@ double delta = 2.0E-9;
 // Parameters of oleic acid drop
 int is_large_mode = 1; // largest particles mode
 double large_fraction = 6.92E-02; // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
-double k_large = 0.95; // correction of the large particles size
+double k_large = 1.0; // 0.91; // 0.925; // correction of the large particles size
 int is_oleic = 0;
 double R_oleic_0 = (Lx / 8.0);
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
