@@ -1295,12 +1295,12 @@ void ff_model_next_step(void)
             r[p].y += drt_r[p].y;
             r[p].z += drt_r[p].z;
 
-            dphi[p].x = dphi_r[p].x;
-            dphi[p].y = dphi_r[p].y;
-            dphi[p].z = dphi_r[p].z;
-
             if (!(is_neel[p]))
             {
+                dphi[p].x = dphi_r[p].x;
+                dphi[p].y = dphi_r[p].y;
+                dphi[p].z = dphi_r[p].z;
+                
                 //dm[p].x = dm[p].y = dm[p].z = 0;
 
                 mt[p] = m[p];
