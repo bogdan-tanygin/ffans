@@ -737,6 +737,8 @@ ff_vect_t ff_model_nonloc_torque(long p)
 
     ttau.x = ttau.y = ttau.z = 0;
 
+    int di, dj, dk;
+
     //	do
     //	{
     //for(p = 1; p <= pN; p ++)
@@ -751,83 +753,93 @@ ff_vect_t ff_model_nonloc_torque(long p)
             if (exist_p[ps])
                 if (p != ps)
                 {
-                    /*#ifdef SECONDARY
-                    for(di = -2; di <= 2; di++)
-                    for(dj = -2; dj <= 2; dj++) // including zero!
+                    //#ifdef SECONDARY
+                    //for(di = -1; di <= 1; di++)
+                    //for(dj = -1; dj <= 1; dj++)
+                    //for(dk = -1; dk <= 1; dk++)
                     {
-                    #endif*/
-                    dx = - r[ps].x + r[p].x;// + di * Lx;
-                    dy = - r[ps].y + r[p].y;// + dj * Ly;
-                    dz = - r[ps].z + r[p].z;
+                        //#endif*/
+                        dx = - r[ps].x + r[p].x;// + di * Lx;
+                        dy = - r[ps].y + r[p].y;// + dj * Ly;
+                        dz = - r[ps].z + r[p].z;// + dk * Lz;
 
-                    dR = sqrt(dx * dx + dy * dy + dz * dz);
+                        if (dx > Lx / 2.0) dx -= Lx;
+                        if (dx < - Lx / 2.0) dx += Lx;
+                        
+                        if (dy > Ly / 2.0) dy -= Ly;
+                        if (dy < - Ly / 2.0) dy += Ly;
+                        
+                        if (dz > Lz / 2.0) dz -= Lz;
+                        if (dz < - Lz / 2.0) dz += Lz;
 
-                    dR2 = dR * dR;
+                        dR = sqrt(dx * dx + dy * dy + dz * dz);
 
-                    if (1)
-                    {
+                        dR2 = dR * dR;
 
-                        mxs = m[ps].x;
-                        mys = m[ps].y;
-                        mzs = m[ps].z;
+                        if (1)
+                        {
 
-                        MUL2mod = 3 * (mxs * dx + mys * dy + mzs * dz);
+                            mxs = m[ps].x;
+                            mys = m[ps].y;
+                            mzs = m[ps].z;
 
-                        dR5 = pow(dR,5);
-                        dR5mod1 = dR5 / C5;
+                            MUL2mod = 3 * (mxs * dx + mys * dy + mzs * dz);
 
-                        MUL2mod__dR5mod1 = MUL2mod / dR5mod1;
-                        dR2__dR5mod1 = dR2 / dR5mod1;
+                            dR5 = pow(dR,5);
+                            dR5mod1 = dR5 / C5;
 
-                        dtBx = dx * MUL2mod__dR5mod1 - mxs * dR2__dR5mod1;
-                        dtBy = dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
-                        dtBz = dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
+                            MUL2mod__dR5mod1 = MUL2mod / dR5mod1;
+                            dR2__dR5mod1 = dR2 / dR5mod1;
 
-                        if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs);
+                            dtBx = dx * MUL2mod__dR5mod1 - mxs * dR2__dR5mod1;
+                            dtBy = dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
+                            dtBz = dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
 
-                    } 
-                    else
-                    {
+                            if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs);
 
-                    }
+                        } 
+                        else
+                        {
 
-                    /*tms = sqrt(MUL(m[ps],m[ps]));
-                    esx = m[ps].x / tms;
-                    esy = m[ps].y / tms;
-                    esz = m[ps].z / tms;
+                        }
 
-                    dx_q_plus  = dx - esx * Rp[ps]; // "plus" is mag. charge
-                    dx_q_minus = dx + esx * Rp[ps];
+                        /*tms = sqrt(MUL(m[ps],m[ps]));
+                        esx = m[ps].x / tms;
+                        esy = m[ps].y / tms;
+                        esz = m[ps].z / tms;
 
-                    dy_q_plus  = dy - esy * Rp[ps];
-                    dy_q_minus = dy + esy * Rp[ps];
+                        dx_q_plus  = dx - esx * Rp[ps]; // "plus" is mag. charge
+                        dx_q_minus = dx + esx * Rp[ps];
 
-                    dz_q_plus  = dz - esz * Rp[ps];
-                    dz_q_minus = dz + esz * Rp[ps];
+                        dy_q_plus  = dy - esy * Rp[ps];
+                        dy_q_minus = dy + esy * Rp[ps];
 
-                    dR_q_plus = sqrt(dx_q_plus * dx_q_plus + dy_q_plus * dy_q_plus + dz_q_plus * dz_q_plus);
-                    dR_q_minus = sqrt(dx_q_minus * dx_q_minus + dy_q_minus * dy_q_minus + dz_q_minus * dz_q_minus);
+                        dz_q_plus  = dz - esz * Rp[ps];
+                        dz_q_minus = dz + esz * Rp[ps];
 
-                    mag_qs = tms / (4.0 * Rp[ps] / 3.0);
+                        dR_q_plus = sqrt(dx_q_plus * dx_q_plus + dy_q_plus * dy_q_plus + dz_q_plus * dz_q_plus);
+                        dR_q_minus = sqrt(dx_q_minus * dx_q_minus + dy_q_minus * dy_q_minus + dz_q_minus * dz_q_minus);
 
-                    dtBqx = C5 * mag_qs * (dx_q_plus / pow(dR_q_plus, 3) - dx_q_minus / pow(dR_q_minus, 3));
-                    dtBqy = C5 * mag_qs * (dy_q_plus / pow(dR_q_plus, 3) - dy_q_minus / pow(dR_q_minus, 3));
-                    dtBqz = C5 * mag_qs * (dz_q_plus / pow(dR_q_plus, 3) - dz_q_minus / pow(dR_q_minus, 3));
+                        mag_qs = tms / (4.0 * Rp[ps] / 3.0);
 
-                    tBx += dtBqx * tms / m0p[ps] + dtBx * (1 - tms / m0p[ps]);
-                    tBy += dtBqy * tms / m0p[ps] + dtBy * (1 - tms / m0p[ps]);
-                    tBz += dtBqz * tms / m0p[ps] + dtBz * (1 - tms / m0p[ps]);*/
+                        dtBqx = C5 * mag_qs * (dx_q_plus / pow(dR_q_plus, 3) - dx_q_minus / pow(dR_q_minus, 3));
+                        dtBqy = C5 * mag_qs * (dy_q_plus / pow(dR_q_plus, 3) - dy_q_minus / pow(dR_q_minus, 3));
+                        dtBqz = C5 * mag_qs * (dz_q_plus / pow(dR_q_plus, 3) - dz_q_minus / pow(dR_q_minus, 3));
 
-                    if (dR >= Rp0[p] + Rp0[ps]) // soft-sphere model related correction
-                    {
-                        tBx += dtBx;
-                        tBy += dtBy;
-                        tBz += dtBz;
-                    }
+                        tBx += dtBqx * tms / m0p[ps] + dtBx * (1 - tms / m0p[ps]);
+                        tBy += dtBqy * tms / m0p[ps] + dtBy * (1 - tms / m0p[ps]);
+                        tBz += dtBqz * tms / m0p[ps] + dtBz * (1 - tms / m0p[ps]);*/
 
-                    /*#ifdef SECONDARY
+                        if (dR >= Rp0[p] + Rp0[ps]) // soft-sphere model related correction
+                        {
+                            tBx += dtBx;
+                            tBy += dtBy;
+                            tBz += dtBz;
+                        }
+
+                        //#ifdef SECONDARY
                     } // di and dj
-                    #endif*/
+                    //#endif*/
                 } // if (p != ps)
 
                 tBmag = sqrt(tBx * tBx + tBy * tBy + tBz * tBz);
@@ -910,6 +922,15 @@ ff_vect_t ff_model_nonloc_force(long p)
                 dx = r[ps].x - r[p].x;// + di * Lx;
                 dy = r[ps].y - r[p].y;// + dj * Ly;
                 dz = r[ps].z - r[p].z;
+
+                if (dx > Lx / 2.0) dx -= Lx;
+                if (dx < - Lx / 2.0) dx += Lx;
+                
+                if (dy > Ly / 2.0) dy -= Ly;
+                if (dy < - Ly / 2.0) dy += Ly;
+                
+                if (dz > Lz / 2.0) dz -= Lz;
+                if (dz < - Lz / 2.0) dz += Lz;
 
                 mx = m[p].x;
                 my = m[p].y;
@@ -1656,50 +1677,95 @@ int ff_model_check_walls(long p)
     int res = 0;
     double dr;
 
-    //walls
-    // Oz
-    if (r[p].z < -Lz / 2.0)
+    if (!is_periodic)
     {
-        r[p].z = -Lz / 2.0;
-        v[p].z *= -1;
-        res = 1;
-    }
+        //walls
+        // Oz
+        if (r[p].z < -Lz / 2.0)
+        {
+            r[p].z = -Lz / 2.0;
+            v[p].z *= -1;
+            res = 1;
+        }
 
-    if (r[p].z >  Lz / 2.0)
-    {
-        r[p].z =  Lz / 2.0;
-        v[p].z *= -1;
-        res = 1;
-    }
+        if (r[p].z >  Lz / 2.0)
+        {
+            r[p].z =  Lz / 2.0;
+            v[p].z *= -1;
+            res = 1;
+        }
 
-    // Ox
-    if (r[p].x < -Lx / 2.0)
-    {
-        r[p].x = -Lx / 2.0;
-        v[p].x *= -1;
-        res = 1;
-    }
+        // Ox
+        if (r[p].x < -Lx / 2.0)
+        {
+            r[p].x = -Lx / 2.0;
+            v[p].x *= -1;
+            res = 1;
+        }
 
-    if (r[p].x >  Lx / 2.0)
-    {
-        r[p].x =  Lx / 2.0;
-        v[p].x *= -1;
-        res = 1;
-    }
+        if (r[p].x >  Lx / 2.0)
+        {
+            r[p].x =  Lx / 2.0;
+            v[p].x *= -1;
+            res = 1;
+        }
 
-    // Oy
-    if (r[p].y < -Ly / 2.0)
-    {
-        r[p].y = -Ly / 2.0;
-        v[p].y *= -1;
-        res = 1;
-    }
+        // Oy
+        if (r[p].y < -Ly / 2.0)
+        {
+            r[p].y = -Ly / 2.0;
+            v[p].y *= -1;
+            res = 1;
+        }
 
-    if (r[p].y >  Ly / 2.0)
+        if (r[p].y >  Ly / 2.0)
+        {
+            r[p].y =  Ly / 2.0;
+            v[p].y *= -1;
+            res = 1;
+        }
+    }
+    else
     {
-        r[p].y =  Ly / 2.0;
-        v[p].y *= -1;
-        res = 1;
+        //walls
+        // Oz
+        if (r[p].z < -Lz / 2.0)
+        {
+            r[p].z += Lz;
+            res = 1;
+        }
+
+        if (r[p].z >  Lz / 2.0)
+        {
+            r[p].z -=  Lz;
+            res = 1;
+        }
+
+        // Ox
+        if (r[p].x < -Lx / 2.0)
+        {
+            r[p].x += Lx;
+            res = 1;
+        }
+
+        if (r[p].x >  Lx / 2.0)
+        {
+            r[p].x -= Lx;
+            res = 1;
+        }
+
+        // Oy
+        if (r[p].y < -Ly / 2.0)
+        {
+            r[p].y += Ly;
+            res = 1;
+        }
+
+        if (r[p].y >  Ly / 2.0)
+        {
+            r[p].y -= Ly;
+            res = 1;
+        }
     }
 
     return res;
