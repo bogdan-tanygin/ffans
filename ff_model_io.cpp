@@ -242,8 +242,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
     case ' ':  // F (Space) - Freeze Rotation!
         time_go = time_go?0:1;
         break;
-
-        break; 
     
     case '[':
         scaling_cube /= 1.05;

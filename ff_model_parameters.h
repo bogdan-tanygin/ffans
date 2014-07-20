@@ -40,6 +40,8 @@ extern double C1;
 // Geometry
 extern double Lx, Ly, Lz; //meters
 
+extern int is_periodic;
+
 // Basic physical model parameters
 extern const double dt0;
 extern double d_neel;
