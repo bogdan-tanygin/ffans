@@ -1931,9 +1931,9 @@ again:
 
         if (start_ideal)
         {
-            r[p].x = -0.4999 * Lx + 0.99 * Lx * (*var_uni)();
-            r[p].y = -0.4999 * Ly + 0.99 * Ly * (*var_uni)();
-            r[p].z = -0.4999 * Lz + 0.99 * Lz * (*var_uni)();
+            r[p].x = -0.45 * Lx + 0.9 * Lx * (*var_uni)();
+            r[p].y = -0.45 * Ly + 0.9 * Ly * (*var_uni)();
+            r[p].z = -0.45 * Lz + 0.9 * Lz * (*var_uni)();
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
             /*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
@@ -1945,8 +1945,11 @@ again:
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-            if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
+            if (!is_periodic)
+            {
+                Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+                if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
+            }
             /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
             if (Rp_to_c[p] > R_oleic) goto again;*/
 

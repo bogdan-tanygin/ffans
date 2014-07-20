@@ -38,7 +38,7 @@ int show_droplet = 0;
 int transp;
 int show_sphere;
 int show_steric = 0;
-int show_cube = 0;
+int show_cube = 1;
 double scaling_cube = 1.0;
 long gr_quality = 20;
 double gr_x0 = 0, gr_y0 = 0, gr_z0 = 0;
