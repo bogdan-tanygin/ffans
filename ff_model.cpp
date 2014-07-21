@@ -1876,6 +1876,8 @@ void ff_model_init(void)
     long i,j;
     double t_temp_1 = 0;
 
+    double start_scale = 0.99;
+
     dt = dt0;
 
     R_oleic = R_oleic_0;
@@ -1931,9 +1933,9 @@ again:
 
         if (start_ideal)
         {
-            r[p].x = -0.45 * Lx + 0.9 * Lx * (*var_uni)();
-            r[p].y = -0.45 * Ly + 0.9 * Ly * (*var_uni)();
-            r[p].z = -0.45 * Lz + 0.9 * Lz * (*var_uni)();
+            r[p].x = start_scale * (-0.49 * Lx + 0.98 * Lx * (*var_uni)());
+            r[p].y = start_scale * (-0.49 * Ly + 0.98 * Ly * (*var_uni)());
+            r[p].z = start_scale * (-0.49 * Lz + 0.98 * Lz * (*var_uni)());
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
             /*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
