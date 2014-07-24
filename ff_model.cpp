@@ -1164,12 +1164,12 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
     // oleic droplet surface tension force
-    /*if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
+    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
     {
         tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
         tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
         tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
-    }*/
+    }
 
     /*tF.x += P[p].x;
     tF.y += P[p].y;
@@ -1952,8 +1952,8 @@ again:
                 Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
                 if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
             }
-            /*Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-            if (Rp_to_c[p] > R_oleic) goto again;*/
+            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
+            if (Rp_to_c[p] > R_oleic) goto again;
 
             for (tp = 1; tp < p; tp++)
             {
