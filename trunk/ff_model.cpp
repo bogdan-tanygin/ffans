@@ -80,6 +80,7 @@ ff_vect_t dw[pN + 1];
 
 long i_min = 1;
 double V0_tot = 0; // total volume of the dispersed phase
+double V0_tot_oleic = 0; // total volume of the dispersed phase inside the oleic droplet
 double V0_largest_EV = 0; // mathematical expected value of largest particles total volume // see is_large_mode variable
 double V0_tot_EV = 0; // mathematical expected value of particles total volume
 
@@ -1164,7 +1165,7 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
     // oleic droplet surface tension force
-    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]))
+    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]) && (!isOsmoticPrevail))
     {
         tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
         tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
@@ -1243,6 +1244,7 @@ void ff_model_next_step(void)
     double theta_0_r, phi_0_r;
     double Mtot;
     double t_temp_1 = 0;
+    double V_oleic = 0;
 
     Ek = Ek_tr = Ek_rot = 0;
     mz_tot = 0;
@@ -1251,8 +1253,10 @@ void ff_model_next_step(void)
     pN_oleic_drop = 0;
     pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
     phi_vol_fract_oleic = 0;
+    V0_tot_oleic = 0;
     k_delta_force_rel_tot = 0;
     k_delta_force_rel_p = 0;
+    P_osm = 0;
 
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
@@ -1640,10 +1644,22 @@ void ff_model_next_step(void)
                     }
 
                     if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
-                    /*if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
-                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);*/
-                    phi_vol_fract_oleic /= (4 / 3.0) * pi * pow(R_oleic, 3);
+                    if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
+                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
+                    //printf("\n TRACE-1 %e %e", phi_vol_fract_oleic_0, phi_vol_fract_oleic);
+                    V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
+                    phi_vol_fract_oleic /= V_oleic;
                     phi_vol_fract_oleic *= 100;
+                    
+                    P_osm = kb * T * pN_oleic_drop / (V_oleic - V0_tot_oleic); // Van 't Hoff equation [Landau-V, eq. (88,3)]
+                    P_sf_oleic = 4 * sigma_sf / R_oleic;
+                    
+                    if (isOsmoticMode)
+                    {
+                        if (P_osm / P_sf_oleic > 1.0) isOsmoticPrevail = 1.0;
+                        else isOsmoticPrevail = 0.0;
+                    }
+                    //printf("\n %e", P_osm / P_sf_oleic);
 
                     //if (dt_red <= 0) dt_red = dt0;
 
@@ -1953,7 +1969,7 @@ again:
                 if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
             }
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-            if (Rp_to_c[p] > R_oleic) goto again;
+            if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
 
             for (tp = 1; tp < p; tp++)
             {
@@ -2638,6 +2654,7 @@ void ff_model_update_conc_in_oleic(long p)
         if ((2 * Rp0[p] >= d[8] * 0.99) && (2 * Rp0[p] <= d[14] * 1.01)) pN_oleic_drop_III++;
 
         phi_vol_fract_oleic += Vp0[p];
+        V0_tot_oleic += Vp0[p];
     }
     else
     {
