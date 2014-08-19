@@ -844,6 +844,8 @@ ff_vect_t ff_model_nonloc_torque(long p)
                 } // if (p != ps)
 
                 tBmag = sqrt(tBx * tBx + tBy * tBy + tBz * tBz);
+                if (is_uniform_field_test) tBx = tBy = tBz = 0;
+
                 /*tm = sqrt(MUL(m[p],m[p]));
 
                 eps = acos((m[p].x * tBx + m[p].y * tBy + m[p].z * tBz) / (tBmag * tm));
@@ -860,7 +862,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
                 ttau.y = - m[p].x * tBz + m[p].z * tBx;
                 ttau.z =   m[p].x * tBy - m[p].y * tBx;
 
-                if (is_neel[p])
+                if ((is_neel[p]) && (!is_uniform_field_test))
                 {
                     m[p].x = m0p[p] * tBx / tBmag;
                     m[p].y = m0p[p] * tBy / tBmag;
@@ -1181,6 +1183,12 @@ ff_vect_t ff_model_force(long p)
     /*k_delta_force_rel[p] = R_mag / F_nonloc_mag;
     k_delta_force_rel_tot += k_delta_force_rel[p];
     k_delta_force_rel_p ++;*/
+
+    if (is_uniform_field_test)
+    {
+        tF.x = tF.y = tF.z = 0;
+        tF.z += - 1E0 * sigma_sf * 2 * pi * 5E-9;
+    }
 
     return tF;
 }
@@ -1897,6 +1905,8 @@ void ff_model_init(void)
     dt = dt0;
 
     R_oleic = R_oleic_0;
+
+    if (is_uniform_field_test) Lz *= 5;
     
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
@@ -1963,13 +1973,11 @@ again:
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            if (!is_periodic)
+            if (!is_uniform_field_test)
             {
                 Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
                 if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
             }
-            Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
-            if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
 
             for (tp = 1; tp < p; tp++)
             {
