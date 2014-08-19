@@ -81,6 +81,8 @@ extern double delta;
 //extern double M0; // mass [kg]
 //extern double m0; // Magnetic moment [J / T]
 
+extern int is_uniform_field_test;
+
 extern int is_large_mode;
 extern double large_fraction;
 extern double k_large;

@@ -110,10 +110,14 @@ void cbKeyPressed(unsigned char key, int x, int y)
         //        exit(1);
         break;
 
-    case 'D': case 'd':
+    case 'd':
         Lx *= 2;
         Ly *= 2;
         Lz *= 2;
+        break;
+
+    case 'D':
+        Lz *= 5;
         break;
 
     case 'M': case 'm':

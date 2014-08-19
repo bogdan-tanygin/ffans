@@ -37,19 +37,19 @@ const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Space
-double volume_reduce = 0.1862; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 0.1; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
 // periodic boundary conditions
-int is_periodic = 1;
+int is_periodic = 0;
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 5E1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 2E1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -68,6 +68,8 @@ double kr = gl_scale; // particle size parameter []
 double delta = 2.0E-9;
 //double R0 = R00 + delta; // Radius including the acid sphere [m]
 //double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
+
+int is_uniform_field_test = 0;
 
 // Parameters of oleic acid drop
 int is_large_mode = 0; // largest particles mode
