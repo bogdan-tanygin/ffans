@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 300 // number of the particles
+#define pN 50 // number of the particles
 
 // Math constants
 extern double pi;
@@ -105,7 +105,7 @@ extern double sigma_sf;
 extern double a_sigma_sf;
 extern double b_sigma_sf;
 extern double ro_oleic;
-//extern double sigma_sf_nano;
+extern double sigma_sf_nano;
 
 extern double T;
 extern double kr;
