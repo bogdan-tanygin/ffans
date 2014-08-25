@@ -1270,7 +1270,7 @@ void ff_model_next_step(void)
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
     ro_oleic = 902.0 - 0.62 * T;
-    sigma_sf = /*sigma_sf_nano **/ (a_sigma_sf + b_sigma_sf * t_temp_1);
+    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     if (isMicroDrop) ff_model_update_mdrop_parameters();
@@ -1914,7 +1914,7 @@ void ff_model_init(void)
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
-    sigma_sf = /*sigma_sf_nano **/ (a_sigma_sf + b_sigma_sf * t_temp_1);
+    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
@@ -2682,8 +2682,10 @@ void ff_model_update_mdrop_parameters()
     double mtot_p = 0;
 
     n_p = phi_v / (V0_tot_EV / pN);
-    
+    //printf("\n n_p = %e", n_p);
+
     R_micro = 2 * sigma_sf / (kb * T * n_p);
+    //printf("\n R_micro = %e", R_micro);
     //printf("\n R_micro / R0 = %e", R_micro / (5E-9)); //2.6E4
     R0_min = R_micro;
     
