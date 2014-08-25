@@ -378,7 +378,7 @@ void ff_io_save_setting(ff_vect_t m_tot,double I)
     fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
     fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
 
-    fprintf(file3, "%5.3e %5.3e %5.3e \n", t, P_osm, P_osm / P_sf_oleic);
+    fprintf(file3, "%5.3e %5.3e %5.3e \n", t, P_pgas, P_pgas / P_sf_oleic);
 
     fclose(file);
     fclose(file1);

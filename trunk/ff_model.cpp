@@ -1001,7 +1001,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 */
 
 #ifndef SECONDARY
-                if (dR <= Rp0[p] + Rp0[ps]) //soft sphere condition
+                if ((dR <= Rp0[p] + Rp0[ps]) && (!isMicroDrop)) //soft sphere condition
                 {
                     /*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
 
@@ -1043,7 +1043,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                 //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
                 //if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
                 //if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
-                if (dR > (Rp0[p] + Rp0[ps] + 2 * delta))
+                if ((dR > (Rp0[p] + Rp0[ps] + 2 * delta)) && (!isMicroDrop))
                 //if (dR > (Rp0[p] + Rp0[ps] + a0))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
@@ -1167,7 +1167,7 @@ ff_vect_t ff_model_force(long p)
     //tF.z +=   C6;
 
     // oleic droplet surface tension force
-    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]) && (!isOsmoticPrevail))
+    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]) && (!isPGasPrevail))
     {
         tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
         tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
@@ -1264,13 +1264,16 @@ void ff_model_next_step(void)
     V0_tot_oleic = 0;
     k_delta_force_rel_tot = 0;
     k_delta_force_rel_p = 0;
-    P_osm = 0;
+    P_pgas = 0;
 
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
-    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
+    ro_oleic = 902.0 - 0.62 * T;
+    sigma_sf = /*sigma_sf_nano **/ (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
+
+    if (isMicroDrop) ff_model_update_mdrop_parameters();
 
     for (p = 1; p <= pN; p++) if (exist_p[p])
     {
@@ -1659,15 +1662,15 @@ void ff_model_next_step(void)
                     phi_vol_fract_oleic /= V_oleic;
                     phi_vol_fract_oleic *= 100;
                     
-                    P_osm = kb * T * pN_oleic_drop / (V_oleic - V0_tot_oleic); // Van 't Hoff equation [Landau-V, eq. (88,3)]
+                    P_pgas = kb * T * pN_oleic_drop / (V_oleic - V0_tot_oleic); // Van 't Hoff equation [Landau-V, eq. (88,3)]
                     P_sf_oleic = 4 * sigma_sf / R_oleic;
                     
-                    if (isOsmoticMode)
+                    if (isPGasMode)
                     {
-                        if (P_osm / P_sf_oleic > 1.0) isOsmoticPrevail = 1.0;
-                        else isOsmoticPrevail = 0.0;
+                        if (P_pgas / P_sf_oleic > 1.0) isPGasPrevail = 1.0;
+                        else isPGasPrevail = 0.0;
                     }
-                    //printf("\n %e", P_osm / P_sf_oleic);
+                    //printf("\n %e", P_pgas / P_sf_oleic);
 
                     //if (dt_red <= 0) dt_red = dt0;
 
@@ -1911,7 +1914,7 @@ void ff_model_init(void)
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
-    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
+    sigma_sf = /*sigma_sf_nano **/ (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
@@ -2668,5 +2671,32 @@ void ff_model_update_conc_in_oleic(long p)
     {
         //if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
         is_inside_oleic[p] = 0;
+    }
+}
+
+void ff_model_update_mdrop_parameters()
+{
+    long p = 0;
+    double R_micro = 0;
+    double n_p = 0;
+    double mtot_p = 0;
+
+    n_p = phi_v / (V0_tot_EV / pN);
+    
+    R_micro = 2 * sigma_sf / (kb * T * n_p);
+    //printf("\n R_micro / R0 = %e", R_micro / (5E-9)); //2.6E4
+    R0_min = R_micro;
+    
+    for (p = 1; p <= pN; p++)
+    {
+        is_neel[p] = 1; // to avoid false microdrop magnetization rotation inertia
+        mtot_p = sqrt(MUL(m[p],m[p]));
+        Rp[p] = Rp0[p] = R_micro;
+        Vp0[p] = (4 * pi / 3.0) * pow(Rp0[p],3);
+        m0p[p] = alpha * Ms * phi_v * Vp0[p];
+        m[p].x *= m0p[p] / mtot_p;
+        m[p].y *= m0p[p] / mtot_p;
+        m[p].z *= m0p[p] / mtot_p;
+        M0p[p] = (rop * phi_v + ro_oleic * (1 - phi_v)) * Vp0[p];
     }
 }

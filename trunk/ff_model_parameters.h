@@ -83,14 +83,18 @@ extern double delta;
 
 extern int is_uniform_field_test;
 
+extern int isMicroDrop;
+extern double phi_v;
+extern double alpha;
+
 extern int is_large_mode;
 extern double large_fraction;
 extern double k_large;
 extern int is_oleic;
 extern double R_oleic_0;
-extern int isOsmoticMode;
-extern int isOsmoticPrevail;
-extern double P_osm;
+extern int isPGasMode;
+extern int isPGasPrevail;
+extern double P_pgas;
 extern double P_sf_oleic;
 extern double eta_oleic;
 extern double a3_eta_oleic;
@@ -100,7 +104,8 @@ extern double a0_eta_oleic;
 extern double sigma_sf;
 extern double a_sigma_sf;
 extern double b_sigma_sf;
-extern double sigma_sf_nano;
+extern double ro_oleic;
+//extern double sigma_sf_nano;
 
 extern double T;
 extern double kr;
@@ -108,6 +113,7 @@ extern double rop;
 extern double A_H;
 extern double N_oa;
 extern double a0;
+extern double ro0;
 extern double eta_car;
 extern double G_barrier;
 

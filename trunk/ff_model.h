@@ -127,3 +127,4 @@ int ff_model_check_walls(long);
 
 void ff_model_brownian_validation(long);
 void ff_model_update_conc_in_oleic(long);
+void ff_model_update_mdrop_parameters(void);
