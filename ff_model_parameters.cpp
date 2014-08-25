@@ -37,7 +37,7 @@ const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Space
-double volume_reduce = 0.1; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 2.6E4 * 0.1; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -49,7 +49,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 2E1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E7 * 2E1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -61,7 +61,7 @@ double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T = 273.15 + 50; // K
-double sigma_sf_nano = 1E-4;
+//double sigma_sf_nano = 1E-4;
 
 double kr = gl_scale; // particle size parameter []
 //double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
@@ -77,21 +77,28 @@ double large_fraction = 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse f
 double k_large = 1.0; // 0.91; // 0.925; // correction of the large particles size
 int is_oleic = 0;
 double R_oleic_0 = (Lx / 2.0);
-int isOsmoticMode = 0;
-int isOsmoticPrevail = 0;
-double P_osm = 0; // osmotic pressure inside the oleic drop
+
+// microdrop mode parameters
+int isMicroDrop = 1; // enable the microdrop mode
+double phi_v = 0.12; // volume concentration of the dispersed phase [Padalka, exp]
+double alpha = 0.5; // default saturation of the microdrop
+
+int isPGasMode = 0;
+int isPGasPrevail = 0;
+double P_pgas = 0; // particles gas pressure inside the oleic drop
 double P_sf_oleic = 0; // oleic droplet surface tension pressure
 //double eta_oleic = 25.6 * 1E-3; // [Pa * s]
 //double eta_oleic = 14.285 * 1E-3; // [Pa * s]
 double eta_oleic = 0;
 double a3_eta_oleic = - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
-double a2_eta_oleic = 3E-05;
-double a1_eta_oleic = - 0.0024;
-double a0_eta_oleic = 0.0769;
+double a2_eta_oleic = 2E-05;
+double a1_eta_oleic = - 0.0018;
+double a0_eta_oleic = 0.0559;
 //double sigma_sf = 32.5 * 1E-3; // [N / m]
 double sigma_sf = 0;
 double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
 double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
+double ro_oleic = 0;
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;

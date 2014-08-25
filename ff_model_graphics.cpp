@@ -48,7 +48,7 @@ double v_len;
 //double v_diam;
 ff_color4f_t v_col;
 
-double space_k = 9E6;
+double space_k = 9E6 * (1 / 2.6E4 * isMicroDrop + 1 * (1 - isMicroDrop));
 
 void ff_mgr_draw_vector(ff_vect_t r, ff_vect_t v)
 {
