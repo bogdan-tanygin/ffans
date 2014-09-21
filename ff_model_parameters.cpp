@@ -37,7 +37,7 @@ const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Space
-double volume_reduce = 0.1; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 0.11; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 
@@ -49,7 +49,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 1E1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 0.01 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -106,7 +106,11 @@ double ro_oleic = 0;
 double rop = 5240; // magnetite mass density [kg / m^3]
 //double M0 = Vself * rop;  // mass [kg]
 double A_H = 4E-20; // Hamaker constant [J]
-double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2]
+
+double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
+double k_o = 0.1; // Level of coverage of surface by the oleic acid
+double N_o; // Surface density of oleic acid
+
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with pace group Fd3m (above the Verwey temperature)
 double K1 = 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
@@ -129,7 +133,7 @@ double start_t = 30 /* [micro_s] */ * (1E-6); // [s]
 double T_ext = 0.2 * (1E6); // [micro_s] // external field period
 double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
 
-double start_ideal = 1; // start chaos (ideal superparam. gas)
+double start_ideal = 0; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)

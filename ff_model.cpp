@@ -407,7 +407,8 @@ int ff_model_check_smooth_dr(long p)
     //rmod = d[4];
     //rmod = 2 * Rp[p];
     //rmod = 2 * delta;
-    rmod = 2 * R0_min;
+    //rmod = 2 * R0_min;
+    rmod = 0.5 * delta;
 
     dphimag = sqrt(MUL(dphi[p], dphi[p]));
 
@@ -796,7 +797,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
                             dtBy = dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
                             dtBz = dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
 
-                            if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs);
+                            if (dtBx != dtBx) printf("\n DEBUG 12 p = %d ps = %d dtBx = %e r[p].x = %e r[ps].x = %e mxs = %e mys = %e mzs = %e dR = %e", p, ps, dtBx, r[p].x, r[ps].x, mxs, mys, mzs, dR);
 
                         } 
                         else
@@ -883,7 +884,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double tFx, tFy, tFz;
     double dtFx, dtFy, dtFz;
     double dreptFx, dreptFy, dreptFz; // repulsion
-    double dR, dRtemp, l, dR2, dR3, dR2mod, dR5, dR5mod, MUL1, MUL2, MUL3;
+    double dr, drtemp, l, dr2, dr3, dr2mod, dr5, dr5mod, MUL1, MUL2, MUL3;
     //double R1 = 0.3 * R0;
     double Cmod;
     //double Cmod1 = Ch * m0 * m0;
@@ -893,7 +894,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double sec_pow;
     ff_vect_t ttF;
 
-    double MUL1__dR5mod, MUL2__dR5mod, MUL3__dR5mod, MUL1_MUL2__dR2mod__dR5mod;
+    double MUL1__dr5mod, MUL2__dr5mod, MUL3__dr5mod, MUL1_MUL2__dr2mod__dr5mod;
 
     double mx, my, mz;
     double mxs, mys, mzs;
@@ -904,7 +905,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
     //ff_vect_t ttau;
 
-    double dd, tt;
+    double dd, tt, dr_min, F_steric_mag;
 
     //long di, dj;
 
@@ -921,6 +922,7 @@ ff_vect_t ff_model_nonloc_force(long p)
             #endif*/
             if (p != ps)
             {
+                dr_min = Rp0[p] + Rp0[ps] + 0.5 * delta;
 
                 dx = r[ps].x - r[p].x;// + di * Lx;
                 dy = r[ps].y - r[p].y;// + dj * Ly;
@@ -943,15 +945,14 @@ ff_vect_t ff_model_nonloc_force(long p)
                 mys = m[ps].y;
                 mzs = m[ps].z;
 
-                //dipole-dipole
-                dR = sqrt(dR2 = dx * dx + dy * dy + dz * dz);
-                dR3 = dR2 * dR;
+                dr = sqrt(dr2 = dx * dx + dy * dy + dz * dz); 
+                dr3 = dr2 * dr;
 
-                //if (dR == 0) printf ("\n \n \n dR == 0 !!!");
+                //if (dr == 0) printf ("\n \n \n dr == 0 !!!");
 
                 // Non local force and self-confid. magnetic field
-                dR2mod = dR2 / 5.0; //modified
-                dR5mod = (dR5 = pow(dR,5)) / C1; //modified
+                dr2mod = dr2 / 5.0; //modified
+                dr5mod = (dr5 = pow(dr,5)) / C1; //modified
 
                 MUL2 = mxs * dx + mys * dy + mzs * dz;
 
@@ -964,19 +965,19 @@ ff_vect_t ff_model_nonloc_force(long p)
                     MUL1 = mx * dx + my * dy + mz * dz;
                     MUL3 = mx * mxs + my * mys + mz * mzs;
 
-                    MUL1__dR5mod = MUL1 / dR5mod;
-                    MUL2__dR5mod = MUL2 / dR5mod;
-                    MUL3__dR5mod = MUL3 / dR5mod;
-                    MUL1_MUL2__dR2mod__dR5mod = MUL1 * MUL2 / (dR2mod * dR5mod);
+                    MUL1__dr5mod = MUL1 / dr5mod;
+                    MUL2__dr5mod = MUL2 / dr5mod;
+                    MUL3__dr5mod = MUL3 / dr5mod;
+                    MUL1_MUL2__dr2mod__dr5mod = MUL1 * MUL2 / (dr2mod * dr5mod);
 
-                    dtFx = -(MUL1__dR5mod * mxs + MUL2__dR5mod * mx
-                        + MUL3__dR5mod * dx - MUL1_MUL2__dR2mod__dR5mod * dx);
+                    dtFx = -(MUL1__dr5mod * mxs + MUL2__dr5mod * mx
+                        + MUL3__dr5mod * dx - MUL1_MUL2__dr2mod__dr5mod * dx);
 
-                    dtFy = -(MUL1__dR5mod * mys + MUL2__dR5mod * my
-                        + MUL3__dR5mod * dy - MUL1_MUL2__dR2mod__dR5mod * dy);
+                    dtFy = -(MUL1__dr5mod * mys + MUL2__dr5mod * my
+                        + MUL3__dr5mod * dy - MUL1_MUL2__dr2mod__dr5mod * dy);
 
-                    dtFz = -(MUL1__dR5mod * mzs + MUL2__dR5mod * mz
-                        + MUL3__dR5mod * dz - MUL1_MUL2__dR2mod__dR5mod * dz);
+                    dtFz = -(MUL1__dr5mod * mzs + MUL2__dr5mod * mz
+                        + MUL3__dr5mod * dz - MUL1_MUL2__dr2mod__dr5mod * dz);
 
                     //if (p == 50) printf("\n DEBUG 7 ps = %d F.x = %e", ps, dtFx);
                     //if (p == 50) printf("\n DEBUG 7 ps = %d m[p].x = %e", ps, m[p].x);
@@ -984,7 +985,7 @@ ff_vect_t ff_model_nonloc_force(long p)
 
                 } 
 
-                if (dR >= Rp0[p] + Rp0[ps])
+                if (dr >= dr_min)
                 {
                     tFx += dtFx;
                     tFy += dtFy;
@@ -992,18 +993,18 @@ ff_vect_t ff_model_nonloc_force(long p)
                 }
 
                 /*
-                if (dR <= 5 * R0) // exp phenomenology
+                if (dr <= 5 * R0) // exp phenomenology
                 {
-                tFx += - (EPS * dx / dR) * (exp(-(dR - 2 * R00) / ro1) / ro1 - exp(-(dR - 2 * R00) / ro2) / ro2);
-                tFy += - (EPS * dy / dR) * (exp(-(dR - 2 * R00) / ro1) / ro1 - exp(-(dR - 2 * R00) / ro2) / ro2);
-                tFz += - (EPS * dz / dR) * (exp(-(dR - 2 * R00) / ro1) / ro1 - exp(-(dR - 2 * R00) / ro2) / ro2);
+                tFx += - (EPS * dx / dr) * (exp(-(dr - 2 * R00) / ro1) / ro1 - exp(-(dr - 2 * R00) / ro2) / ro2);
+                tFy += - (EPS * dy / dr) * (exp(-(dr - 2 * R00) / ro1) / ro1 - exp(-(dr - 2 * R00) / ro2) / ro2);
+                tFz += - (EPS * dz / dr) * (exp(-(dr - 2 * R00) / ro1) / ro1 - exp(-(dr - 2 * R00) / ro2) / ro2);
                 }
                 */
 
 #ifndef SECONDARY
-                if ((dR <= Rp0[p] + Rp0[ps]) && (!isMicroDrop)) //soft sphere condition
+                if ((dr < dr_min) && (!isMicroDrop)) //soft sphere condition
                 {
-                    /*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dR5);
+                    /*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dr5);
 
                     tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
@@ -1015,50 +1016,60 @@ ff_vect_t ff_model_nonloc_force(long p)
                     //printf("\n aggregated_p");
                     }*/
 
-                    dRtemp = Rp0[p] + Rp0[ps];
+                    drtemp = Rp0[p] + Rp0[ps];
                     dd = Rp0[p] + Rp0[ps];
-                    l = 2 * (dRtemp - dd) / dd;
+                    l = 2 * (drtemp - dd) / dd;
                     tt = 2 * delta / dd;
 
-                    tFx += - Ch_ss * (dx / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                    tFy += - Ch_ss * (dy / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                    tFz += - Ch_ss * (dz / dRtemp) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFx += - Ch_ss * (dx / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFy += - Ch_ss * (dy / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFz += - Ch_ss * (dz / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                 }
 
                 // Entropic repulsion
-                /*if ((dR > Rp0[p] + Rp0[ps]) && (dR <= Rp0[p] + Rp0[ps] + 2 * delta)) 
+                if ((dr >= dr_min) && (dr <= Rp0[p] + Rp0[ps] + 2 * delta)) 
                 {
-                    dd = Rp0[p] + Rp0[ps];
-                    l = 2 * (dR - dd) / dd;
+                    /*dd = Rp0[p] + Rp0[ps];
+                    l = 2 * (dr - dd) / dd;
                     tt = 2 * delta / dd;
+                    tFx += - (dx / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFy += - (dy / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFz += - (dz / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
 
-                    tFx += - (dx / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                    tFy += - (dy / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                    tFz += - (dz / dR) * (2 * pow(dd, 2) * kb * T * N_oa * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                }*/
+                    F_steric_mag = ((-pi)*(Rp0[ps]+Rp0[p])*kb*N_oa*T*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+
+                        (-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-
+                        pow(Rp0[p]-Rp0[ps],2))*delta))/(6*(Rp0[ps]+Rp0[p])*delta*dr*dr);
+                    
+                    //printf("\n F_steric_mag = %e", F_steric_mag);
+
+                    tFx += - (dx / dr) * F_steric_mag;
+                    tFy += - (dy / dr) * F_steric_mag;
+                    tFz += - (dz / dr) * F_steric_mag;
+                }
 #endif
 
 #ifndef SECONDARY
                 // attraction
-                //if ((dR > Rp[p] + Rp[ps] )&&(dR < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dR5 dependence finally is similar to the well-known exp. phenomenology
-                //if (dR > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
-                //if (dR > (Rp[p] + Rp[ps]) * (1 + smooth_r))
-                if ((dR > (Rp0[p] + Rp0[ps] + 2 * delta)) && (!isMicroDrop))
-                //if (dR > (Rp0[p] + Rp0[ps] + a0))
+                //if ((dr > Rp[p] + Rp[ps] )&&(dr < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dr5 dependence finally is similar to the well-known exp. phenomenology
+                //if (dr > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
+                //if (dr > (Rp[p] + Rp[ps]) * (1 + smooth_r))
+                //if (dr > (Rp0[p] + Rp0[ps] + a0))
+                //if ((dr > (Rp0[p] + Rp0[ps] + 2 * delta)) && (!isMicroDrop))
+                if ((dr >= dr_min) && (!isMicroDrop))
                 {
-                    /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dR5);
+                    /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dr5);
 
                     tFx += dx * Cmod;
                     tFy += dy * Cmod;
                     tFz += dz * Cmod;*/
 
-                    tFx += - (dx / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
-                    tFy += - (dy / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
-                    tFz += - (dz / dR) * (- 64 * A_H * dR * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dR * dR - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dR * dR - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFx += - (dx / dr) * (- 64 * A_H * dr * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dr * dr - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dr * dr - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFy += - (dy / dr) * (- 64 * A_H * dr * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dr * dr - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dr * dr - pow(Rp0[p] + Rp0[ps], 2), 2)));
+                    tFz += - (dz / dr) * (- 64 * A_H * dr * pow(Rp0[p] * Rp0[ps], 3) / (6 * pow(dr * dr - pow(Rp0[p] - Rp0[ps], 2), 2) * pow(dr * dr - pow(Rp0[p] + Rp0[ps], 2), 2)));
 
                     /*if (aggregated_p[p][ps])
                     {
-                    Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dR5);
+                    Cmod = 5 * m0p[p] * m0p[ps] * (C1 / dr5);
 
                     tFx += dx * Cmod;
                     tFy += dy * Cmod;
@@ -1080,9 +1091,9 @@ ff_vect_t ff_model_nonloc_force(long p)
                 tFz -= Fnonloc[ps][p].z;
                 }*/ // end of if p > ps
                 //#endif
-                //tBx += dx * MUL2mod__dR5mod1 - mxs * dR2__dR5mod1;
-                //tBy += dy * MUL2mod__dR5mod1 - mys * dR2__dR5mod1;
-                //tBz += dz * MUL2mod__dR5mod1 - mzs * dR2__dR5mod1;
+                //tBx += dx * MUL2mod__dr5mod1 - mxs * dr2__dr5mod1;
+                //tBy += dy * MUL2mod__dr5mod1 - mys * dr2__dr5mod1;
+                //tBz += dz * MUL2mod__dr5mod1 - mzs * dr2__dr5mod1;
                 /*#ifdef SECONDARY
                 }
                 #endif*/
@@ -1137,7 +1148,7 @@ double ff_model_G_steric(long p, long ps)
     // Entropic repulsion
     if (dR <= dRmax)
         G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
-        (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_oa * T) / ( 6 * delta * dR);
+        (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_o * T) / ( 6 * delta * dR);
     else G_steric = 0;
 
     return G_steric;
@@ -1895,13 +1906,16 @@ ff_vect_t Bext(double x, double y, double z)
 
 void ff_model_init(void)
 {
-    long p, tp;
+    long p, tp, p_prev;
     double theta, phi;
     ff_vect_t dr;
     double dR;
     double sigma;
     long i,j;
     double t_temp_1 = 0;
+    double dr_tmp, dr_min;
+    int cont_flag;
+    long i_attempt;
 
     double start_scale = 0.99;
 
@@ -1916,6 +1930,8 @@ void ff_model_init(void)
     if (t_temp < 20) t_temp_1 = 20;
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
+
+    N_o = N_oa * k_o / 0.5;
 
     printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
     
@@ -1993,6 +2009,41 @@ again:
                 if (dR <= Rp[p] + Rp[tp]) goto again;
             }
         } // start_ideal
+        else
+        {
+            p_prev = 1;
+            if (p == 1) {r[p].x = r[p].y = r[p].z = 0;}
+            else
+            {
+cont3:                
+                for (i_attempt = 1; i_attempt <= 100; i_attempt++)
+                {
+                    dr_min = Rp0[p_prev] + Rp0[p] + 0.5 * delta;
+                    
+                    theta = pi * (*var_uni)();
+                    phi = 2 * pi * (*var_uni)();
+                    
+                    r[p].x = r[p_prev].x + dr_min * sin(theta) * cos(phi);
+                    r[p].y = r[p_prev].y + dr_min * sin(theta) * sin(phi);
+                    r[p].z = r[p_prev].z + dr_min * cos(theta);
+
+                    cont_flag = 0;
+                    for (tp = 1; tp < p; tp++)
+                    {
+                        dr.x = r[p].x - r[tp].x;
+                        dr.y = r[p].y - r[tp].y;
+                        dr.z = r[p].z - r[tp].z;
+
+                        dR = sqrt(MUL(dr,dr));
+
+                        if (dR < Rp0[p] + Rp0[tp] + 0.5 * delta) {cont_flag = 1; goto cont1;}
+                    }
+cont1:             if (!cont_flag) goto cont2;
+                }
+cont2:
+                if (cont_flag) {p_prev ++; goto cont3;}
+            }
+        }
 
         v[p].x = v[p].y = v[p].z = 0;
         //v_r[p].x = v_r[p].y = v_r[p].z = 0;
