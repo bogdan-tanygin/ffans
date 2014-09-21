@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 100 // number of the particles
+#define pN 200 // number of the particles
 
 // Math constants
 extern double pi;
@@ -112,6 +112,8 @@ extern double kr;
 extern double rop;
 extern double A_H;
 extern double N_oa;
+extern double k_o;
+extern double N_o;
 extern double a0;
 extern double ro0;
 extern double eta_car;
