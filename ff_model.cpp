@@ -1048,9 +1048,9 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += - (dy / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFz += - (dz / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
 
-                    F_steric_mag = ((-pi)*(Rp0[ps]+Rp0[p])*kb*N_oa*T*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+
+                    F_steric_mag = (-pi)*(Rp0[ps]+Rp0[p])*kb*N_o*T*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+
                         (-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-
-                        pow(Rp0[p]-Rp0[ps],2))*delta))/(6*(Rp0[ps]+Rp0[p])*delta*dr*dr);
+                        pow(Rp0[p]-Rp0[ps],2))*delta)/(6*(Rp0[ps]+Rp0[p])*delta*dr*dr);
                     
                     //printf("\n F_steric_mag = %e", F_steric_mag);
 
