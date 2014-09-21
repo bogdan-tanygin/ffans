@@ -1013,14 +1013,14 @@ ff_vect_t ff_model_nonloc_force(long p)
                 }
                 */
 
-#ifndef SECONDARY
+//#ifndef SECONDARY
                 if ((dr < dr_min) && (!isMicroDrop)) //soft sphere condition
                 {
-                    /*Cmod = 1 * m0p[p] * m0p[ps] * (C1 / dr5);
+                    Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dr5);
 
                     tFx += -dx * Cmod;
                     tFy += -dy * Cmod;
-                    tFz += -dz * Cmod;*/
+                    tFz += -dz * Cmod;
 
                     /*if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
                     {
@@ -1028,14 +1028,14 @@ ff_vect_t ff_model_nonloc_force(long p)
                     //printf("\n aggregated_p");
                     }*/
 
-                    drtemp = Rp0[p] + Rp0[ps];
+                    /*drtemp = Rp0[p] + Rp0[ps];
                     dd = Rp0[p] + Rp0[ps];
                     l = 2 * (drtemp - dd) / dd;
                     tt = 2 * delta / dd;
 
                     tFx += - Ch_ss * (dx / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFy += - Ch_ss * (dy / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
-                    tFz += - Ch_ss * (dz / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
+                    tFz += - Ch_ss * (dz / drtemp) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
                 }
 
                 // Entropic repulsion
@@ -1048,9 +1048,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += - (dy / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFz += - (dz / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
 
-                    F_steric_mag = (-pi)*(Rp0[ps]+Rp0[p])*kb*N_o*T*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+
-                        (-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-
-                        pow(Rp0[p]-Rp0[ps],2))*delta)/(6*(Rp0[ps]+Rp0[p])*delta*dr*dr);
+                    F_steric_mag = ((-pi)*kb*T*N_o*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+(-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-pow((Rp0[p]-Rp0[ps]),2))*delta))/(6*delta*dr*dr);
                     
                     //printf("\n F_steric_mag = %e", F_steric_mag);
 
@@ -1058,16 +1056,16 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += - (dy / dr) * F_steric_mag;
                     tFz += - (dz / dr) * F_steric_mag;
                 }
-#endif
+//#endif
 
-#ifndef SECONDARY
+//#ifndef SECONDARY
                 // attraction
                 //if ((dr > Rp[p] + Rp[ps] )&&(dr < 3 * (Rp[p] + Rp[ps]) / 2.0 )) // the Heaviside step function  and dr5 dependence finally is similar to the well-known exp. phenomenology
                 //if (dr > Rp[p] + Rp[ps] + 2 * smooth_r * delta)
                 //if (dr > (Rp[p] + Rp[ps]) * (1 + smooth_r))
                 //if (dr > (Rp0[p] + Rp0[ps] + a0))
                 //if ((dr > (Rp0[p] + Rp0[ps] + 2 * delta)) && (!isMicroDrop))
-                if ((dr >= dr_min) && (!isMicroDrop))
+                if (dr >= dr_min)// && (!isMicroDrop))
                 {
                     /*Cmod = Ch * m0p[p] * m0p[ps] * (C1 / dr5);
 
@@ -1088,7 +1086,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFz += dz * Cmod;
                     }*/
                 }
-#endif
+//#endif
 
                 /*Fnonloc[p][ps].x = tFx;
                 Fnonloc[p][ps].y = tFy;
