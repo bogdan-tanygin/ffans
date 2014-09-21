@@ -60,7 +60,7 @@ long slow_steps = 0;
 double smooth_r = 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
-double T = 273.15 + 50; // K
+double T = 273.15; // K
 double sigma_sf_nano = 5E-4; //1E-4;
 
 double kr = gl_scale; // particle size parameter []
@@ -119,7 +119,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 double Ms = 478 * 1E3; // [A / m]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 10; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 0; // 3E4; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
