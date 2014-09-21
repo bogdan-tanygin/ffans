@@ -108,7 +108,7 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o = 1E-5; // 0.1; // Level of coverage of surface by the oleic acid
+double k_o = 1E-3; //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
@@ -119,7 +119,7 @@ double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-
 double Ms = 478 * 1E3; // [A / m]
 
 double Ch = 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss = 3E4; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
+double Ch_ss = 10; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
 
 int load_at_start = 0;
 int auto_save = 1;
