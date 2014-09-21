@@ -402,8 +402,19 @@ int ff_model_check_smooth_dr(long p)
     double dr, rmod, dphimag;
     long ps;
     int res = 1;
+    /*ff_vect_t dr_tmp;
+    ff_vect_t dphi_tmp;
 
+    dr_tmp.x = drt[p].x + drt_r[p].x;
+    dr_tmp.y = drt[p].y + drt_r[p].y;
+    dr_tmp.z = drt[p].z + drt_r[p].z;
+
+    dphi_tmp.x = dphi[p].x + dphi_r[p].x;
+    dphi_tmp.y = dphi[p].y + dphi_r[p].y;
+    dphi_tmp.z = dphi[p].z + dphi_r[p].z;*/
+    
     dr = sqrt(MUL(drt[p], drt[p]));
+    //dr = sqrt(MUL(dr_tmp, dr_tmp));
     //rmod = d[4];
     //rmod = 2 * Rp[p];
     //rmod = 2 * delta;
@@ -411,6 +422,7 @@ int ff_model_check_smooth_dr(long p)
     rmod = 0.5 * delta;
 
     dphimag = sqrt(MUL(dphi[p], dphi[p]));
+    //dphimag = sqrt(MUL(dphi_tmp, dphi_tmp));
 
     if (rmod > 0)
         if ((dr / rmod > smooth_r) || ((dphimag / pi > smooth_r) && (!(is_neel[p]))))

@@ -287,6 +287,14 @@ void cbKeyPressed(unsigned char key, int x, int y)
         gr_z0 += 0.05;
         break;
 
+    case 'u':
+        dt *= 1.1;
+        break;
+    
+    case 'y':
+        dt /= 1.1;
+        break;
+
     default:
         printf ("KP: No action assigned for %d.\n", key);
         break;
