@@ -419,7 +419,7 @@ int ff_model_check_smooth_dr(long p)
     //rmod = 2 * Rp[p];
     //rmod = 2 * delta;
     //rmod = 2 * R0_min;
-    rmod = 0.5 * delta;
+    rmod = 0.5 * delta_r;
 
     dphimag = sqrt(MUL(dphi[p], dphi[p]));
     //dphimag = sqrt(MUL(dphi_tmp, dphi_tmp));
@@ -934,7 +934,7 @@ ff_vect_t ff_model_nonloc_force(long p)
             #endif*/
             if (p != ps)
             {
-                dr_min = Rp0[p] + Rp0[ps] + a0; // 0.5 * delta;
+                dr_min = Rp0[p] + Rp0[ps] + delta_r;
 
                 dx = r[ps].x - r[p].x;// + di * Lx;
                 dy = r[ps].y - r[p].y;// + dj * Ly;
@@ -2028,7 +2028,7 @@ again:
 cont3:                
                 for (i_attempt = 1; i_attempt <= 100; i_attempt++)
                 {
-                    dr_min = Rp0[p_prev] + Rp0[p] + 0; // 0.5 * delta;
+                    dr_min = Rp0[p_prev] + Rp0[p] + delta_r;
                     
                     theta = pi * (*var_uni)();
                     phi = 2 * pi * (*var_uni)();
@@ -2046,7 +2046,7 @@ cont3:
 
                         dR = sqrt(MUL(dr,dr));
 
-                        if (dR < Rp0[p] + Rp0[tp] + 0 /*0.5 * delta*/) {cont_flag = 1; goto cont1;}
+                        if (dR < Rp0[p] + Rp0[tp] + delta_r) {cont_flag = 1; goto cont1;}
                     }
 cont1:             if (!cont_flag) goto cont2;
                 }
