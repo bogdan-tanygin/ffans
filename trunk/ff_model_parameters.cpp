@@ -36,10 +36,14 @@ const double kb = 1.3806488 * 1E-23; // [m2 kg s-2 K-1]
 const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
+// Material
+double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature)
+
 // Space
-double volume_reduce = 0.2; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 0.25; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
+double delta_r = a0; // minimal distance between particles 
 
 // periodic boundary conditions
 int is_periodic = 0;
@@ -49,7 +53,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 0.01 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E-4 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -108,11 +112,10 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o = 0.0001; //0.1; // Level of coverage of surface by the oleic acid
+double k_o = 1E-3; //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
-double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with pace group Fd3m (above the Verwey temperature)
 double K1 = 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 //double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]

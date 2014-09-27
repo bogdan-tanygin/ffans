@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 1000 // number of the particles
+#define pN 30 // number of the particles
 
 // Math constants
 extern double pi;
@@ -39,6 +39,7 @@ extern double C1;
 
 // Geometry
 extern double Lx, Ly, Lz; //meters
+extern double delta_r;
 
 extern int is_periodic;
 
