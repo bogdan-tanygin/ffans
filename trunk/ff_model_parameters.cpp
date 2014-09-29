@@ -53,7 +53,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 1E-4 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -112,7 +112,7 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o = 1E-3; //0.1; // Level of coverage of surface by the oleic acid
+double k_o = 5E-4; //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
