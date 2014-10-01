@@ -112,7 +112,7 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 
 double N_oa = 10E19; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o = 5E-4; //0.1; // Level of coverage of surface by the oleic acid
+double k_o = 5E-4; // 5E-4 //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
