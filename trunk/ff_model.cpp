@@ -777,14 +777,17 @@ ff_vect_t ff_model_nonloc_torque(long p)
                         dy = - r[ps].y + r[p].y;// + dj * Ly;
                         dz = - r[ps].z + r[p].z;// + dk * Lz;
 
-                        if (dx > Lx / 2.0) dx -= Lx;
-                        if (dx < - Lx / 2.0) dx += Lx;
-                        
-                        if (dy > Ly / 2.0) dy -= Ly;
-                        if (dy < - Ly / 2.0) dy += Ly;
-                        
-                        if (dz > Lz / 2.0) dz -= Lz;
-                        if (dz < - Lz / 2.0) dz += Lz;
+                        if (is_periodic)
+						{
+							if (dx > Lx / 2.0) dx -= Lx;
+							if (dx < - Lx / 2.0) dx += Lx;
+							
+							if (dy > Ly / 2.0) dy -= Ly;
+							if (dy < - Ly / 2.0) dy += Ly;
+							
+							if (dz > Lz / 2.0) dz -= Lz;
+							if (dz < - Lz / 2.0) dz += Lz;
+						}
 
                         dR = sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -940,14 +943,17 @@ ff_vect_t ff_model_nonloc_force(long p)
                 dy = r[ps].y - r[p].y;// + dj * Ly;
                 dz = r[ps].z - r[p].z;
 
-                if (dx > Lx / 2.0) dx -= Lx;
-                if (dx < - Lx / 2.0) dx += Lx;
-                
-                if (dy > Ly / 2.0) dy -= Ly;
-                if (dy < - Ly / 2.0) dy += Ly;
-                
-                if (dz > Lz / 2.0) dz -= Lz;
-                if (dz < - Lz / 2.0) dz += Lz;
+                if (is_periodic)
+				{
+					if (dx > Lx / 2.0) dx -= Lx;
+					if (dx < - Lx / 2.0) dx += Lx;
+					
+					if (dy > Ly / 2.0) dy -= Ly;
+					if (dy < - Ly / 2.0) dy += Ly;
+					
+					if (dz > Lz / 2.0) dz -= Lz;
+					if (dz < - Lz / 2.0) dz += Lz;
+				}
 
                 mx = m[p].x;
                 my = m[p].y;
