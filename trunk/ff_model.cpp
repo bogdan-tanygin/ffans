@@ -1054,8 +1054,10 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFy += - (dy / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);
                     tFz += - (dz / dr) * (2 * pow(dd, 2) * kb * T * N_o * pi * log((tt + 1) / (l / 2 + 1)) / tt);*/
 
-                    F_steric_mag = ((-pi)*kb*T*N_o*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+(-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-pow((Rp0[p]-Rp0[ps]),2))*delta))/(6*delta*dr*dr);
-                    
+                    //T=273;
+					F_steric_mag = ((-pi)*kb*T*N_o*(dr-2*delta-Rp0[ps]-Rp0[p])*((Rp0[ps]+Rp0[p])*(2*(dr*dr+delta*delta)+(-pow(Rp0[ps],2)+Rp0[p]*Rp0[ps]-pow(Rp0[p],2))*(dr/(Rp0[ps]+Rp0[p])+1)+delta*dr)+(2*Rp0[p]*Rp0[ps]-pow((Rp0[p]-Rp0[ps]),2))*delta))/(6*delta*dr*dr);
+                    //T=0;
+
                     //printf("\n F_steric_mag = %e", F_steric_mag);
 
                     tFx += - (dx / dr) * F_steric_mag;
@@ -2576,6 +2578,8 @@ void ff_model_size_dispersion_init(void)
 
     d[14] = 250;
     F[14] = 0.006122449;
+
+	//for (i = 1; i <= imax; i++) d[i] = 100; // same size
 
     Ftot = 0;
     for (i = 1; i <= imax; i++)
