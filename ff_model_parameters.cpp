@@ -53,7 +53,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 1E-9; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E-12; // 1E-9; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -80,7 +80,7 @@ int is_large_mode = 0; // largest particles mode
 double large_fraction = 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse ferrocolloids) // 6.92E-02 (my sim); // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
 double k_large = 1.0; // 0.91; // 0.925; // correction of the large particles size
 int is_oleic = 0;
-double R_oleic_0 = (Lx / 2.0);
+double R_oleic_0 = 0.5 * 0.11 * Lx; // = (Lx / 2.0);
 
 // microdrop mode parameters
 int isMicroDrop = 0; // enable the microdrop mode

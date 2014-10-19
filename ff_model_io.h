@@ -23,6 +23,7 @@ void ff_io_load(long);
 /*void ff_io_save_susceptX(void);
 void ff_io_save_susceptY(void);
 void ff_io_save_susceptZ(void);*/
+void ff_io_entropy_change(void);
 
 extern void cbMouseInput(int button, int state, int x, int y);
 extern void cbMouseMove(int x, int y);
