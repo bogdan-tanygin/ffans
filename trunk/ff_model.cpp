@@ -163,6 +163,7 @@ double Ekp_z[pN + 1];
 double Ekp_rot_x[pN + 1];
 double Ekp_rot_y[pN + 1];
 double Ekp_rot_z[pN + 1];
+double G_dd[pN + 1]; // dipole-dipole energy
 //double dW[pN + 1]; // work
 double g_Bz_prev;
 long step = 0;
@@ -746,7 +747,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
     double sign;
     int is_last;
 
-    ff_vect_t ttB;
+    ff_vect_t tBext;
     ff_vect_t ttau;
 
     ttau.x = ttau.y = ttau.z = 0;
@@ -758,10 +759,10 @@ ff_vect_t ff_model_nonloc_torque(long p)
     //for(p = 1; p <= pN; p ++)
     if (exist_p[p])
     {
-        ttB = Bext(r[p].x, r[p].y, r[p].z);
-        tBx = ttB.x;
-        tBy = ttB.y;
-        tBz = ttB.z;
+        tBext = Bext(r[p].x, r[p].y, r[p].z);
+        tBx = tBext.x;
+        tBy = tBext.y;
+        tBz = tBext.z;
 
         for(ps = 1; ps <= pN; ps ++)
             if (exist_p[ps])
@@ -885,6 +886,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
                     m[p].z = m0p[p] * tBz / tBmag;
                 }
 
+				G_dd[p] = - (m[p].x * (tBx - tBext.x) + m[p].y * (tBy - tBext.y) + m[p].z * (tBz - tBext.z));
 #endif
 
     }// if (exist_p[p])
@@ -1146,6 +1148,11 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
+double ff_model_G_zeeman(long p)
+{
+	return - MUL(Bext(r[p].x, r[p].y, r[p].z), m[p]);
+}
+
 double ff_model_G_steric(long p, long ps)
 {
     double G_steric = 0;
@@ -1155,21 +1162,53 @@ double ff_model_G_steric(long p, long ps)
     double dz = 0;
     double dR = 0;
     double dRmax = 0;
+	double dr_min = 0;
+
+	dr_min = Rp0[p] + Rp0[ps] + delta_r;
 
     dx = r[p].x - r[ps].x;
     dy = r[p].y - r[ps].y;
     dz = r[p].z - r[ps].z;
     dR = sqrt(dx * dx + dy * dy + dz * dz);
 
-    dRmax = Rp[ps] + Rp[p] + 2 * delta;
+    dRmax = Rp0[ps] + Rp0[p] + 2 * delta;
 
     // Entropic repulsion
-    if (dR <= dRmax)
-        G_steric = (pi * kb * pow(dR - (2 * delta + Rp[ps] + Rp[p]), 2) * ((Rp[ps] + Rp[p]) * 
-        (dR + delta) - (pow(Rp[ps], 3) + pow(Rp[p], 3)) / (Rp[p] + Rp[ps])) * N_o * T) / ( 6 * delta * dR);
+    if ((dR <= dRmax) && (dR >= dr_min))
+        G_steric = (pi * kb * pow(dR - (2 * delta + Rp0[ps] + Rp0[p]), 2) * ((Rp0[ps] + Rp0[p]) * 
+        (dR + delta) - (pow(Rp0[ps], 3) + pow(Rp0[p], 3)) / (Rp0[p] + Rp0[ps])) * N_o * T) / ( 6 * delta * dR);
     else G_steric = 0;
 
     return G_steric;
+}
+
+double ff_model_G_london(long p, long ps)
+{
+    double G_london = 0;
+    double z = 0;
+    double dx = 0; 
+    double dy = 0; 
+    double dz = 0;
+    double dR = 0;
+    double dRmax = 0;
+	double dr_min = 0;
+
+	dr_min = Rp0[p] + Rp0[ps] + delta_r;
+
+    dx = r[p].x - r[ps].x;
+    dy = r[p].y - r[ps].y;
+    dz = r[p].z - r[ps].z;
+    dR = sqrt(dx * dx + dy * dy + dz * dz);
+
+    //dRmax = Rp0[ps] + Rp0[p] + 2 * delta;
+
+    // London dispersion energy
+    if ((1 /*dR <= dRmax*/) && (dR >= dr_min))
+        G_london = (- A_H / 6.0) * (2 * Rp0[p] * Rp0[ps] / (dR * dR - pow(Rp0[p] + Rp0[ps], 2)) + 2 * Rp0[p] * Rp0[ps] / (dR * dR - pow(Rp0[p] - Rp0[ps], 2))
+		                            + log((dR * dR - pow(Rp0[p] + Rp0[ps], 2)) / (dR * dR - pow(Rp0[p] - Rp0[ps], 2))));
+    else G_london = 0;
+
+    return G_london;
 }
 
 ff_vect_t ff_model_force(long p)
@@ -1924,7 +1963,7 @@ ff_vect_t Bext(double x, double y, double z)
 
 void ff_model_init(void)
 {
-    long p, tp, p_prev;
+    long p, ps, tp, p_prev;
     double theta, phi;
     ff_vect_t dr;
     double dR;
@@ -2098,6 +2137,8 @@ cont2:
         is_inside_oleic[p] = 1;
         is_temp_sat[p] = 0;
         k_force_adapt_p_0[p] = k_force_adapt_0;
+
+		G_dd[p] = 0;
 
         p++;
     }
@@ -2579,7 +2620,7 @@ void ff_model_size_dispersion_init(void)
     d[14] = 250;
     F[14] = 0.006122449;
 
-	//for (i = 1; i <= imax; i++) d[i] = 100; // same size
+	for (i = 1; i <= imax; i++) d[i] = 0.5 * 100; // same size
 
     Ftot = 0;
     for (i = 1; i <= imax; i++)

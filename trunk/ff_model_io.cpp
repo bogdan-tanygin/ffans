@@ -110,7 +110,12 @@ void cbKeyPressed(unsigned char key, int x, int y)
         //        exit(1);
         break;
 
-    case 'd':
+    // force entropy changes
+	case 'a':
+		ff_io_entropy_change();
+		break;
+	
+	case 'd':
         Lx *= 2;
         Ly *= 2;
         Lz *= 2;
@@ -590,3 +595,59 @@ file  = fopen("susceptZZ.dat", "a");
 fprintf(file, "%5.3e %5.3e \n", Hz, Mz);
 fclose(file);
 }*/
+
+void ff_io_entropy_change(void)
+{
+	double k_r = 1.01;
+	long p, ps;
+	double G = 0; // total energy per particles
+	double S = 0; // entropy S = S - S0, where S0 is arbitrary value
+	double V, a_free;
+	double F = 0; // free energy
+	FILE* file;
+
+	// total energy calc
+	G = 0;
+	for (p = 1; p <= pN - 1; p++)
+	{
+		G += G_dd[p] / 2.0 + ff_model_G_zeeman(p);
+		//printf("\n  G_dd[p] / 2.0 = %e",  G_dd[p] / 2.0);
+		//printf("\n  ff_model_G_zeeman(p) = %e",  ff_model_G_zeeman(p));
+
+		for (ps = p + 1; ps <= pN; ps++)
+		{
+			G += ff_model_G_london(p, ps) + ff_model_G_steric(p, ps);
+			//printf("\n ff_model_G_london(%d, %d) = %e", p, ps, ff_model_G_london(p, ps));
+			//printf("\n ff_model_G_steric(p, ps) = %e",  ff_model_G_steric(p, ps));
+		}
+	}
+	G /= pN;
+
+	// entropy calculation (only for monodisperse ferrofluid!)
+	a_free = pow(pi * 1.35 * pow(2 * Rp0[1], 3) / (6 * phi_vol_fract_oleic / 100), 1 / 3.0);
+	V = (4 * pi / 3.0) * pow(a_free - 2 * Rp0[1], 3);
+	S = kb * log(V);
+
+	// free energy
+	F = G - T * S;
+
+	//printf("\n G = %e", G);
+	printf("\n F / (k * T) = %e", F / (kb * T));
+
+	file  = fopen("F(phi).dat", "a");
+	fprintf(file, "%5.3e %5.3e \n", phi_vol_fract_oleic, F / (kb * T));
+	fclose(file);
+
+	for (p = 1; p <= pN - 1; p++)
+	{
+		r[p].x *= k_r;
+		r[p].y *= k_r;
+		r[p].z *= k_r;
+	}
+
+	R_oleic *= k_r;
+
+	Lx *= k_r;
+	Ly *= k_r;
+	Lz *= k_r;
+}
