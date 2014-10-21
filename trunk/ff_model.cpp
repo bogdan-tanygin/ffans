@@ -2620,7 +2620,7 @@ void ff_model_size_dispersion_init(void)
     d[14] = 250;
     F[14] = 0.006122449;
 
-	for (i = 1; i <= imax; i++) d[i] = 0.5 * 100; // same size
+	//for (i = 1; i <= imax; i++) d[i] = 0.5 * 100; // same size
 
     Ftot = 0;
     for (i = 1; i <= imax; i++)
