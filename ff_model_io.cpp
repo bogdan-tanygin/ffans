@@ -116,13 +116,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
 		break;
 	
 	case 'd':
-        Lx *= 2;
-        Ly *= 2;
-        Lz *= 2;
+        Lx *= 1.05;
+        Ly *= 1.05;
+        Lz *= 1.05;
         break;
 
     case 'D':
-        Lz *= 5;
+        Lx /= 1.05;
+        Ly /= 1.05;
+        Lz /= 1.05;
         break;
 
     case 'M': case 'm':

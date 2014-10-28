@@ -2035,9 +2035,9 @@ again:
 
         if (start_ideal)
         {
-            r[p].x = start_scale * (-0.49 * Lx + 0.98 * Lx * (*var_uni)());
-            r[p].y = start_scale * (-0.49 * Ly + 0.98 * Ly * (*var_uni)());
-            r[p].z = start_scale * (-0.49 * Lz + 0.98 * Lz * (*var_uni)());
+            r[p].x = start_scale * (Rp[p] - 0.49 * Lx + (2 * 0.49 * Lx - Rp[p]) * (*var_uni)());
+            r[p].y = start_scale * (Rp[p] - 0.49 * Ly + (2 * 0.49 * Ly - Rp[p]) * (*var_uni)());
+            r[p].z = start_scale * (Rp[p] - 0.49 * Lz + (2 * 0.49 * Lz - Rp[p]) * (*var_uni)());
             Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
 
             /*r[p].x = - R_oleic + 2 * R_oleic * (*var_uni)();
@@ -2049,12 +2049,12 @@ again:
             //if (p == 5)
             //r[p].x = r[p].y = r[p].z = 0;
 
-            if (!is_uniform_field_test)
+            /*if (!is_uniform_field_test)
             {
                 Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
                 if (Rp_to_c[p] > R_oleic - Rp[p]) goto again;
             }
-
+			*/
             for (tp = 1; tp < p; tp++)
             {
                 dr.x = r[p].x - r[tp].x;
@@ -2063,7 +2063,7 @@ again:
 
                 dR = sqrt(MUL(dr,dr));
 
-                if (dR <= Rp[p] + Rp[tp]) goto again;
+                if (dR <= Rp0[p] + Rp0[tp] + delta_r) goto again;
             }
         } // start_ideal
         else
