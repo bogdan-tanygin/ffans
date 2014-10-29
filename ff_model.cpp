@@ -1308,13 +1308,14 @@ ff_vect_t ff_model_torque(long p)
 void ff_model_next_step(void)
 { 
     ff_vect_t f, ttau;
-    double I;
+    double I, I_min_per;
 	double I_per[3][3][3];
     long p;
     int chk;
     long mz_tot_n;
     ff_vect_t r0;
 	ff_vect_t r0_per[3][3][3];
+	ff_vect_t r_per[pN + 1][3][3][3];
     //double C2, gamma_rot;
     double M0, I0;
     ff_vect_t ex, ey, ez; // basis of rotation around ez = w
@@ -1678,77 +1679,194 @@ void ff_model_next_step(void)
 							if (r[p].z <= 0) per_z_minus = r[p].z + Lz;
 							else per_z_minus = r[p].z;
 
+							r_per[p][0][0][0].x = per_x_minus;
+							r_per[p][0][0][0].y = per_y_minus;
+							r_per[p][0][0][0].z = per_z_minus;
 							r0_per[0][0][0].x += M0p[p] * per_x_minus;
 							r0_per[0][0][0].y += M0p[p] * per_y_minus;
 							r0_per[0][0][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][0][0][1].x = per_x_minus;
+							r_per[p][0][0][1].y = per_y_minus;
+							r_per[p][0][0][1].z = r[p].z;
 							r0_per[0][0][1].x += M0p[p] * per_x_minus;
 							r0_per[0][0][1].y += M0p[p] * per_y_minus;
 							r0_per[0][0][1].z += M0p[p] * r[p].z;
 
+							r_per[p][0][0][2].x = per_x_minus;
+							r_per[p][0][0][2].y = per_y_minus;
+							r_per[p][0][0][2].z = per_z_plus;
 							r0_per[0][0][2].x += M0p[p] * per_x_minus;
 							r0_per[0][0][2].y += M0p[p] * per_y_minus;
 							r0_per[0][0][2].z += M0p[p] * per_z_plus;
 
+							r_per[p][0][1][0].x = per_x_minus;
+							r_per[p][0][1][0].y = r[p].y;
+							r_per[p][0][1][0].z = per_z_minus;
 							r0_per[0][1][0].x += M0p[p] * per_x_minus;
 							r0_per[0][1][0].y += M0p[p] * r[p].y;
 							r0_per[0][1][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][0][1][1].x = per_x_minus;
+							r_per[p][0][1][1].y = r[p].y;
+							r_per[p][0][1][1].z = r[p].z;							
 							r0_per[0][1][1].x += M0p[p] * per_x_minus;
 							r0_per[0][1][1].y += M0p[p] * r[p].y;
 							r0_per[0][1][1].z += M0p[p] * r[p].z;
 
+							r_per[p][0][1][2].x = per_x_minus;
+							r_per[p][0][1][2].y = r[p].y;
+							r_per[p][0][1][2].z = per_z_plus;							
 							r0_per[0][1][2].x += M0p[p] * per_x_minus;
 							r0_per[0][1][2].y += M0p[p] * r[p].y;
 							r0_per[0][1][2].z += M0p[p] * per_z_plus;
 
+							r_per[p][0][2][0].x = per_x_minus;
+							r_per[p][0][2][0].y = per_y_plus;
+							r_per[p][0][2][0].z = per_z_minus;
 							r0_per[0][2][0].x += M0p[p] * per_x_minus;
 							r0_per[0][2][0].y += M0p[p] * per_y_plus;
 							r0_per[0][2][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][0][2][1].x = per_x_minus;
+							r_per[p][0][2][1].y = per_y_plus;
+							r_per[p][0][2][1].z = r[p].z;
 							r0_per[0][2][1].x += M0p[p] * per_x_minus;
 							r0_per[0][2][1].y += M0p[p] * per_y_plus;
 							r0_per[0][2][1].z += M0p[p] * r[p].z;
 
+							r_per[p][0][2][2].x = per_x_minus;
+							r_per[p][0][2][2].y = per_y_plus;
+							r_per[p][0][2][2].z = per_z_plus;
 							r0_per[0][2][2].x += M0p[p] * per_x_minus;
 							r0_per[0][2][2].y += M0p[p] * per_y_plus;
 							r0_per[0][2][2].z += M0p[p] * per_z_plus;
 
+							r_per[p][1][0][0].x = r[p].x;
+							r_per[p][1][0][0].y = per_y_minus;
+							r_per[p][1][0][0].z = per_z_minus;
 							r0_per[1][0][0].x += M0p[p] * r[p].x;
 							r0_per[1][0][0].y += M0p[p] * per_y_minus;
 							r0_per[1][0][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][1][0][1].x = r[p].x;
+							r_per[p][1][0][1].y = per_y_minus;
+							r_per[p][1][0][1].z = r[p].z;
 							r0_per[1][0][1].x += M0p[p] * r[p].x;
 							r0_per[1][0][1].y += M0p[p] * per_y_minus;
 							r0_per[1][0][1].z += M0p[p] * r[p].z;
 
+							r_per[p][1][0][2].x = r[p].x;
+							r_per[p][1][0][2].y = per_y_minus;
+							r_per[p][1][0][2].z = per_z_plus;
 							r0_per[1][0][2].x += M0p[p] * r[p].x;
 							r0_per[1][0][2].y += M0p[p] * per_y_minus;
 							r0_per[1][0][2].z += M0p[p] * per_z_plus;
 
+							r_per[p][1][1][0].x = r[p].x;
+							r_per[p][1][1][0].y = r[p].y;
+							r_per[p][1][1][0].z = per_z_minus;
 							r0_per[1][1][0].x += M0p[p] * r[p].x;
 							r0_per[1][1][0].y += M0p[p] * r[p].y;
 							r0_per[1][1][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][1][1][1].x = r[p].x;
+							r_per[p][1][1][1].y = r[p].y;
+							r_per[p][1][1][1].z = r[p].z;
 							r0_per[1][1][1].x += M0p[p] * r[p].x;
 							r0_per[1][1][1].y += M0p[p] * r[p].y;
 							r0_per[1][1][1].z += M0p[p] * r[p].z;
 
+							r_per[p][1][1][2].x = r[p].x;
+							r_per[p][1][1][2].y = r[p].y;
+							r_per[p][1][1][2].z = per_z_plus;
 							r0_per[1][1][2].x += M0p[p] * r[p].x;
 							r0_per[1][1][2].y += M0p[p] * r[p].y;
 							r0_per[1][1][2].z += M0p[p] * per_z_plus;
 
+							r_per[p][1][2][0].x = r[p].x;
+							r_per[p][1][2][0].y = per_y_plus;
+							r_per[p][1][2][0].z = per_z_minus;
 							r0_per[1][2][0].x += M0p[p] * r[p].x;
 							r0_per[1][2][0].y += M0p[p] * per_y_plus;
 							r0_per[1][2][0].z += M0p[p] * per_z_minus;
 
+							r_per[p][1][2][1].x = r[p].x;
+							r_per[p][1][2][1].y = per_y_plus;
+							r_per[p][1][2][1].z = r[p].z;
 							r0_per[1][2][1].x += M0p[p] * r[p].x;
 							r0_per[1][2][1].y += M0p[p] * per_y_plus;
 							r0_per[1][2][1].z += M0p[p] * r[p].z;
 
+							r_per[p][1][2][2].x = r[p].x;
+							r_per[p][1][2][2].y = per_y_plus;
+							r_per[p][1][2][2].z = per_z_plus;
 							r0_per[1][2][2].x += M0p[p] * r[p].x;
 							r0_per[1][2][2].y += M0p[p] * per_y_plus;
 							r0_per[1][2][2].z += M0p[p] * per_z_plus;
+
+							r_per[p][2][0][0].x = per_x_plus;
+							r_per[p][2][0][0].y = per_y_minus;
+							r_per[p][2][0][0].z = per_z_minus;
+							r0_per[2][0][0].x += M0p[p] * per_x_plus;
+							r0_per[2][0][0].y += M0p[p] * per_y_minus;
+							r0_per[2][0][0].z += M0p[p] * per_z_minus;
+
+							r_per[p][2][0][1].x = per_x_plus;
+							r_per[p][2][0][1].y = per_y_minus;
+							r_per[p][2][0][1].z = r[p].z;
+							r0_per[2][0][1].x += M0p[p] * per_x_plus;
+							r0_per[2][0][1].y += M0p[p] * per_y_minus;
+							r0_per[2][0][1].z += M0p[p] * r[p].z;
+
+							r_per[p][2][0][2].x = per_x_plus;
+							r_per[p][2][0][2].y = per_y_minus;
+							r_per[p][2][0][2].z = per_z_plus;
+							r0_per[2][0][2].x += M0p[p] * per_x_plus;
+							r0_per[2][0][2].y += M0p[p] * per_y_minus;
+							r0_per[2][0][2].z += M0p[p] * per_z_plus;
+
+							r_per[p][2][1][0].x = per_x_plus;
+							r_per[p][2][1][0].y = r[p].y;
+							r_per[p][2][1][0].z = per_z_minus;
+							r0_per[2][1][0].x += M0p[p] * per_x_plus;
+							r0_per[2][1][0].y += M0p[p] * r[p].y;
+							r0_per[2][1][0].z += M0p[p] * per_z_minus;
+
+							r_per[p][2][1][1].x = per_x_plus;
+							r_per[p][2][1][1].y = r[p].y;
+							r_per[p][2][1][1].z = r[p].z;
+							r0_per[2][1][1].x += M0p[p] * per_x_plus;
+							r0_per[2][1][1].y += M0p[p] * r[p].y;
+							r0_per[2][1][1].z += M0p[p] * r[p].z;
+
+							r_per[p][2][1][2].x = per_x_plus;
+							r_per[p][2][1][2].y = r[p].y;
+							r_per[p][2][1][2].z = per_z_plus;
+							r0_per[2][1][2].x += M0p[p] * per_x_plus;
+							r0_per[2][1][2].y += M0p[p] * r[p].y;
+							r0_per[2][1][2].z += M0p[p] * per_z_plus;
+
+							r_per[p][2][2][0].x = per_x_plus;
+							r_per[p][2][2][0].y = per_y_plus;
+							r_per[p][2][2][0].z = per_z_minus;
+							r0_per[2][2][0].x += M0p[p] * per_x_plus;
+							r0_per[2][2][0].y += M0p[p] * per_y_plus;
+							r0_per[2][2][0].z += M0p[p] * per_z_minus;
+
+							r_per[p][2][2][1].x = per_x_plus;
+							r_per[p][2][2][1].y = per_y_plus;
+							r_per[p][2][2][1].z = r[p].z;
+							r0_per[2][2][1].x += M0p[p] * per_x_plus;
+							r0_per[2][2][1].y += M0p[p] * per_y_plus;
+							r0_per[2][2][1].z += M0p[p] * r[p].z;
+
+							r_per[p][2][2][2].x = per_x_plus;
+							r_per[p][2][2][2].y = per_y_plus;
+							r_per[p][2][2][2].z = per_z_plus;
+							r0_per[2][2][2].x += M0p[p] * per_x_plus;
+							r0_per[2][2][2].y += M0p[p] * per_y_plus;
+							r0_per[2][2][2].z += M0p[p] * per_z_plus;
 						}
 
                         mz_tot += m[p].z;
@@ -1771,18 +1889,37 @@ void ff_model_next_step(void)
                     r0.y /= Mtot;
                     r0.z /= Mtot;
 
+					if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
+					{
+						r0_per[t1][t2][t3].x /= Mtot;
+						r0_per[t1][t2][t3].y /= Mtot;
+						r0_per[t1][t2][t3].z /= Mtot;
+					}
+
                     I = 0;
+					
                     for (p = 1; p <= pN; p++)
 					{
                         I += M0p[p] * (pow(r[p].x - r0.x, 2)
                         + pow(r[p].y - r0.y, 2)
                         + pow(r[p].z - r0.z, 2));
 
-						if (is_periodic)
+						if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
 						{
-
+							I_per[t1][t2][t3] += M0p[p] * (
+														   pow(r_per[p][t1][t2][t3].x - r0_per[t1][t2][t3].x, 2)
+														 + pow(r_per[p][t1][t2][t3].y - r0_per[t1][t2][t3].y, 2)
+														 + pow(r_per[p][t1][t2][t3].z - r0_per[t1][t2][t3].z, 2));
 						}
 					}
+
+					if (is_periodic)
+					{
+						I_min_per = I_per[0][0][0];
+						for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
+							if (I_per[t1][t2][t3] < I_min_per) I_min_per = I_per[t1][t2][t3];
+					}
+					//printf("\n DEBUG I000 = %e I = %e", I_per[1][1][1], I);
 
 
                     mz_tot *= pN / mz_tot_n; // in loop is interrupted then needs to increase
@@ -1858,7 +1995,8 @@ void ff_model_next_step(void)
 
                     if (setting_plot)
                     {
-                        if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
+                        if (is_periodic) I = I_min_per;
+						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
                         else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
                         else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
                     }
