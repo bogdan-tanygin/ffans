@@ -83,6 +83,7 @@ double V0_tot = 0; // total volume of the dispersed phase
 double V0_tot_oleic = 0; // total volume of the dispersed phase inside the oleic droplet
 double V0_largest_EV = 0; // mathematical expected value of largest particles total volume // see is_large_mode variable
 double V0_tot_EV = 0; // mathematical expected value of particles total volume
+double I_glob = 0;
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
@@ -1996,6 +1997,7 @@ void ff_model_next_step(void)
                     if (setting_plot)
                     {
                         if (is_periodic) I = I_min_per;
+						I_glob = I;
 						if (step % 1000 == 0) ff_io_save_setting(m_tot,I);
                         else if ((step < 1000) && (step % 100 == 0)) ff_io_save_setting(m_tot,I);
                         else if ((step < 100) && (step % 10 == 0)) ff_io_save_setting(m_tot,I);
