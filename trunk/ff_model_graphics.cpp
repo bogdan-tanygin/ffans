@@ -581,6 +581,12 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"I = %5.3e kg * m^2", I_glob);
+
+    glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
     // ------------------
     glEnable(GL_LIGHTING);
 }

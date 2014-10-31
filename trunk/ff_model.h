@@ -97,6 +97,7 @@ extern ff_vect_t m_tot;
 extern double V0_tot;
 extern double V0_largest_EV; // mathematical expected value of largest particles total volume // see is_large_mode variable
 extern double V0_tot_EV; // mathematical expected value of particles total volume
+extern double I_glob;
 
 extern int exist_p[];
 extern double Rp[];
