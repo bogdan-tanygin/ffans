@@ -40,13 +40,13 @@ const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnet
 double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature)
 
 // Space
-double volume_reduce = 0.25 * 0.25; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 0.25; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 double delta_r = a0 * 0.5; // minimal distance between particles 
 
 // periodic boundary conditions
-int is_periodic = 1;
+int is_periodic = 0;
 
 //double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
 //double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
@@ -80,7 +80,7 @@ int is_large_mode = 0; // largest particles mode
 double large_fraction = 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse ferrocolloids) // 6.92E-02 (my sim); // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
 double k_large = 1.0; // 0.91; // 0.925; // correction of the large particles size
 int is_oleic = 0;
-double R_oleic_0 = Lx / 2.0; //0.5 * 0.11 * Lx; // = (Lx / 2.0);
+double R_oleic_0 = (Lx / 2.0);
 
 // microdrop mode parameters
 int isMicroDrop = 0; // enable the microdrop mode
@@ -112,7 +112,7 @@ double rop = 5240; // magnetite mass density [kg / m^3]
 double A_H = 4E-20; // Hamaker constant [J]
 
 double N_oa = 1E18; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o = 1E-1 * 0.5; // 5E-4 - same result //0.1; // Level of coverage of surface by the oleic acid
+double k_o = 2 * 1E-1 * 0.5; // 1E-1 * 0.5; // 5E-4 - same result //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
 //double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
@@ -136,7 +136,7 @@ double start_t = 30 /* [micro_s] */ * (1E-6); // [s]
 double T_ext = 0.2 * (1E6); // [micro_s] // external field period
 double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
 
-double start_ideal = 1; // start chaos (ideal superparam. gas)
+double start_ideal = 0; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)
