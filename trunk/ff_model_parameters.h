@@ -40,6 +40,7 @@ extern double C1;
 // Geometry
 extern double Lx, Ly, Lz; //meters
 extern double delta_r;
+extern double delta_r_init;
 
 extern int is_periodic;
 

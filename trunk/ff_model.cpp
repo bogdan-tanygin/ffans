@@ -2312,7 +2312,7 @@ again:
 
                 dR = sqrt(MUL(dr,dr));
 
-                if (dR <= Rp0[p] + Rp0[tp] + delta_r) goto again;
+                if (dR <= Rp0[p] + Rp0[tp] + delta_r_init) goto again;
             }
         } // start_ideal
         else
@@ -2324,7 +2324,7 @@ again:
 cont3:                
                 for (i_attempt = 1; i_attempt <= 100; i_attempt++)
                 {
-                    dr_min = Rp0[p_prev] + Rp0[p] + delta_r;
+                    dr_min = Rp0[p_prev] + Rp0[p] + delta_r_init;
                     
                     theta = pi * (*var_uni)();
                     phi = 2 * pi * (*var_uni)();
@@ -2342,7 +2342,7 @@ cont3:
 
                         dR = sqrt(MUL(dr,dr));
 
-                        if (dR < Rp0[p] + Rp0[tp] + delta_r) {cont_flag = 1; goto cont1;}
+                        if (dR < Rp0[p] + Rp0[tp] + delta_r_init) {cont_flag = 1; goto cont1;}
                     }
 cont1:             if (!cont_flag) goto cont2;
                 }
