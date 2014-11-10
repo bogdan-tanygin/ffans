@@ -44,7 +44,7 @@ double volume_reduce = 0.25; //0.25; // 0.09; //0.085; // 0.1862; // initial den
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
 double delta_r = a0 * 0.5; // minimal distance between particles 
-double delta_r_init = 15 * delta;
+double delta_r_init = delta;
 
 // periodic boundary conditions
 int is_periodic = 0;

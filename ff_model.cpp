@@ -876,13 +876,17 @@ ff_vect_t ff_model_nonloc_torque(long p)
                 m[p].y = m0p[p] * tBy / tBmag;
                 m[p].z = m0p[p] * tBz / tBmag;*/
 
-                ttau.x =   m[p].y * tBz - m[p].z * tBy;
-                ttau.y = - m[p].x * tBz + m[p].z * tBx;
-                ttau.z =   m[p].x * tBy - m[p].y * tBx;
+                if (tBmag)
+				{
+					ttau.x =   m[p].y * tBz - m[p].z * tBy;
+					ttau.y = - m[p].x * tBz + m[p].z * tBx;
+					ttau.z =   m[p].x * tBy - m[p].y * tBx;
+				}
 
-                if ((is_neel[p]) && (!is_uniform_field_test))
+                if ((is_neel[p]) && (!is_uniform_field_test) && (tBmag))
                 {
-                    m[p].x = m0p[p] * tBx / tBmag;
+                    //printf("\n p = %d !!!", p);
+					m[p].x = m0p[p] * tBx / tBmag;
                     m[p].y = m0p[p] * tBy / tBmag;
                     m[p].z = m0p[p] * tBz / tBmag;
                 }
@@ -1026,10 +1030,13 @@ ff_vect_t ff_model_nonloc_force(long p)
                 if ((dr < dr_min) && (!isMicroDrop)) //soft sphere condition
                 {
                     Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dr5);
-
-                    tFx += -dx * Cmod;
-                    tFy += -dy * Cmod;
-                    tFz += -dz * Cmod;
+					
+                    if (dr)
+					{
+						tFx += - dx * Cmod;
+						tFy += - dy * Cmod;
+						tFz += - dz * Cmod;
+					}
 
                     /*if ((dW[p] > G_barrier) && (!aggregated_p[p][ps]))
                     {
@@ -2869,7 +2876,7 @@ void ff_model_size_dispersion_init(void)
     d[14] = 250;
     F[14] = 0.006122449;
 
-	//for (i = 1; i <= imax; i++) d[i] = 0.5 * 100; // same size
+	//for (i = 1; i <= imax; i++) d[i] = 200; // same size
 
     Ftot = 0;
     for (i = 1; i <= imax; i++)
@@ -2910,7 +2917,7 @@ void ff_model_size_dispersion_init(void)
         random_points[i] = F[i] / Ftot;
         if (i > 1) random_points[i] += random_points[i - 1];
     }
-
+	
     //printf("\n random_points[14] = %e", random_points[14]);
     //printf("\n random_points[13] = %e", random_points[13]);
 
