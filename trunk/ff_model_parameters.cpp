@@ -37,14 +37,14 @@ const double ta0 = -273.15; // [°C]
 const double gamma_e = 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Material
-double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature)
+double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature) // \cite{Fleet1981}
 
 // Space
-double volume_reduce = 0.25; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
+double volume_reduce = 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 1E-6 * scale; //meters
-double delta_r = a0 * 0.5; // minimal distance between particles 
-double delta_r_init = delta;
+double delta_r = a0 * 0.5; // minimal distance between particles // order of magnitude of the oleic acid molecule width
+double delta_r_init = delta_r;
 
 // periodic boundary conditions
 int is_periodic = 0;
@@ -137,7 +137,7 @@ double start_t = 30 /* [micro_s] */ * (1E-6); // [s]
 double T_ext = 0.2 * (1E6); // [micro_s] // external field period
 double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
 
-double start_ideal = 0; // start chaos (ideal superparam. gas)
+double start_ideal = 1; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)

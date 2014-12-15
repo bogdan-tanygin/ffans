@@ -2657,8 +2657,8 @@ void ff_model_effective_random_motion_update(long p)
     //tau_r_phi = (*var_nor)() * sqrt(6 * kb * T * gamma_rot / dt_red);
 
     //printf("\n t1 = %e", M0 / gamma);
-    //printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
-    //printf("\n Viscous limit - saturation of angular velocity time %e", I0 / gamma_rot);
+    // printf("\n Viscous limit - saturation of velocity time %e", M0 / gamma);
+    // printf("\n Viscous limit - saturation of angular velocity time %e", I0 / gamma_rot);
     //printf("\n %e", gamma * dx / (M0 * v[p].x));
 
     /*P[p].x = Px * k_force_adapt_p_x[p] * speed_ballance;
