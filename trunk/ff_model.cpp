@@ -2246,7 +2246,7 @@ void ff_model_init(void)
 
     N_o = N_oa * k_o / 0.5;
 
-    printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
+    //printf("\n tau0 = %e", Ms / (2 * alpha_damp * gamma_e * K1));
     
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
