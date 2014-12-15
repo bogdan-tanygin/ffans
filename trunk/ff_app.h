@@ -16,4 +16,4 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************/
 
-#define PROGRAM_TITLE "Ferrofluid Aggregates Nano Simulator (FFANS) - v.0.6.0"
+#define PROGRAM_TITLE "Ferrofluid Aggregates Nano Simulator (FFANS) - v.0.6.0.0"
