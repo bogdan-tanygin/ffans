@@ -127,7 +127,12 @@ void cbKeyPressed(unsigned char key, int x, int y)
         Lz /= 1.05;
         break;
 
-    case 'M': case 'm':
+	case 'V': case 'v':
+		show_m = show_m ? 0 : 1;
+		show_sphere = show_sphere ? 0 : 1;
+		break;
+
+	case 'M': case 'm':
         show_m = show_m?0:1;
         break;
 

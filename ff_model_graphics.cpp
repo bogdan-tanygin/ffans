@@ -33,11 +33,11 @@
 GLUquadric* g_quad;
 
 int show_m, show_b, show_bext;
-int show_info = 0;
+int show_info = 1;
 int show_droplet = 0;
 int transp;
 int show_sphere;
-int show_steric = 0;
+int show_steric = 1;
 int show_cube = 1;
 double scaling_cube = 1.0;
 long gr_quality = 20;
@@ -406,19 +406,19 @@ void ff_mgr_print_info()
 
     ///////////
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"slow_steps = %d", slow_steps);
+    sprintf(buf,"precision_rate = %d", slow_steps);
 
     glRasterPos2i(6, shift * 20);
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     ///////////
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"k_force_adapt = %e", k_force_adapt);
 
     glRasterPos2i(6, shift * 20);
     shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Hysteresis mode = %d", hyst_mode);
@@ -486,7 +486,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"Lx * scaling_cube = %5.3e m", Lx * scaling_cube);
+    sprintf(buf,"Lx = %5.3e m", Lx);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -497,13 +497,13 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Ek_tr = %5.3e J", Ek_tr);
 
     glRasterPos2i(6, (shift--) * 20);
@@ -519,7 +519,7 @@ void ff_mgr_print_info()
     sprintf(buf,"k_force_adapt_mean = %5.3e", k_force_adapt_mean_print);
 
     glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     /*glColor4f(0,0,0,0.75);
     sprintf(buf,"k_delta_force_rel_mean = %5.3e", k_delta_force_rel_tot / k_delta_force_rel_p);
@@ -533,7 +533,7 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
     
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"pseudo_dT = %5.3e K", dT);
 
     glRasterPos2i(6, (shift--) * 20);
@@ -549,10 +549,10 @@ void ff_mgr_print_info()
     sprintf(buf,"T_mean_loc = %5.3e K", T_mean_loc_prev / (k_bm_inst_max - 1));
 
     glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"t = %5.3e °C", T + ta0);
+    sprintf(buf,"T = %5.3e °C", T + ta0);
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -563,7 +563,7 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    glColor4f(0,0,0,0.75);
+    /*glColor4f(0,0,0,0.75);
     sprintf(buf,"V0_tot = %5.3e m^-3", V0_tot);
 
     glRasterPos2i(6, (shift--) * 20);
@@ -579,12 +579,18 @@ void ff_mgr_print_info()
     sprintf(buf,"V0_largest_EV = %5.3e m^-3", V0_largest_EV);
 
     glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
 
 	glColor4f(0,0,0,0.75);
     sprintf(buf,"I = %5.3e kg * m^2", I_glob);
 
     glRasterPos2i(6, (shift--) * 20);
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
+
+	glColor4f(0,0,0,0.75);
+    sprintf(buf,"'V': switch magnetic moment / particle view");
+
+    glRasterPos2i(6, ((shift--) - 23) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     // ------------------
@@ -605,7 +611,7 @@ void ff_mgr_init()
     //y_rot = 30.0f;
     //x_rot = -60.0f;
     //z_off = -1.0f;
-    z_off = -5.0f;
+    z_off = -4.0f;
 
     //glCullFace(GL_BACK);
     //glFrontFace(GL_CCW);
