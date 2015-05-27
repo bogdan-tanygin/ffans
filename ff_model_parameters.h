@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 100 // number of the particles
+#define pN 50 // number of the particles
 
 // Math constants
 extern double pi;
@@ -123,6 +123,8 @@ extern double G_barrier;
 
 //order of magnitude of the external field but exact function is hardcoded 
 extern double B0; // Tesla
+extern double gradPerc;
+extern double gradL;
 
 // Derived parameters
 //extern double C2;

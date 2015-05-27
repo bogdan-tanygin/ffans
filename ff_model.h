@@ -31,6 +31,8 @@ void ff_model_check_collisions(long);
 void ff_model_upgrade_ext_field(void);
 
 ff_vect_t Bext(double x, double y, double z);
+ff_vect_t B_het_bem(ff_vect_t r);
+ff_vect_t dBz_het_bem(ff_vect_t r);
 
 // working variables 
 ////////////////////

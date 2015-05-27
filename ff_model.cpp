@@ -418,8 +418,8 @@ int ff_model_check_smooth_dr(long p)
     dr = sqrt(MUL(drt[p], drt[p]));
     //dr = sqrt(MUL(dr_tmp, dr_tmp));
     //rmod = d[4];
-    //rmod = 2 * Rp[p];
-    rmod = delta;
+    rmod = 2 * Rp[p];
+    //rmod = delta;
     //rmod = 2 * R0_min;
     //rmod = 0.5 * delta_r;
 
@@ -914,7 +914,7 @@ ff_vect_t ff_model_nonloc_force(long p)
     double dx, dy, dz;
     double tk;
     double sec_pow;
-    ff_vect_t ttF;
+    ff_vect_t ttF, dBmaggrad;
 
     double MUL1__dr5mod, MUL2__dr5mod, MUL3__dr5mod, MUL1_MUL2__dr2mod__dr5mod;
 
@@ -1143,6 +1143,14 @@ ff_vect_t ff_model_nonloc_force(long p)
             //m[p].y = m0 * tBy / tBmag;
             //m[p].z = m0 * tBz / tBmag;
             //ff_model_set_m(p);
+
+            if (ext_field_is_homo == 0)
+            {
+                dBmaggrad = dBz_het_bem(r[p]);
+                tFx += m[p].z * dBmaggrad.x;
+                tFy += m[p].z * dBmaggrad.y;
+                tFz += m[p].z * dBmaggrad.z;
+            }
 
             // force
             ttF.x = tFx;
@@ -1981,7 +1989,8 @@ void ff_model_next_step(void)
                         R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
                     //printf("\n TRACE-1 %e %e", phi_vol_fract_oleic_0, phi_vol_fract_oleic);
                     V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
-                    phi_vol_fract_oleic /= V_oleic;
+                    //phi_vol_fract_oleic /= V_oleic;
+                    phi_vol_fract_oleic /= (Lx * Ly * Lz);
                     phi_vol_fract_oleic *= 100;
                     
                     P_pgas = kb * T * pN_oleic_drop / (V_oleic - V0_tot_oleic); // Van 't Hoff equation [Landau-V, eq. (88,3)]
@@ -2184,10 +2193,50 @@ ff_vect_t B_het(double x1, double y1, double z1, int what_shift)
     return B;
 }
 
+// External inhomogeneous field. The sample is located in the center of the big electromagnet consisting of 2 concentrators.
+// Symmetry: [Infinite-fold symmetry axis inf_z], [Reflection plane (xy)].
+ff_vect_t B_het_bem(ff_vect_t r)
+{
+    double r0;
+    ff_vect_t B;
+
+    r0 = sqrt(MUL(r,r));
+
+    B.x = B.y = 0;
+    B.z = B0 * (1 - gradPerc * r0 / gradL);
+
+    return B;
+}
+
+// External inhomogeneous field. The sample is located in the center of the big electromagnet consisting of 2 concentrators.
+// Symmetry: [Infinite-fold symmetry axis inf_z], [Reflection plane (xy)].
+ff_vect_t dBz_het_bem(ff_vect_t r)
+{
+    double r0;
+    ff_vect_t dBz;
+
+    r0 = sqrt(MUL(r,r));
+
+    if (r0 != 0)
+    {
+        dBz.x = - B0 * gradPerc * r.x / (gradL * r0); // it means dBz.x == dBz / dx
+        dBz.y = - B0 * gradPerc * r.y / (gradL * r0);
+        dBz.z = - B0 * gradPerc * r.z / (gradL * r0);
+    }
+    else
+    {
+        dBz.x = dBz.y = dBz.z = 0;
+    }
+
+    return dBz;
+}
+
 ff_vect_t Bext(double x, double y, double z)
 {
-    ff_vect_t tBext;
+    ff_vect_t tBext,r;
     double normX, normY, normZ;
+
+    r.x = x; r.y = y; r.z = z;
 
     if (!manual_field_control)
     {
@@ -2204,13 +2253,14 @@ ff_vect_t Bext(double x, double y, double z)
         }
         else
         {
-            normX = (BmanX /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 1).x);
-            normY = (BmanY /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 2).y);
-            normZ = (BmanZ /*Oe*/ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 3).z);
+            /*normX = (BmanX * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 1).x);
+            normY = (BmanY * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 2).y);
+            normZ = (BmanZ * (1.0 / (4.0 * pi * 1E-3)) * mu0 / B_het(0, 0, 0, 3).z);
 
             tBext.x = normX * B_het(x, y, z, 1).x + normY * B_het(x, y, z, 2).x + normZ * B_het(x, y, z, 3).x;
             tBext.y = normX * B_het(x, y, z, 1).y + normY * B_het(x, y, z, 2).y + normZ * B_het(x, y, z, 3).y;
-            tBext.z = normX * B_het(x, y, z, 1).z + normY * B_het(x, y, z, 2).z + normZ * B_het(x, y, z, 3).z;
+            tBext.z = normX * B_het(x, y, z, 1).z + normY * B_het(x, y, z, 2).z + normZ * B_het(x, y, z, 3).z;*/
+            tBext = B_het_bem(r);
         }
     }
 
@@ -3022,7 +3072,7 @@ dr_root_theory = sqrt(6 * D * t);
 
 void ff_model_update_conc_in_oleic(long p)
 {
-    if (Rp_to_c[p] <= R_oleic)
+    //if (Rp_to_c[p] <= R_oleic)
         //if (Rp_to_c[p] <= Lx / 8.0)
     {
         is_inside_oleic[p] = 1;
@@ -3035,7 +3085,7 @@ void ff_model_update_conc_in_oleic(long p)
         phi_vol_fract_oleic += Vp0[p];
         V0_tot_oleic += Vp0[p];
     }
-    else
+    //else
     {
         //if (is_inside_oleic[p] == 1) k_force_adapt_p[p] = 1;
         is_inside_oleic[p] = 0;

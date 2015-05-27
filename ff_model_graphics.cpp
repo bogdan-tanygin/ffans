@@ -497,11 +497,11 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol_total (drop) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
+    glColor4f(0,0,0,0.75);
+    sprintf(buf,"phi_vol_total (l-mode) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
+    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     /*glColor4f(0,0,0,0.75);
     sprintf(buf,"Ek_tr = %5.3e J", Ek_tr);
