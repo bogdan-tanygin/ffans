@@ -10,6 +10,7 @@
 *.opensdf
 /ipch
 /Release
+/pack_bin
 
 # Logs #
 ########

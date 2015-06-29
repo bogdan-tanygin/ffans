@@ -42,7 +42,8 @@ double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel struc
 // Space
 double volume_reduce = 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
-double Lx = 5E-6 * scale, Ly = 5E-6 * scale, Lz = 1E-6 * scale; //meters
+//double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 25E-6 * scale; //meters
+double Lx = 950E-9, Ly = 950E-9, Lz = 950E-9; //meters
 double delta_r = a0 * 0.5; // minimal distance between particles // order of magnitude of the oleic acid molecule width
 double delta_r_init = 20 * 1E-9; // delta_r;
 
@@ -54,7 +55,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 1E-7; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -128,7 +129,7 @@ double Ch_ss = 0; // 3E4; // 50 * 1E5; // soft-sphere repulsion parameter (param
 int load_at_start = 0;
 int auto_save = 1;
 int manual_field_control = 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ control 
-int ext_field_is_homo = 0;
+int ext_field_is_homo = 1;
 int auto_reversal = 0;
 
 int setting_plot = 1; // cluster creation plot m_tot / m0 and I.
@@ -146,7 +147,7 @@ double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)
 //int __deprecated__brownian_force = 1;
 
 //default order of magnitude of the external field but exact function is hardcoded 
-double B0 = 500 /*Oe*/ * 79.577 * mu0; // Tesla
+double B0 = 2500 /*Oe*/ * 79.577 * mu0; // Tesla
 double gradPerc = 5E-1;
 double gradL = Lx / 2.0;
 
