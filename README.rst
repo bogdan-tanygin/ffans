@@ -37,6 +37,6 @@ For latest version download please visit `page <https://sites.google.com/site/bt
 
 License
 -------
-Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin and contributors.
+Copyright (C) 2011,2013-2015 Dr. Bogdan Tanygin and contributors.
 
 The ffans is a free software made available under the GPL License. For details see the LICENSE file.
