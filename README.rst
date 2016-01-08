@@ -16,22 +16,18 @@ Ab initio molecular dynamics and micromagnetics based simulation and interactive
 
 If you have questions regarding usage and/or collaboration, feel free to `contact us <ffans@googlegroups.com>`_.
 
-Original publication for `citation <http://dx.doi.org/10.1016/j.jmmm.2012.07.004>`_: ::
+Original publication for `citation <http://cpb.iphy.ac.cn/EN/abstract/abstract65596.shtml>`_: ::
 
-  @article{Tanygin2012,
-  author = {Tanygin, B.M. and Kovalenko, V.F. and Petrychuk, M.V. and Dzyan, S.A.},
-  title = {{Molecular dynamics study of the primary ferrofluid aggregate formation}},
-  journal = {Journal of Magnetism and Magnetic Materials},
-  year = {2012},
-  volume = {324},
-  number = {23},
-  pages = {4006--4010},
-  doi = {10.1016/j.jmmm.2012.07.004}
-  }
-
-Downloads
----------
-For latest version download please visit `page <https://sites.google.com/site/btanygin/research/physics/simulation/ferrofluids/ffans-downloads>`_.
+@article{Tanygin2015,
+author = {Tanygin, B. M. and Shulyma, S. I. and Kovalenko, V. F. and Petrychuk, M. V.},
+eprint = {1503.05854},
+journal = {Chinese Physics B},
+number = {10},
+pages = {104702},
+title = {{Ferrofluid nucleus phase transitions in an external uniform magnetic field}},
+volume = {24},
+year = {2015}
+}
 
 .. image:: https://sites.google.com/site/btanygin/_/rsrc/1430314550490/research/physics/simulation/ferrofluids/ffans-downloads/FFANS-logo192px.png
 
