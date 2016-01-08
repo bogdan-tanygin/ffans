@@ -18,16 +18,16 @@ If you have questions regarding usage and/or collaboration, feel free to `contac
 
 Original publication for `citation <http://cpb.iphy.ac.cn/EN/abstract/abstract65596.shtml>`_: ::
 
-@article{Tanygin2015,
-author = {Tanygin, B. M. and Shulyma, S. I. and Kovalenko, V. F. and Petrychuk, M. V.},
-eprint = {1503.05854},
-journal = {Chinese Physics B},
-number = {10},
-pages = {104702},
-title = {{Ferrofluid nucleus phase transitions in an external uniform magnetic field}},
-volume = {24},
-year = {2015}
-}
+  @article{Tanygin2015,
+  author = {Tanygin, B. M. and Shulyma, S. I. and Kovalenko, V. F. and Petrychuk, M. V.},
+  eprint = {1503.05854},
+  journal = {Chinese Physics B},
+  number = {10},
+  pages = {104702},
+  title = {{Ferrofluid nucleus phase transitions in an external uniform magnetic field}},
+  volume = {24},
+  year = {2015}
+  }
 
 .. image:: https://sites.google.com/site/btanygin/_/rsrc/1430314550490/research/physics/simulation/ferrofluids/ffans-downloads/FFANS-logo192px.png
 
