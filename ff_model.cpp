@@ -2308,7 +2308,7 @@ void ff_model_init(void)
     sigma = 1;
 
     srand( (unsigned)time( NULL ) );
-    rng.seed(static_cast<unsigned int>(std::time(0)));
+    rng.seed(static_cast<unsigned int>(time(0)));
 
     //boost::normal_distribution<> nd(0.0, 1.0);
     nd = new boost::normal_distribution<> (0.0, sigma);
