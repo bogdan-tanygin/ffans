@@ -34,7 +34,7 @@
 #include "ff_model_parameters.h"
 #include "ff_model_graphics.h"
 #include "ff_model_io.h"
-
+#include "ff_analysis.h"
 // working variables 
 ////////////////////
 boost::mt19937 rng;
@@ -1361,7 +1361,16 @@ void ff_model_next_step(void)
     ro_oleic = 902.0 - 0.62 * T;
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-
+	double eta_car1 = eta_car;//Here i Start !!!
+	eta_car = ff_visousity_mix(
+								eta_oleic,
+								ff_molar_part(
+									ff_mol(mass_oleic,mol_mass_oleic),
+									ff_mol(mass_car,mol_mass_car)),
+								eta_car1,
+								ff_molar_part(
+									ff_mol(mass_car,mol_mass_car),
+									ff_mol(mass_oleic,mol_mass_oleic)));
     if (isMicroDrop) ff_model_update_mdrop_parameters();
 
     for (p = 1; p <= pN; p++) if (exist_p[p])
