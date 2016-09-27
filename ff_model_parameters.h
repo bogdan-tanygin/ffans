@@ -122,6 +122,7 @@ extern double N_o;
 extern double a0;
 extern double ro0;
 extern double eta_car;
+extern double eta_car0;
 extern double G_barrier;
 extern double mol_mass_car;
 extern double v_car;

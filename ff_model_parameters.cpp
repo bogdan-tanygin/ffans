@@ -105,9 +105,9 @@ double a0_eta_oleic = 0.0559;
 double sigma_sf = 0;
 double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
 double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
-double ro_oleic = 0.853;// density of oleic acid g/sm^3
-double mol_mass_oleic = 282; //mol mass of oleic acid C18H34O2
-double v_oleic =  1* 1E-4; //volume of oleic acid
+double ro_oleic = 853;// density of oleic acid kg/m^3
+double mol_mass_oleic = 282*1E-3; //mol mass of oleic acid C18H34O2
+double v_oleic =  1* 1E-7; //m^3 volume of oleic acid
 double mass_oleic = ro_oleic * v_oleic;
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
@@ -145,9 +145,10 @@ double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field 
 double start_ideal = 1; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
-double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)
-double mol_mass_car = 170; //molar mass of kerosene
-double v_car = 3*1E-3; //volume of kerosine
+double eta_car0 = 0.00164; //Pa * s //kerosene (carrier liquid)
+double eta_car = 1; //Pa * s //Mix eta
+double mol_mass_car = 170*1E-3; //molar mass of kerosene
+double v_car = 3*1E-6; //volume of kerosine
 double mass_car = ro0*v_car;//mas of kerosine
 //int __deprecated__brownian_shifts = 0;
 //int __deprecated__brownian_force = 1;

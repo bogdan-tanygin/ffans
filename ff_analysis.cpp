@@ -4,7 +4,7 @@
 						double y2,
 						double mu2)
 {
-	return pow(10,((y1*log(mu1))+(y2*log(mu2))));
+	return pow(10,((y1*log10(mu1))+(y2*log10(mu2))));
 }
  double ff_molar_part(double nu1, double nu2)
  {

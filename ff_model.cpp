@@ -1361,13 +1361,13 @@ void ff_model_next_step(void)
     ro_oleic = 902.0 - 0.62 * T;
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-	double eta_car1 = eta_car;//Here i Start !!!
+	//Here i Start !!!
 	eta_car = ff_visousity_mix(
 								eta_oleic,
 								ff_molar_part(
 									ff_mol(mass_oleic,mol_mass_oleic),
 									ff_mol(mass_car,mol_mass_car)),
-								eta_car1,
+								eta_car0,
 								ff_molar_part(
 									ff_mol(mass_car,mol_mass_car),
 									ff_mol(mass_oleic,mol_mass_oleic)));
