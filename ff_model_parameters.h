@@ -158,3 +158,5 @@ extern double alpha_damp;
 
 extern double Ms;
 extern double K1;
+
+extern int ScreenCaptureStep; 

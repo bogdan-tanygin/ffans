@@ -107,7 +107,7 @@ double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf
 double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 double ro_oleic = 853;// density of oleic acid kg/m^3
 double mol_mass_oleic = 282*1E-3; //mol mass of oleic acid C18H34O2
-double v_oleic =  1* 1E-7; //m^3 volume of oleic acid
+double v_oleic =  2* 1E-7; //m^3 volume of oleic acid
 double mass_oleic = ro_oleic * v_oleic;
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
@@ -181,3 +181,4 @@ double C5 = mu0 / (4 * pi);
 //double C6 = ro0 * Vself * g;
 
 double alpha_damp = 0.05; //magnetization dynamic damping
+int ScreenCaptureStep = 10000; //every ScreenCaptureStep`s steps will make screen  shot

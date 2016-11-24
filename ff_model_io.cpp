@@ -19,17 +19,18 @@
 #include <stdio.h>
 
 #include <GL/glut.h>
+#include <sstream>
 
 #include "ff_model.h"
 #include "ff_model_io.h"
 #include "ff_sys_graphics.h"
 #include "ff_model_graphics.h"
 #include "ff_model_parameters.h"
-
+#include "ff_analysis.h"
 double mouse_x, mouse_y;
 int mouse_rotate = 0;
 int is_ctrl;
-
+ostringstream out;
 void cbMouseInput(int button, int state, int x, int y)
 {
     switch (button){
@@ -195,7 +196,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
     case 'E': case 'e':
         show_bext = show_bext?0:1;
         break;
-
+	
+	case 'N': case 'n':
+		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
+		GetScreenShot(out.str());
+		break;
     /*case 'h':
         hyst_mode++;
         tmp = 0;
