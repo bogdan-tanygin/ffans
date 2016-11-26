@@ -262,6 +262,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
     case ' ':  // F (Space) - Freeze Rotation!
         time_go = time_go?0:1;
+		ActiveWindow();
         break;
     
     case '[':

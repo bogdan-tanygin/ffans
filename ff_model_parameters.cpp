@@ -181,4 +181,4 @@ double C5 = mu0 / (4 * pi);
 //double C6 = ro0 * Vself * g;
 
 double alpha_damp = 0.05; //magnetization dynamic damping
-int ScreenCaptureStep = 10000; //every ScreenCaptureStep`s steps will make screen  shot
+int ScreenCaptureStep = 100; //every ScreenCaptureStep`s steps will make screen  shot

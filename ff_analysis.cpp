@@ -1,5 +1,6 @@
 #include "ff_analysis.h"
 #include "ff_sys_graphics.h"
+#include "ff_model.h"
 
 #include <Windows.h>
 #include <GdiPlus.h>
@@ -12,6 +13,14 @@
 
 using namespace Gdiplus;
 using namespace std;
+
+HWND hWnd;
+bool Active = true;
+
+void ActiveWindow()
+{
+	if(Active){hWnd = GetForegroundWindow();Active = false;}
+}
  double ff_visousity_mix(double y1,
 						double mu1,
 						double y2,
@@ -96,8 +105,8 @@ void GetScreenShot(string name1) //Make Screen Shot
     w   = x2 - x1;
     h   = y2 - y1;
 
-    // copy screen to bitmap
-    HDC     hScreen = GetDC(NULL);
+    // copy screen to bitmap 
+	HDC     hScreen = GetDC(hWnd);
     HDC     hDC     = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     HGDIOBJ old_obj = SelectObject(hDC, hBitmap);
@@ -119,6 +128,8 @@ void GetScreenShot(string name1) //Make Screen Shot
 	LPCSTR name = name1.c_str();
 	bool error = saveBitmap(name,hBitmap,NULL);
 	cout<<"Screen Shot ~~~ "<<name<<"  "<<error<<endl;
+	
+	
 	// clean up
     SelectObject(hDC, old_obj);
     DeleteDC(hDC);

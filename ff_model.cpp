@@ -1376,7 +1376,7 @@ void ff_model_next_step(void)
 	if(step%ScreenCaptureStep == 0 && step>=ScreenCaptureStep)
 	{
 		ostringstream out;
-		MultiPosition(-62.1,-100,-25);
+		//MultiPosition(-62.1,-100,-25); doesn`t worl, leter may be 
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		out.flush();
@@ -2298,8 +2298,7 @@ void ff_model_init(void)
     double t_temp_1 = 0;
     double dr_tmp, dr_min;
     int cont_flag;
-    long i_attempt;
-
+    long i_attempt; 
     double start_scale = 0.99;
 
     dt = dt0;
