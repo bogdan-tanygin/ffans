@@ -34,7 +34,7 @@
 #include "ff_model_parameters.h"
 #include "ff_model_graphics.h"
 #include "ff_model_io.h"
-
+#include "ff_analysis.h"
 // working variables 
 ////////////////////
 boost::mt19937 rng;
@@ -1361,6 +1361,26 @@ void ff_model_next_step(void)
     ro_oleic = 902.0 - 0.62 * T;
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
+	//Here i Start !!!
+	eta_car = ff_visousity_mix(
+								eta_oleic,
+								ff_molar_part(
+									ff_mol(mass_oleic,mol_mass_oleic),
+									ff_mol(mass_car,mol_mass_car)),
+								eta_car0,
+								ff_molar_part(
+									ff_mol(mass_car,mol_mass_car),
+									ff_mol(mass_oleic,mol_mass_oleic)));
+	//eta_car = eta_car0;//Oleic acid = 0 mll
+	
+	if(step%ScreenCaptureStep == 0 && step>=ScreenCaptureStep)
+	{
+		ostringstream out;
+		//MultiPosition(-62.1,-100,-25); doesn`t worl, leter may be 
+		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
+		GetScreenShot(out.str());
+		out.flush();
+	}
 
     if (isMicroDrop) ff_model_update_mdrop_parameters();
 
@@ -2278,8 +2298,7 @@ void ff_model_init(void)
     double t_temp_1 = 0;
     double dr_tmp, dr_min;
     int cont_flag;
-    long i_attempt;
-
+    long i_attempt; 
     double start_scale = 0.99;
 
     dt = dt0;
@@ -2308,7 +2327,7 @@ void ff_model_init(void)
     sigma = 1;
 
     srand( (unsigned)time( NULL ) );
-    rng.seed(static_cast<unsigned int>(std::time(0)));
+    rng.seed(static_cast<unsigned int>(time(0)));
 
     //boost::normal_distribution<> nd(0.0, 1.0);
     nd = new boost::normal_distribution<> (0.0, sigma);

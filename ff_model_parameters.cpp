@@ -43,7 +43,8 @@ double a0 = 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel struc
 double volume_reduce = 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
 double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 //double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 25E-6 * scale; //meters
-double Lx = 950E-9, Ly = 950E-9, Lz = 950E-9; //meters
+double nano_size = 950;
+double Lx = nano_size * 1E-9 / 3.0, Ly = nano_size * 1E-9, Lz = nano_size * 1E-9 * 3; //meters
 double delta_r = a0 * 0.5; // minimal distance between particles // order of magnitude of the oleic acid molecule width
 double delta_r_init = 20 * 1E-9; // delta_r;
 
@@ -55,7 +56,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1E-9; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -104,7 +105,10 @@ double a0_eta_oleic = 0.0559;
 double sigma_sf = 0;
 double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
 double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
-double ro_oleic = 0;
+double ro_oleic = 853;// density of oleic acid kg/m^3
+double mol_mass_oleic = 282*1E-3; //mol mass of oleic acid C18H34O2
+double v_oleic =  2* 1E-7; //m^3 volume of oleic acid
+double mass_oleic = ro_oleic * v_oleic;
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
 //double sigma_sf_nano = 5E-2 * sigma_sf;
@@ -141,8 +145,11 @@ double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field 
 double start_ideal = 1; // start chaos (ideal superparam. gas)
 double start_sediment = 0;
 double ro0 = 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
-double eta_car = 0.00164; //Pa * s //kerosene (carrier liquid)
-
+double eta_car0 = 0.00164; //Pa * s //kerosene (carrier liquid)
+double eta_car = 1; //Pa * s //Mix eta
+double mol_mass_car = 170*1E-3; //molar mass of kerosene
+double v_car = 3*1E-6; //volume of kerosine
+double mass_car = ro0*v_car;//mas of kerosine
 //int __deprecated__brownian_shifts = 0;
 //int __deprecated__brownian_force = 1;
 
@@ -174,3 +181,4 @@ double C5 = mu0 / (4 * pi);
 //double C6 = ro0 * Vself * g;
 
 double alpha_damp = 0.05; //magnetization dynamic damping
+int ScreenCaptureStep = 100; //every ScreenCaptureStep`s steps will make screen  shot

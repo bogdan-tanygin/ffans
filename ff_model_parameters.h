@@ -108,6 +108,9 @@ extern double a_sigma_sf;
 extern double b_sigma_sf;
 extern double ro_oleic;
 extern double sigma_sf_nano;
+extern double mol_mass_oleic;
+extern double v_oleic;
+extern double mass_oleic; 
 
 extern double T;
 extern double kr;
@@ -119,7 +122,12 @@ extern double N_o;
 extern double a0;
 extern double ro0;
 extern double eta_car;
+extern double eta_car0;
 extern double G_barrier;
+extern double mol_mass_car;
+extern double v_car;
+extern double mass_car;
+
 
 //order of magnitude of the external field but exact function is hardcoded 
 extern double B0; // Tesla
@@ -150,3 +158,5 @@ extern double alpha_damp;
 
 extern double Ms;
 extern double K1;
+
+extern int ScreenCaptureStep; 
