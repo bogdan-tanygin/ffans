@@ -22,7 +22,7 @@ struct CameraPosition
 	float y;
 	float z;
 };
-int counterOfPosition = -1;
+int counterOfPosition = 0;
 int MaxPointOfPosition =0;
 vector<CameraPosition> position;
 void ActiveWindow()
@@ -149,7 +149,6 @@ void addPosition()
 {
 	position.push_back(CameraPosition());
 	MaxPointOfPosition++;
-	counterOfPosition++;
 	position[counterOfPosition].x = x_rot;
 	position[counterOfPosition].y = y_rot;
 	position[counterOfPosition].z = z_off;
