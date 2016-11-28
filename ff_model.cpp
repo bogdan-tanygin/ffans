@@ -1372,11 +1372,11 @@ void ff_model_next_step(void)
 									ff_mol(mass_car,mol_mass_car),
 									ff_mol(mass_oleic,mol_mass_oleic)));
 	//eta_car = eta_car0;//Oleic acid = 0 mll
-	
-	if(step%ScreenCaptureStep == 0 && step>=ScreenCaptureStep)
+	//if(step%ScreenCaptureStep==0){counterOfPosition=0;}
+	if(step%ScreenCaptureStep == counterOfPosition*10 && step>=ScreenCaptureStep)
 	{
+		ChangePosition();
 		ostringstream out;
-		//MultiPosition(-62.1,-100,-25); doesn`t worl, leter may be 
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		out.flush();

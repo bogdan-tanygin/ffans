@@ -201,6 +201,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		break;
+	case 'z':
+		addPosition();
+		break;
+	case 'Z':
+		delPosition();
+		break;
+	case 'f':
+		ChangePosition();
+		break;
     /*case 'h':
         hyst_mode++;
         tmp = 0;

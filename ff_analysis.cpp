@@ -9,14 +9,22 @@
 #include <Ole2.h>
 #include <OleCtl.h>
 #include <iostream>
-
+#include <vector>
 
 using namespace Gdiplus;
 using namespace std;
 
 HWND hWnd;
 bool Active = true;
-
+struct CameraPosition
+{
+	float x;
+	float y;
+	float z;
+};
+int counterOfPosition = -1;
+int MaxPointOfPosition =0;
+vector<CameraPosition> position;
 void ActiveWindow()
 {
 	if(Active){hWnd = GetForegroundWindow();Active = false;}
@@ -137,10 +145,56 @@ void GetScreenShot(string name1) //Make Screen Shot
     DeleteObject(hBitmap);
 }
 
-void MultiPosition(float my_x_rot, float my_y_rot, float my_z_off)
+void addPosition()
 {
-	x_rot = my_x_rot;
-	y_rot = my_y_rot;
-	z_off = my_z_off;
-
+	position.push_back(CameraPosition());
+	MaxPointOfPosition++;
+	counterOfPosition++;
+	position[counterOfPosition].x = x_rot;
+	position[counterOfPosition].y = y_rot;
+	position[counterOfPosition].z = z_off;
 }
+
+void delPosition()
+{
+	if(MaxPointOfPosition)
+	{
+		position.erase(position.begin()+counterOfPosition);
+		MaxPointOfPosition--;
+		if(counterOfPosition<MaxPointOfPosition-1)
+		{
+			counterOfPosition++;
+		}
+		else
+		{
+			counterOfPosition=0;
+		}
+	}
+	else
+	{
+		cout<<"U have not saved position yet"<<endl;
+	}
+}
+
+void ChangePosition()
+{
+	if(MaxPointOfPosition)
+	{
+		if(counterOfPosition<MaxPointOfPosition-1)
+		{
+			counterOfPosition++;
+		}
+		else
+		{
+			counterOfPosition=0;
+		}
+		x_rot = position[counterOfPosition].x;
+		y_rot = position[counterOfPosition].y;
+		z_off = position[counterOfPosition].z;
+	}
+	else
+	{
+		cout<<"U have not saved position yet"<<endl;
+	}
+}
+
