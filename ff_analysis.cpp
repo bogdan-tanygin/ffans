@@ -152,6 +152,7 @@ void addPosition()
 	position[counterOfPosition].x = x_rot;
 	position[counterOfPosition].y = y_rot;
 	position[counterOfPosition].z = z_off;
+	counterOfPosition++;
 }
 
 void delPosition()
