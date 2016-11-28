@@ -1,6 +1,7 @@
 #include "ff_analysis.h"
 #include "ff_sys_graphics.h"
 #include "ff_model.h"
+#include "ff_model_graphics.h"
 
 #include <Windows.h>
 #include <GdiPlus.h>
@@ -21,6 +22,7 @@ struct CameraPosition
 	float x;
 	float y;
 	float z;
+	int projection_type_status;
 };
 int counterOfPosition = 0;
 int MaxPointOfPosition =0;
@@ -151,7 +153,9 @@ void addPosition()
 	MaxPointOfPosition++;
 	position[counterOfPosition].x = x_rot;
 	position[counterOfPosition].y = y_rot;
-	position[counterOfPosition].z = z_off;
+	position[counterOfPosition].z = space_k;
+	position[counterOfPosition].projection_type_status = projection_type ? 1 : 0;
+	cout<<"saved position (x,y,z,t)"<<x_rot<<"~~"<<y_rot<<"~~"<<space_k<<endl;
 	counterOfPosition++;
 }
 
@@ -188,9 +192,12 @@ void ChangePosition()
 		{
 			counterOfPosition=0;
 		}
+		projection_type = position[counterOfPosition].projection_type_status;
 		x_rot = position[counterOfPosition].x;
 		y_rot = position[counterOfPosition].y;
-		z_off = position[counterOfPosition].z;
+		space_k = position[counterOfPosition].z;
+		cbResizeScene(window_width, window_height);
+		
 	}
 	else
 	{
