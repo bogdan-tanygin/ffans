@@ -532,7 +532,7 @@ void ff_io_load(long tstep)
             ff_model_size_dispersion_param_calc(Rp0[p], p);
         }
         while(!feof(file));
-
+		step = tstep;
         fclose(file);
     } //tstep > 0
 }

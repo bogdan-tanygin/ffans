@@ -1330,8 +1330,8 @@ void ff_model_next_step(void)
     int chk;
     long mz_tot_n;
     ff_vect_t r0;
-	ff_vect_t r0_per[3][3][3];
-	ff_vect_t r_per[pN + 1][3][3][3];
+	//ff_vect_t r0_per[3][3][3];
+	//ff_vect_t r_per[pN + 1][3][3][3];
     //double C2, gamma_rot;
     double M0, I0;
     ff_vect_t ex, ey, ez; // basis of rotation around ez = w
@@ -1650,7 +1650,7 @@ void ff_model_next_step(void)
 					for (int t2 = 0; t2 <= 2; t2++)
 						for (int t3 = 0; t3 <= 2; t3++)
 						{
-							r0_per[t1][t2][t3].x = r0_per[t1][t2][t3].y = r0_per[t1][t2][t3].z = 0;
+							//r0_per[t1][t2][t3].x = r0_per[t1][t2][t3].y = r0_per[t1][t2][t3].z = 0;
 							I_per[t1][t2][t3] = 0;
 						}
 
@@ -1715,7 +1715,7 @@ void ff_model_next_step(void)
 							if (r[p].z <= 0) per_z_minus = r[p].z + Lz;
 							else per_z_minus = r[p].z;
 
-							r_per[p][0][0][0].x = per_x_minus;
+							/*r_per[p][0][0][0].x = per_x_minus;
 							r_per[p][0][0][0].y = per_y_minus;
 							r_per[p][0][0][0].z = per_z_minus;
 							r0_per[0][0][0].x += M0p[p] * per_x_minus;
@@ -1902,7 +1902,7 @@ void ff_model_next_step(void)
 							r_per[p][2][2][2].z = per_z_plus;
 							r0_per[2][2][2].x += M0p[p] * per_x_plus;
 							r0_per[2][2][2].y += M0p[p] * per_y_plus;
-							r0_per[2][2][2].z += M0p[p] * per_z_plus;
+							r0_per[2][2][2].z += M0p[p] * per_z_plus;*/
 						}
 
                         mz_tot += m[p].z;
@@ -1925,12 +1925,12 @@ void ff_model_next_step(void)
                     r0.y /= Mtot;
                     r0.z /= Mtot;
 
-					if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
+				/*	if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
 					{
 						r0_per[t1][t2][t3].x /= Mtot;
 						r0_per[t1][t2][t3].y /= Mtot;
 						r0_per[t1][t2][t3].z /= Mtot;
-					}
+					}*/
 
                     I = 0;
 					
@@ -1940,13 +1940,13 @@ void ff_model_next_step(void)
                         + pow(r[p].y - r0.y, 2)
                         + pow(r[p].z - r0.z, 2));
 
-						if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
+					/*	if (is_periodic) for (int t1 = 0; t1 <= 2; t1++) for (int t2 = 0; t2 <= 2; t2++) for (int t3 = 0; t3 <= 2; t3++)
 						{
 							I_per[t1][t2][t3] += M0p[p] * (
 														   pow(r_per[p][t1][t2][t3].x - r0_per[t1][t2][t3].x, 2)
 														 + pow(r_per[p][t1][t2][t3].y - r0_per[t1][t2][t3].y, 2)
 														 + pow(r_per[p][t1][t2][t3].z - r0_per[t1][t2][t3].z, 2));
-						}
+						}*/
 					}
 
 					if (is_periodic)
