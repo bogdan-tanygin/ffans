@@ -201,6 +201,15 @@ void cbKeyPressed(unsigned char key, int x, int y)
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		break;
+	case 'z':
+		addPosition();
+		break;
+	case 'Z':
+		delPosition();
+		break;
+	case 'f':
+		ChangePosition();
+		break;
     /*case 'h':
         hyst_mode++;
         tmp = 0;
@@ -523,7 +532,7 @@ void ff_io_load(long tstep)
             ff_model_size_dispersion_param_calc(Rp0[p], p);
         }
         while(!feof(file));
-
+		step = tstep;
         fclose(file);
     } //tstep > 0
 }

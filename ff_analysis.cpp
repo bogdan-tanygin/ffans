@@ -1,6 +1,7 @@
 #include "ff_analysis.h"
 #include "ff_sys_graphics.h"
 #include "ff_model.h"
+#include "ff_model_graphics.h"
 
 #include <Windows.h>
 #include <GdiPlus.h>
@@ -9,14 +10,23 @@
 #include <Ole2.h>
 #include <OleCtl.h>
 #include <iostream>
-
+#include <vector>
 
 using namespace Gdiplus;
 using namespace std;
 
 HWND hWnd;
 bool Active = true;
-
+struct CameraPosition
+{
+	float x;
+	float y;
+	float z;
+	int projection_type_status;
+};
+int counterOfPosition = 0;
+int MaxPointOfPosition =0;
+vector<CameraPosition> position;
 void ActiveWindow()
 {
 	if(Active){hWnd = GetForegroundWindow();Active = false;}
@@ -137,10 +147,61 @@ void GetScreenShot(string name1) //Make Screen Shot
     DeleteObject(hBitmap);
 }
 
-void MultiPosition(float my_x_rot, float my_y_rot, float my_z_off)
+void addPosition()
 {
-	x_rot = my_x_rot;
-	y_rot = my_y_rot;
-	z_off = my_z_off;
-
+	position.push_back(CameraPosition());
+	MaxPointOfPosition++;
+	position[counterOfPosition].x = x_rot;
+	position[counterOfPosition].y = y_rot;
+	position[counterOfPosition].z = space_k;
+	position[counterOfPosition].projection_type_status = projection_type ? 1 : 0;
+	cout<<"saved position (x,y,z,t)"<<x_rot<<"~~"<<y_rot<<"~~"<<space_k<<endl;
+	counterOfPosition++;
 }
+
+void delPosition()
+{
+	if(MaxPointOfPosition)
+	{
+		position.erase(position.begin()+counterOfPosition);
+		MaxPointOfPosition--;
+		if(counterOfPosition<MaxPointOfPosition-1)
+		{
+			counterOfPosition++;
+		}
+		else
+		{
+			counterOfPosition=0;
+		}
+	}
+	else
+	{
+		cout<<"U have not saved position yet"<<endl;
+	}
+}
+
+void ChangePosition()
+{
+	if(MaxPointOfPosition)
+	{
+		if(counterOfPosition<MaxPointOfPosition-1)
+		{
+			counterOfPosition++;
+		}
+		else
+		{
+			counterOfPosition=0;
+		}
+		projection_type = position[counterOfPosition].projection_type_status;
+		x_rot = position[counterOfPosition].x;
+		y_rot = position[counterOfPosition].y;
+		space_k = position[counterOfPosition].z;
+		cbResizeScene(window_width, window_height);
+		
+	}
+	else
+	{
+		cout<<"U have not saved position yet"<<endl;
+	}
+}
+
