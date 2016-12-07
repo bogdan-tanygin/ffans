@@ -1363,14 +1363,15 @@ void ff_model_next_step(void)
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 	//Here i Start !!!
 	eta_car = ff_visousity_mix(
-								eta_oleic,
 								ff_molar_part(
 									ff_mol(mass_oleic,mol_mass_oleic),
 									ff_mol(mass_car,mol_mass_car)),
-								eta_car0,
+								eta_oleic,
 								ff_molar_part(
 									ff_mol(mass_car,mol_mass_car),
-									ff_mol(mass_oleic,mol_mass_oleic)));
+									ff_mol(mass_oleic,mol_mass_oleic)),
+									eta_car0);
+	//cout<<eta_car<<" "<<eta_oleic<<" "<<eta_car0<<endl;
 	//eta_car = eta_car0;//Oleic acid = 0 mll
 	//if(step%ScreenCaptureStep==0){counterOfPosition=0;}
 	if(step%ScreenCaptureStep == counterOfPosition*10 && step>=ScreenCaptureStep)
