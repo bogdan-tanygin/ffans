@@ -1362,6 +1362,10 @@ void ff_model_next_step(void)
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 	//Here i Start !!!
+	if(step==1000000)
+	{
+		BmanZ=2000;
+	}
 	eta_car = ff_visousity_mix(
 								ff_molar_part(
 									ff_mol(mass_oleic,mol_mass_oleic),

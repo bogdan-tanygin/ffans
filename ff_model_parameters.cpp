@@ -56,7 +56,7 @@ int is_periodic = 0;
 
 // Basic physical model parameters
 double dt_neel = 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 = 5E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+const double dt0 = 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel = 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min = 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
 long k_bm_inst_max = 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
@@ -107,7 +107,7 @@ double a_sigma_sf = 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf
 double b_sigma_sf = - 0.061298 * 1E-3; // [N / m] // linear coefficient
 double ro_oleic = 853;// density of oleic acid kg/m^3
 double mol_mass_oleic = 282*1E-3; //mol mass of oleic acid C18H34O2
-double v_oleic =  2* 1E-7; //m^3 volume of oleic acid
+double v_oleic =  1* 1E-7; //m^3 volume of oleic acid
 double mass_oleic = ro_oleic * v_oleic;
 
 //double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
