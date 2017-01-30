@@ -33,6 +33,6 @@ Original publication for `citation <http://cpb.iphy.ac.cn/EN/abstract/abstract65
 
 License
 -------
-Copyright (C) 2011,2013-2015 Dr. Bogdan Tanygin and contributors.
+Copyright (C) 2011,2013-2017 Dr. Bogdan Tanygin and Dmytro Matskevych.
 
 The ffans is a free software made available under the GPL License. For details see the LICENSE file.
