@@ -1,3 +1,20 @@
+/**************************************************************************
+* Copyright (C) 2016,2017 Dmytro Matskevych<dimqqqq@mail.ru>
+* All rights reserved.
+* 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************/
 #include "ff_analysis.h"
 #include "ff_sys_graphics.h"
 #include "ff_model.h"
@@ -147,15 +164,16 @@ void GetScreenShot(string name1) //Make Screen Shot
     DeleteObject(hBitmap);
 }
 
-void addPosition()
+void addPosition(float x, float y, float z, int pts)
 {
 	position.push_back(CameraPosition());
 	MaxPointOfPosition++;
-	position[counterOfPosition].x = x_rot;
-	position[counterOfPosition].y = y_rot;
-	position[counterOfPosition].z = space_k;
-	position[counterOfPosition].projection_type_status = projection_type ? 1 : 0;
-	cout<<"saved position (x,y,z,t)"<<x_rot<<"~~"<<y_rot<<"~~"<<space_k<<endl;
+	counterOfPosition = MaxPointOfPosition-1;
+	position[counterOfPosition].x = x;
+	position[counterOfPosition].y = y;
+	position[counterOfPosition].z = z;
+	position[counterOfPosition].projection_type_status = pts;
+	cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is saved"<<endl;
 	counterOfPosition++;
 }
 
@@ -163,6 +181,7 @@ void delPosition()
 {
 	if(MaxPointOfPosition)
 	{
+		cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is removed"<<endl;
 		position.erase(position.begin()+counterOfPosition);
 		MaxPointOfPosition--;
 		if(counterOfPosition<MaxPointOfPosition-1)
@@ -192,6 +211,7 @@ void ChangePosition()
 		{
 			counterOfPosition=0;
 		}
+		cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is changed"<<endl;
 		projection_type = position[counterOfPosition].projection_type_status;
 		x_rot = position[counterOfPosition].x;
 		y_rot = position[counterOfPosition].y;

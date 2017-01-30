@@ -1367,7 +1367,7 @@ void ff_model_next_step(void)
 		BmanZ=2000;
 		ScreenCaptureStep = 2000;
 	}
-	/*eta_car = ff_visousity_mix(
+	eta_car = ff_visousity_mix(
 								ff_molar_part(
 									ff_mol(mass_oleic,mol_mass_oleic),
 									ff_mol(mass_car,mol_mass_car)),
@@ -1375,8 +1375,8 @@ void ff_model_next_step(void)
 								ff_molar_part(
 									ff_mol(mass_car,mol_mass_car),
 									ff_mol(mass_oleic,mol_mass_oleic)),
-									eta_car0);*/
-	eta_car = eta_car0;//Oleic acid = 0 mll
+									eta_car0);
+	//eta_car = eta_car0;//Oleic acid = 0 mll
 	//cout<<eta_car<<" "<<eta_oleic<<" "<<eta_car0<<endl;
 	
 	//if(step%ScreenCaptureStep==0){counterOfPosition=0;}

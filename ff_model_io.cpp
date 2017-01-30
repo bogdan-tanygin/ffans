@@ -202,7 +202,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
 		GetScreenShot(out.str());
 		break;
 	case 'z':
-		addPosition();
+		addPosition(x_rot, y_rot, space_k, projection_type);
 		break;
 	case 'Z':
 		delPosition();
