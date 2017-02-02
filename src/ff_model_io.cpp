@@ -198,7 +198,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 	
 	case 'N': case 'n':
-		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
+		out<<"../tools/step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		break;
 	case 'z':
@@ -433,7 +433,7 @@ void ff_io_autosave(void)
     if (auto_save)
     {
 
-        sprintf(str, "%d.dat", step);
+        sprintf(str, "../tools/%d.dat", step);
 
         file  = fopen(str, "w");
 
@@ -485,7 +485,7 @@ void ff_io_load(long tstep)
 
     if (tstep > 0)
     {
-        sprintf(str, "%d.dat", tstep);
+        sprintf(str, "../tools/%d.dat", tstep);
 
         file  = fopen(str, "r");
 

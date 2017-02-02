@@ -25,6 +25,7 @@
 #include "ff_sys_graphics.h"
 #include "ff_model_graphics.h"
 #include "ff_model.h"
+#include "ff_iniParam.h"
 
 int main(int argc, char **argv)
     //int _tmain(int argc, _TCHAR* argv[])
@@ -39,13 +40,13 @@ int main(int argc, char **argv)
 
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III;
 
-    file  = fopen("setting_M.dat", "w");
-    file1 = fopen("setting_I.dat", "w");
-    file2 = fopen("setting_n_agg.dat", "w");
-    file2_phi = fopen("setting_phi_agg.dat", "w");
-    file2_I = fopen("setting_n_agg_I.dat", "w");
-    file2_II = fopen("setting_n_agg_II.dat", "w");
-    file2_III = fopen("setting_n_agg_III.dat", "w");
+    file  = fopen("../tools/setting_M.dat", "w");
+    file1 = fopen("../tools/setting_I.dat", "w");
+    file2 = fopen("../tools/setting_n_agg.dat", "w");
+    file2_phi = fopen("../tools/setting_phi_agg.dat", "w");
+    file2_I = fopen("../tools/setting_n_agg_I.dat", "w");
+    file2_II = fopen("../tools/setting_n_agg_II.dat", "w");
+    file2_III = fopen("../tools/setting_n_agg_III.dat", "w");
 
     fclose(file);
     fclose(file1);
@@ -54,6 +55,7 @@ int main(int argc, char **argv)
     fclose(file2_I);
     fclose(file2_II);
     fclose(file2_III);
+	
 
     // system graphics init
     ff_gr_init(argc, argv);

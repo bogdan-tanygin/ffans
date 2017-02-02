@@ -1384,7 +1384,7 @@ void ff_model_next_step(void)
 	{
 		ChangePosition();
 		ostringstream out;
-		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
+		out<<"../tools/step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		out.flush();
 	}
