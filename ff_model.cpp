@@ -1361,7 +1361,9 @@ void ff_model_next_step(void)
     ro_oleic = 902.0 - 0.62 * T;
     sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-	//Here i Start !!!
+	
+    //Screen capturing
+    //----------------
 	if(step==1000000)
 	{
 		BmanZ=2000;
@@ -1388,6 +1390,7 @@ void ff_model_next_step(void)
 		GetScreenShot(out.str());
 		out.flush();
 	}
+    //----------------
 
     if (isMicroDrop) ff_model_update_mdrop_parameters();
 
@@ -1424,6 +1427,9 @@ void ff_model_next_step(void)
             //for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_motion_update(p);
         }
 
+        // START: Velocity Verlet based Analytical Dissipative Integrator.
+        // STEP 0. Forces for t=0 (beginning of dt interval), x(0), v(0). 
+        // Translational and rotational motion of bead particles.
         for (p = 1; p <= pN; p++)
         if (exist_p[p])
         {
@@ -1441,6 +1447,44 @@ void ff_model_next_step(void)
             tau1[p].x = ttau.x; tau1[p].y = ttau.y; tau1[p].z = ttau.z;
         }
 
+        // STEP 1. Velocity v(0.5*dt) calculation: stochastic (TODO) and deterministic parts.
+           for (p = 1; p <= pN; p++)
+                    if (exist_p[p])
+                    {
+                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
+                    {
+                        C2[p] = 6 * pi * eta_car * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
+                    }
+                    else
+                    {
+                        C2[p] = 6 * pi * eta_oleic * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
+                    }
+
+                        M0 = M0p[p];
+                        I0 = I0p[p];
+
+                        // C2 is a friction
+                        dvt[p].x = (F[p].x / C2[p]) + (v[p].x - F[p].x / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].x;
+                        dvt[p].y = (F[p].y / C2[p]) + (v[p].y - F[p].y / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].y;
+                        dvt[p].z = (F[p].z / C2[p]) + (v[p].z - F[p].z / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].z;
+
+                        v[p].x += dvt[p].x;
+                        v[p].y += dvt[p].y;
+                        v[p].z += dvt[p].z;
+
+                        w[p].x = (tau[p].x / gamma_rot[p]) + (w[p].x - tau[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+                        w[p].y = (tau[p].y / gamma_rot[p]) + (w[p].y - tau[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+                        w[p].z = (tau[p].z / gamma_rot[p]) + (w[p].z - tau[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+
+                        if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
+                        if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
+                        if (v[p].z != v[p].z) printf("\n DEBUG 3 p = %d v[p].z = %e", p, v[p].z);
+                    } // end of loop for dv
+        
+        // STEP 2. Position x(dt) calculation: stochastic and deterministic parts.
+        // Random walk
         for (p = 1; p <= pN; p++) if (exist_p[p])
         {
             r[p].x += drt_r[p].x;
@@ -1483,43 +1527,9 @@ void ff_model_next_step(void)
                 m[p].y *= m0p[p] / tmmag;
                 m[p].z *= m0p[p] / tmmag;
             }
-        }
-                
-        for (p = 1; p <= pN; p++) if (exist_p[p])
-        {
-            f = ff_model_force(p);
-            ttau = ff_model_torque(p);
-            F2[p].x = f.x; F2[p].y = f.y; F2[p].z = f.z;
-            tau2[p].x = ttau.x; tau2[p].y = ttau.y; tau2[p].z = ttau.z;
-
-            F[p].x = (F1[p].x + F2[p].x) / 2.0;
-            F[p].y = (F1[p].y + F2[p].y) / 2.0;
-            F[p].z = (F1[p].z + F2[p].z) / 2.0;
-
-            tau[p].x = (tau1[p].x + tau2[p].x) / 2.0;
-            tau[p].y = (tau1[p].y + tau2[p].y) / 2.0;
-            tau[p].z = (tau1[p].z + tau2[p].z) / 2.0;
-
-            /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
-            /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
-            /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
-
-            /*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
-            /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
-            /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
-
-            /*DEBUG*/ if (v[p].x != v[p].x) printf("\n DEBUG 1.1 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
-            /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
-            /*DEBUG*/ if (v[p].z != v[p].z) printf("\n DEBUG 1.1 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
-
-            /*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
-            /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
-            /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
-        }
-
-            //ff_model_update_dT();
-            k_bm_inst ++;
-
+        }  // end of loop for dr_r
+        
+        // Deterministic position update
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
@@ -1537,32 +1547,32 @@ void ff_model_next_step(void)
                     M0 = M0p[p];
                     I0 = I0p[p];
 
-                    drt[p].x = F[p].x * dt / C2[p] +		 
-                        (v[p].x - F[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                    drt[p].x = F1[p].x * dt / C2[p] +		 
+                        (v[p].x - F1[p].x / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
                     //+ drt_r[p].x * dt / dt0;
 
-                    drt[p].y = F[p].y * dt / C2[p] +		 
-                        (v[p].y - F[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                    drt[p].y = F1[p].y * dt / C2[p] +		 
+                        (v[p].y - F1[p].y / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
                     //+ drt_r[p].y * dt / dt0;
 
-                    drt[p].z = F[p].z * dt / C2[p] +		 
-                        (v[p].z - F[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
+                    drt[p].z = F1[p].z * dt / C2[p] +		 
+                        (v[p].z - F1[p].z / C2[p]) * (1 - exp(- C2[p] * dt / M0)) * M0 / C2[p];
                     //+ drt_r[p].z * dt / dt0;
 
                     //if (brownian_shifts) ff_model_set_rand_dir(p);
 
                     if (!(is_neel[p]))
                     {
-                        dphi[p].x = tau[p].x * dt / gamma_rot[p] +		 
-                            (w[p].x - tau[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        dphi[p].x = tau1[p].x * dt / gamma_rot[p] +		 
+                            (w[p].x - tau1[p].x / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
                         //+ dphi_r[p].x * dt / dt0;
 
-                        dphi[p].y = tau[p].y * dt / gamma_rot[p] +		 
-                            (w[p].y - tau[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        dphi[p].y = tau1[p].y * dt / gamma_rot[p] +		 
+                            (w[p].y - tau1[p].y / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
                         //+ dphi_r[p].y * dt / dt0;
 
-                        dphi[p].z = tau[p].z * dt / gamma_rot[p] +		 
-                            (w[p].z - tau[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
+                        dphi[p].z = tau1[p].z * dt / gamma_rot[p] +		 
+                            (w[p].z - tau1[p].z / gamma_rot[p]) * (1 - exp(- gamma_rot[p] * dt / I0)) * I0 / gamma_rot[p];
                         //+ dphi_r[p].z * dt / dt0;
                     }
                     else dphi[p].x = dphi[p].y = dphi[p].z = 0;
@@ -1638,7 +1648,78 @@ void ff_model_next_step(void)
 
                     ff_model_check_walls(p);
                 } // end of loop for dr
+        
+        // STEP 3. Forces f(dt) calculation.
+        for (p = 1; p <= pN; p++) if (exist_p[p])
+        {
+            f = ff_model_force(p);
+            ttau = ff_model_torque(p);
+            F2[p].x = f.x; F2[p].y = f.y; F2[p].z = f.z;
+            tau2[p].x = ttau.x; tau2[p].y = ttau.y; tau2[p].z = ttau.z;
 
+            F[p].x = (F1[p].x + F2[p].x) / 2.0;
+            F[p].y = (F1[p].y + F2[p].y) / 2.0;
+            F[p].z = (F1[p].z + F2[p].z) / 2.0;
+
+            tau[p].x = (tau1[p].x + tau2[p].x) / 2.0;
+            tau[p].y = (tau1[p].y + tau2[p].y) / 2.0;
+            tau[p].z = (tau1[p].z + tau2[p].z) / 2.0;
+
+            /*DEBUG*/ if (f.x != f.x) printf("\n DEBUG 1 p = %d f.x = %e", p, f.x);
+            /*DEBUG*/ if (f.y != f.y) printf("\n DEBUG 1 p = %d f.y = %e", p, f.y);
+            /*DEBUG*/ if (f.z != f.z) printf("\n DEBUG 1 p = %d f.z = %e", p, f.z);
+
+            /*DEBUG*/ //if (tau[p].x != tau[p].x) printf("\n DEBUG 1 p = %d ttau.x = %e", p, tau[p].x);
+            /*DEBUG*/ //if (ttau.y != ttau.y) printf("\n DEBUG 1 p = %d ttau.y = %e", p, ttau.y);
+            /*DEBUG*/ //if (tau[p].z != tau[p].z) printf("\n DEBUG 1 p = %d ttau.z = %e", p, tau[p].z);
+
+            /*DEBUG*/ if (v[p].x != v[p].x) printf("\n DEBUG 1.1 p = %d r[p].x = %e v[p].x = %e", p, r[p].x, v[p].x);
+            /*DEBUG*/ if (v[p].y != v[p].y) printf("\n DEBUG 1.1 p = %d r[p].y = %e v[p].y = %e", p, r[p].y, v[p].y);
+            /*DEBUG*/ if (v[p].z != v[p].z) printf("\n DEBUG 1.1 p = %d r[p].z = %e v[p].z = %e", p, r[p].z, v[p].z);
+
+            /*DEBUG*/ if (w[p].x != w[p].x) printf("\n DEBUG 1.2 p = %d", p);
+            /*DEBUG*/ if (w[p].y != w[p].y) printf("\n DEBUG 1.2 p = %d", p);
+            /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
+        } // force calc
+        
+           // STEP 4. Velocity v(dt) calculation: stochastic (TODO) and deterministic parts.
+           for (p = 1; p <= pN; p++)
+                    if (exist_p[p])
+                    {
+                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
+                    {
+                        C2[p] = 6 * pi * eta_car * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
+                    }
+                    else
+                    {
+                        C2[p] = 6 * pi * eta_oleic * Rp[p];
+                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
+                    }
+
+                        M0 = M0p[p];
+                        I0 = I0p[p];
+
+                        // C2 is a friction
+                        dvt[p].x = (F2[p].x / C2[p]) + (v[p].x - F2[p].x / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].x;
+                        dvt[p].y = (F2[p].y / C2[p]) + (v[p].y - F2[p].y / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].y;
+                        dvt[p].z = (F2[p].z / C2[p]) + (v[p].z - F2[p].z / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].z;
+
+                        v[p].x += dvt[p].x;
+                        v[p].y += dvt[p].y;
+                        v[p].z += dvt[p].z;
+
+                        w[p].x = (tau2[p].x / gamma_rot[p]) + (w[p].x - tau2[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+                        w[p].y = (tau2[p].y / gamma_rot[p]) + (w[p].y - tau2[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+                        w[p].z = (tau2[p].z / gamma_rot[p]) + (w[p].z - tau2[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+
+                        if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
+                        if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
+                        if (v[p].z != v[p].z) printf("\n DEBUG 3 p = %d v[p].z = %e", p, v[p].z);
+                    } // end of loop for dv
+
+            //ff_model_update_dT();
+            //k_bm_inst ++;
                 //k_bm_inst++;
                 //if (k_bm_inst == k_bm_inst_max) k_bm_inst = 1;
                 if (k_bm_inst == k_bm_inst_max)
@@ -1680,23 +1761,6 @@ void ff_model_next_step(void)
                         M0 = M0p[p];
                         I0 = I0p[p];
 
-                        // C2 is a friction
-                        dvt[p].x = (F[p].x / C2[p]) + (v[p].x - F[p].x / C2[p]) * exp(- C2[p] * dt / M0) - v[p].x;
-                        dvt[p].y = (F[p].y / C2[p]) + (v[p].y - F[p].y / C2[p]) * exp(- C2[p] * dt / M0) - v[p].y;
-                        dvt[p].z = (F[p].z / C2[p]) + (v[p].z - F[p].z / C2[p]) * exp(- C2[p] * dt / M0) - v[p].z;
-
-                        v[p].x += dvt[p].x;
-                        v[p].y += dvt[p].y;
-                        v[p].z += dvt[p].z;
-
-                        w[p].x = (tau[p].x / gamma_rot[p]) + (w[p].x - tau[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
-                        w[p].y = (tau[p].y / gamma_rot[p]) + (w[p].y - tau[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
-                        w[p].z = (tau[p].z / gamma_rot[p]) + (w[p].z - tau[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * dt / I0);
-
-                        if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
-                        if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
-                        if (v[p].z != v[p].z) printf("\n DEBUG 3 p = %d v[p].z = %e", p, v[p].z);
-
                         //chk = ff_model_check_smooth_dv(p);
                         //if ( chk == 0) goto t_end;
 
@@ -1721,195 +1785,6 @@ void ff_model_next_step(void)
 							else per_z_plus = r[p].z;
 							if (r[p].z <= 0) per_z_minus = r[p].z + Lz;
 							else per_z_minus = r[p].z;
-
-							/*r_per[p][0][0][0].x = per_x_minus;
-							r_per[p][0][0][0].y = per_y_minus;
-							r_per[p][0][0][0].z = per_z_minus;
-							r0_per[0][0][0].x += M0p[p] * per_x_minus;
-							r0_per[0][0][0].y += M0p[p] * per_y_minus;
-							r0_per[0][0][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][0][0][1].x = per_x_minus;
-							r_per[p][0][0][1].y = per_y_minus;
-							r_per[p][0][0][1].z = r[p].z;
-							r0_per[0][0][1].x += M0p[p] * per_x_minus;
-							r0_per[0][0][1].y += M0p[p] * per_y_minus;
-							r0_per[0][0][1].z += M0p[p] * r[p].z;
-
-							r_per[p][0][0][2].x = per_x_minus;
-							r_per[p][0][0][2].y = per_y_minus;
-							r_per[p][0][0][2].z = per_z_plus;
-							r0_per[0][0][2].x += M0p[p] * per_x_minus;
-							r0_per[0][0][2].y += M0p[p] * per_y_minus;
-							r0_per[0][0][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][0][1][0].x = per_x_minus;
-							r_per[p][0][1][0].y = r[p].y;
-							r_per[p][0][1][0].z = per_z_minus;
-							r0_per[0][1][0].x += M0p[p] * per_x_minus;
-							r0_per[0][1][0].y += M0p[p] * r[p].y;
-							r0_per[0][1][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][0][1][1].x = per_x_minus;
-							r_per[p][0][1][1].y = r[p].y;
-							r_per[p][0][1][1].z = r[p].z;							
-							r0_per[0][1][1].x += M0p[p] * per_x_minus;
-							r0_per[0][1][1].y += M0p[p] * r[p].y;
-							r0_per[0][1][1].z += M0p[p] * r[p].z;
-
-							r_per[p][0][1][2].x = per_x_minus;
-							r_per[p][0][1][2].y = r[p].y;
-							r_per[p][0][1][2].z = per_z_plus;							
-							r0_per[0][1][2].x += M0p[p] * per_x_minus;
-							r0_per[0][1][2].y += M0p[p] * r[p].y;
-							r0_per[0][1][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][0][2][0].x = per_x_minus;
-							r_per[p][0][2][0].y = per_y_plus;
-							r_per[p][0][2][0].z = per_z_minus;
-							r0_per[0][2][0].x += M0p[p] * per_x_minus;
-							r0_per[0][2][0].y += M0p[p] * per_y_plus;
-							r0_per[0][2][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][0][2][1].x = per_x_minus;
-							r_per[p][0][2][1].y = per_y_plus;
-							r_per[p][0][2][1].z = r[p].z;
-							r0_per[0][2][1].x += M0p[p] * per_x_minus;
-							r0_per[0][2][1].y += M0p[p] * per_y_plus;
-							r0_per[0][2][1].z += M0p[p] * r[p].z;
-
-							r_per[p][0][2][2].x = per_x_minus;
-							r_per[p][0][2][2].y = per_y_plus;
-							r_per[p][0][2][2].z = per_z_plus;
-							r0_per[0][2][2].x += M0p[p] * per_x_minus;
-							r0_per[0][2][2].y += M0p[p] * per_y_plus;
-							r0_per[0][2][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][1][0][0].x = r[p].x;
-							r_per[p][1][0][0].y = per_y_minus;
-							r_per[p][1][0][0].z = per_z_minus;
-							r0_per[1][0][0].x += M0p[p] * r[p].x;
-							r0_per[1][0][0].y += M0p[p] * per_y_minus;
-							r0_per[1][0][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][1][0][1].x = r[p].x;
-							r_per[p][1][0][1].y = per_y_minus;
-							r_per[p][1][0][1].z = r[p].z;
-							r0_per[1][0][1].x += M0p[p] * r[p].x;
-							r0_per[1][0][1].y += M0p[p] * per_y_minus;
-							r0_per[1][0][1].z += M0p[p] * r[p].z;
-
-							r_per[p][1][0][2].x = r[p].x;
-							r_per[p][1][0][2].y = per_y_minus;
-							r_per[p][1][0][2].z = per_z_plus;
-							r0_per[1][0][2].x += M0p[p] * r[p].x;
-							r0_per[1][0][2].y += M0p[p] * per_y_minus;
-							r0_per[1][0][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][1][1][0].x = r[p].x;
-							r_per[p][1][1][0].y = r[p].y;
-							r_per[p][1][1][0].z = per_z_minus;
-							r0_per[1][1][0].x += M0p[p] * r[p].x;
-							r0_per[1][1][0].y += M0p[p] * r[p].y;
-							r0_per[1][1][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][1][1][1].x = r[p].x;
-							r_per[p][1][1][1].y = r[p].y;
-							r_per[p][1][1][1].z = r[p].z;
-							r0_per[1][1][1].x += M0p[p] * r[p].x;
-							r0_per[1][1][1].y += M0p[p] * r[p].y;
-							r0_per[1][1][1].z += M0p[p] * r[p].z;
-
-							r_per[p][1][1][2].x = r[p].x;
-							r_per[p][1][1][2].y = r[p].y;
-							r_per[p][1][1][2].z = per_z_plus;
-							r0_per[1][1][2].x += M0p[p] * r[p].x;
-							r0_per[1][1][2].y += M0p[p] * r[p].y;
-							r0_per[1][1][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][1][2][0].x = r[p].x;
-							r_per[p][1][2][0].y = per_y_plus;
-							r_per[p][1][2][0].z = per_z_minus;
-							r0_per[1][2][0].x += M0p[p] * r[p].x;
-							r0_per[1][2][0].y += M0p[p] * per_y_plus;
-							r0_per[1][2][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][1][2][1].x = r[p].x;
-							r_per[p][1][2][1].y = per_y_plus;
-							r_per[p][1][2][1].z = r[p].z;
-							r0_per[1][2][1].x += M0p[p] * r[p].x;
-							r0_per[1][2][1].y += M0p[p] * per_y_plus;
-							r0_per[1][2][1].z += M0p[p] * r[p].z;
-
-							r_per[p][1][2][2].x = r[p].x;
-							r_per[p][1][2][2].y = per_y_plus;
-							r_per[p][1][2][2].z = per_z_plus;
-							r0_per[1][2][2].x += M0p[p] * r[p].x;
-							r0_per[1][2][2].y += M0p[p] * per_y_plus;
-							r0_per[1][2][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][2][0][0].x = per_x_plus;
-							r_per[p][2][0][0].y = per_y_minus;
-							r_per[p][2][0][0].z = per_z_minus;
-							r0_per[2][0][0].x += M0p[p] * per_x_plus;
-							r0_per[2][0][0].y += M0p[p] * per_y_minus;
-							r0_per[2][0][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][2][0][1].x = per_x_plus;
-							r_per[p][2][0][1].y = per_y_minus;
-							r_per[p][2][0][1].z = r[p].z;
-							r0_per[2][0][1].x += M0p[p] * per_x_plus;
-							r0_per[2][0][1].y += M0p[p] * per_y_minus;
-							r0_per[2][0][1].z += M0p[p] * r[p].z;
-
-							r_per[p][2][0][2].x = per_x_plus;
-							r_per[p][2][0][2].y = per_y_minus;
-							r_per[p][2][0][2].z = per_z_plus;
-							r0_per[2][0][2].x += M0p[p] * per_x_plus;
-							r0_per[2][0][2].y += M0p[p] * per_y_minus;
-							r0_per[2][0][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][2][1][0].x = per_x_plus;
-							r_per[p][2][1][0].y = r[p].y;
-							r_per[p][2][1][0].z = per_z_minus;
-							r0_per[2][1][0].x += M0p[p] * per_x_plus;
-							r0_per[2][1][0].y += M0p[p] * r[p].y;
-							r0_per[2][1][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][2][1][1].x = per_x_plus;
-							r_per[p][2][1][1].y = r[p].y;
-							r_per[p][2][1][1].z = r[p].z;
-							r0_per[2][1][1].x += M0p[p] * per_x_plus;
-							r0_per[2][1][1].y += M0p[p] * r[p].y;
-							r0_per[2][1][1].z += M0p[p] * r[p].z;
-
-							r_per[p][2][1][2].x = per_x_plus;
-							r_per[p][2][1][2].y = r[p].y;
-							r_per[p][2][1][2].z = per_z_plus;
-							r0_per[2][1][2].x += M0p[p] * per_x_plus;
-							r0_per[2][1][2].y += M0p[p] * r[p].y;
-							r0_per[2][1][2].z += M0p[p] * per_z_plus;
-
-							r_per[p][2][2][0].x = per_x_plus;
-							r_per[p][2][2][0].y = per_y_plus;
-							r_per[p][2][2][0].z = per_z_minus;
-							r0_per[2][2][0].x += M0p[p] * per_x_plus;
-							r0_per[2][2][0].y += M0p[p] * per_y_plus;
-							r0_per[2][2][0].z += M0p[p] * per_z_minus;
-
-							r_per[p][2][2][1].x = per_x_plus;
-							r_per[p][2][2][1].y = per_y_plus;
-							r_per[p][2][2][1].z = r[p].z;
-							r0_per[2][2][1].x += M0p[p] * per_x_plus;
-							r0_per[2][2][1].y += M0p[p] * per_y_plus;
-							r0_per[2][2][1].z += M0p[p] * r[p].z;
-
-							r_per[p][2][2][2].x = per_x_plus;
-							r_per[p][2][2][2].y = per_y_plus;
-							r_per[p][2][2][2].z = per_z_plus;
-							r0_per[2][2][2].x += M0p[p] * per_x_plus;
-							r0_per[2][2][2].y += M0p[p] * per_y_plus;
-							r0_per[2][2][2].z += M0p[p] * per_z_plus;*/
 						}
 
                         mz_tot += m[p].z;
@@ -2607,7 +2482,7 @@ void ff_model_effective_random_motion_update(long p)
     double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
     double N_mol_col = 0;
 
-    double sigma = 0, sigma_rot = 0;
+    double sigma2 = 0, sigma2_rot = 0;
 
     //dt0 = dt * k_bm_inst_max;
     //dt0 = dt;
@@ -2632,10 +2507,10 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of position change
     // [Langevin equation + Stokes' law]
-    sigma = D * (2 * dt + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt / M0) - exp(- 2 * gamma * dt / M0)));
-    dx = (*var_nor)() * sqrt(sigma);
-    dy = (*var_nor)() * sqrt(sigma);
-    dz = (*var_nor)() * sqrt(sigma);
+    sigma2 = D * (2 * dt + (M0 / gamma) * (- 3 + 4 * exp(- gamma * dt / M0) - exp(- 2 * gamma * dt / M0)));
+    dx = (*var_nor)() * sqrt(sigma2);
+    dy = (*var_nor)() * sqrt(sigma2);
+    dz = (*var_nor)() * sqrt(sigma2);
 
     drt_r[p].x = dx;
     drt_r[p].y = dy;
@@ -2643,8 +2518,8 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of rotation of the magnetization direction
     // [Euler-Langevin equation + Stokes' law]
-    sigma_rot = D_rot * (2 * dt + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
-    dphi = (*var_nor)() * sqrt(3 * sigma_rot); // rotation magnitude
+	sigma2_rot = D_rot * (2 * dt + (I0 / gamma_rot) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
+    dphi = (*var_nor)() * sqrt(3 * sigma2_rot); // rotation magnitude
     theta_0 = (*var_uni)() * pi;   // rotation vector random direction
     phi_0 = (*var_uni)() * 2 * pi;
 
