@@ -68,13 +68,14 @@ ff_vect_t w[pN + 1]; // angular velocity vector
 ff_vect_t drt[pN + 1];
 ff_vect_t drt_r[pN + 1]; // instantiated random translation
 ff_vect_t dvt[pN + 1];
+ff_vect_t dvt_r[pN + 1];
 //ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
 //double dv_r[pN + 1]; // extra random velocity magnitude
 ff_vect_t dphi[pN + 1];
 ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
 //ff_vect_t dm[pN + 1];
 ff_vect_t dw[pN + 1];
-//double dw_r[pN + 1]; // extra random angular velocity magnitude
+ff_vect_t dw_r[pN + 1];
 
 //ff_vect_t dir110[13];
 
@@ -1447,7 +1448,7 @@ void ff_model_next_step(void)
             tau1[p].x = ttau.x; tau1[p].y = ttau.y; tau1[p].z = ttau.z;
         }
 
-        // STEP 1. Velocity v(0.5*dt) calculation: stochastic (TODO) and deterministic parts.
+        // STEP 1. Velocity v(0.5*dt) calculation: deterministic part.
            for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
@@ -1682,7 +1683,7 @@ void ff_model_next_step(void)
             /*DEBUG*/ if (w[p].z != w[p].z) printf("\n DEBUG 1.2 p = %d", p);
         } // force calc
         
-           // STEP 4. Velocity v(dt) calculation: stochastic (TODO) and deterministic parts.
+           // STEP 4. Velocity v(dt) calculation: stochastic (dt step) and deterministic (dt/2 step) parts.
            for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
@@ -1705,13 +1706,17 @@ void ff_model_next_step(void)
                         dvt[p].y = (F2[p].y / C2[p]) + (v[p].y - F2[p].y / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].y;
                         dvt[p].z = (F2[p].z / C2[p]) + (v[p].z - F2[p].z / C2[p]) * exp(- C2[p] * 0.5 * dt / M0) - v[p].z;
 
-                        v[p].x += dvt[p].x;
-                        v[p].y += dvt[p].y;
-                        v[p].z += dvt[p].z;
+                        v[p].x += dvt[p].x + dvt_r[p].x;
+                        v[p].y += dvt[p].y + dvt_r[p].y;
+                        v[p].z += dvt[p].z + dvt_r[p].z;
 
                         w[p].x = (tau2[p].x / gamma_rot[p]) + (w[p].x - tau2[p].x / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
                         w[p].y = (tau2[p].y / gamma_rot[p]) + (w[p].y - tau2[p].y / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
                         w[p].z = (tau2[p].z / gamma_rot[p]) + (w[p].z - tau2[p].z / gamma_rot[p]) * exp(- gamma_rot[p] * 0.5 * dt / I0);
+
+						w[p].x += dw_r[p].x;
+						w[p].y += dw_r[p].y;
+						w[p].z += dw_r[p].z;
 
                         if (v[p].x != v[p].x) printf("\n DEBUG 3 p = %d v[p].x = %e", p, v[p].x);
                         if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
@@ -2315,6 +2320,8 @@ cont2:
         //w_r[p].x = w_r[p].y = w_r[p].z = 0;
         drt_r[p].x = drt_r[p].y = drt_r[p].z = 0;
         dphi_r[p].x = dphi_r[p].y = dphi_r[p].z = 0;
+		dvt_r[p].x = dvt_r[p].y = dvt_r[p].z = 0;
+		dw_r[p].x = dw_r[p].y = dw_r[p].z = 0;
         //dW[p] = 0;
         //for (tp = 1; tp <= pN; tp++) aggregated_p[p][tp] = 0;
 
@@ -2466,7 +2473,7 @@ void ff_model_effective_random_motion_update(long p)
 {
     double Px, Py, Pz, tau_r_phi; // instantiated effective random force
     double theta_0, phi_0; // random direction of the torque 
-    double dx, dy, dz, dphi; // instantiated displacements for time dt * k_bm_inst_max
+    double dx, dy, dz, dvx, dvy, dvz, dphi, dw; // instantiated displacements for time dt * k_bm_inst_max
     //double dt0;
     double D, D_rot, gamma, gamma_rot;
     double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
@@ -2483,6 +2490,7 @@ void ff_model_effective_random_motion_update(long p)
     double N_mol_col = 0;
 
     double sigma2 = 0, sigma2_rot = 0;
+	double sigma2v = 0, sigma2w_rot = 0;
 
     //dt0 = dt * k_bm_inst_max;
     //dt0 = dt;
@@ -2516,6 +2524,15 @@ void ff_model_effective_random_motion_update(long p)
     drt_r[p].y = dy;
     drt_r[p].z = dz;
 
+	sigma2v = (kb * T / M0) * (1 - exp(-2 * gamma * dt / M0));
+	dvx = (*var_nor)() * sqrt(sigma2v);
+	dvy = (*var_nor)() * sqrt(sigma2v);
+	dvz = (*var_nor)() * sqrt(sigma2v);
+
+	dvt_r[p].x = dvx;
+	dvt_r[p].y = dvy;
+	dvt_r[p].z = dvz;
+
     // instantiation of rotation of the magnetization direction
     // [Euler-Langevin equation + Stokes' law]
 	sigma2_rot = D_rot * (2 * dt + (I0 / (2 * gamma_rot)) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
@@ -2526,6 +2543,15 @@ void ff_model_effective_random_motion_update(long p)
     dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
     dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
     dphi_r[p].z = dphi * cos(theta_0);
+
+	sigma2w_rot = (kb * T / I0) * (1 - exp(-2 * gamma_rot * dt / I0));
+	dw = (*var_nor)() * sqrt(3 * sigma2w_rot); // rotation angular velocity change magnitude
+	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
+	phi_0 = (*var_uni)() * 2 * pi;
+
+	dw_r[p].x = dw * sin(theta_0) * cos(phi_0);
+	dw_r[p].y = dw * sin(theta_0) * sin(phi_0);
+	dw_r[p].z = dw * cos(theta_0);
 
     /*Px = (gamma * dx) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
     Py = (gamma * dy) / (dt0 - M0 * (1 - exp(- gamma * dt0 / M0)) / gamma);
@@ -2631,8 +2657,8 @@ void ff_model_update_dT(void)
 
     if (dT < 0)
     {
-        //printf("\n WARNING: dT < 0");
-        //dT = 0;
+        printf("\n WARNING: dT < 0");
+        dT = 0;
     }
 
     //printf("\n dT = %e", dT);
