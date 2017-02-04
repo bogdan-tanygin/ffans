@@ -21,15 +21,19 @@
 #include <math.h>
 #include "ff_model_parameters.h"
 #include "ff_iniParam.h"
+#include <fstream>
+#include <iostream>
+
+using namespace std;
 int isAnalysis = ff_paramAnalysis();
 double gl_scale = iniGet("ParticleDiam","gl_scale");//1.0; // particle diameter scale parameter
 	//
-	
+
 // Math constants
-double pi = iniGet("MathConst","pi");//acos(-1.0);
+double pi = acos(-1.0);
 
 // Physics constants
-const double mu0 =iniGet("PhysConst","mu0");// 4 * pi * 1E-7;
+const double mu0 = 4 * pi * 1E-7;
 const double muB =iniGet("PhysConst","muB");// 9.27400968 * 1E-24; // Bohr magneton
 const double R =iniGet("PhysConst","R");// 8.31;
 const double Na =iniGet("PhysConst","Na");// 6.02214179 * 1E23;
@@ -61,10 +65,10 @@ double dt_neel =iniGet("BasicPhysModelPar","dt_neel");// 1E-9; // [s] // Neel re
 const double dt0 =iniGet("BasicPhysModelPar","dt0");// 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel =iniGet("BasicPhysModelPar","d_neel");// 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min =iniGet("BasicPhysModelPar","d_min");// 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
-long k_bm_inst_max =iniGet("BasicPhysModelPar","k_bm_inst_max");// 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
-long k_bm_inst =iniGet("BasicPhysModelPar","k_bm_inst");// 1;
+long k_bm_inst_max =(long)iniGet("BasicPhysModelPar","k_bm_inst_max");// 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
+long k_bm_inst =(long)iniGet("BasicPhysModelPar","k_bm_inst");// 1;
 double k_force_adapt_0 =iniGet("BasicPhysModelPar","k_force_adapt_0");// 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
-long slow_steps =iniGet("BasicPhysModelPar","slow_steps");// 0;
+long slow_steps =(long)iniGet("BasicPhysModelPar","slow_steps");// 0;
 //double smooth_v = 10; // disabled in code
 double smooth_r =iniGet("BasicPhysModelPar","smooth_r");// 0.4;
 //double m_h_eff_tol = 1; // max. angle [rad] between m and B
@@ -184,3 +188,103 @@ double C5 = mu0 / (4 * pi);
 
 double alpha_damp =iniGet("DefaultOrder","alpha_damp");// 0.05; //magnetization dynamic damping
 int ScreenCaptureStep =(int)iniGet("DefaultOrder","ScreenCaptureStep");// 10000; //every ScreenCaptureStep`s steps will make screen  shot
+
+
+void ParamInfo()
+{
+	fstream file1 = fstream("info2.txt");
+	file1<<"infoTest"<<endl;
+	file1<<"gl_scale"<<"=="<<gl_scale<<endl;
+	file1<<"pi"<<"=="<<pi<<endl;
+	file1<<"mu0"<<"=="<<mu0<<endl;
+	file1<<"muB"<<"=="<<muB<<endl;
+	file1<<"R"<<"=="<<R<<endl;
+	file1<<"Na"<<"=="<<Na<<endl;
+	file1<<"g"<<"=="<<g<<endl;
+	file1<<"kb"<<"=="<<kb<<endl;
+	file1<<"ta0"<<"=="<<ta0<<endl;
+	file1<<"gamma_e"<<"=="<<gamma_e<<endl;
+	file1<<"a0"<<"=="<<a0<<endl;
+	file1<<"volume_reduce"<<"=="<<volume_reduce<<endl;
+	file1<<"scale"<<"=="<<scale<<endl;
+	file1<<"nano_size"<<"=="<<nano_size<<endl;
+	file1<<"Lx"<<"=="<<Lx<<endl;
+	file1<<"Ly"<<"=="<<Ly<<endl;
+	file1<<"Lz"<<"=="<<Lz<<endl;
+	file1<<"delta_r"<<"=="<<delta_r<<endl;
+	file1<<"delta_r_init"<<"=="<<delta_r_init<<endl;
+	file1<<"is_periodic"<<"=="<<is_periodic<<endl;
+	file1<<"dt_neel"<<"=="<<dt_neel<<endl;
+	file1<<"dt0"<<"=="<<dt0<<endl;
+	file1<<"d_neel"<<"=="<<d_neel<<endl;
+	file1<<"d_min"<<"=="<<d_min<<endl;
+	file1<<"k_bm_inst_max"<<"=="<<k_bm_inst_max<<endl;
+	file1<<"k_bm_inst"<<"=="<<k_bm_inst<<endl;
+	file1<<"k_force_adapt_0"<<"=="<<k_force_adapt_0<<endl;
+	file1<<"slow_steps"<<"=="<<slow_steps<<endl;
+	file1<<"smooth_r"<<"=="<<smooth_r<<endl;
+	file1<<"T"<<"=="<<T<<endl;
+	file1<<"sigma_sf_nano"<<"=="<<sigma_sf_nano<<endl;
+	file1<<"kr"<<"=="<<kr<<endl;
+	file1<<"delta"<<"=="<<delta<<endl;
+	file1<<"is_uniform_field_test"<<"=="<<is_uniform_field_test<<endl;
+	file1<<"is_large_mode"<<"=="<<is_large_mode<<endl;
+	file1<<"large_fraction"<<"=="<<large_fraction<<endl;
+	file1<<"k_large"<<"=="<<k_large<<endl;
+	file1<<"is_oleic"<<"=="<<is_oleic<<endl;
+	file1<<"R_oleic_0"<<"=="<<R_oleic_0<<endl;
+	file1<<"isMicroDrop"<<"=="<<isMicroDrop<<endl;
+	file1<<"phi_v"<<"=="<<phi_v<<endl;
+	file1<<"alpha"<<"=="<<alpha<<endl;
+	file1<<"isPGasMode"<<"=="<<isPGasMode<<endl;
+	file1<<"isPGasPrevail"<<"=="<<isPGasPrevail<<endl;
+	file1<<"P_pgas"<<"=="<<P_pgas<<endl;
+	file1<<"P_sf_oleic"<<"=="<<P_sf_oleic<<endl;
+	file1<<"eta_oleic"<<"=="<<eta_oleic<<endl;
+	file1<<"a3_eta_oleic"<<"=="<<a3_eta_oleic<<endl;
+	file1<<"a2_eta_oleic"<<"=="<<a2_eta_oleic<<endl;
+	file1<<"a1_eta_oleic"<<"=="<<a1_eta_oleic<<endl;
+	file1<<"a0_eta_oleic"<<"=="<<a0_eta_oleic<<endl;
+	file1<<"sigma_sf"<<"=="<<sigma_sf<<endl;
+	file1<<"a_sigma_sf"<<"=="<<a_sigma_sf<<endl;
+	file1<<"b_sigma_sf"<<"=="<<b_sigma_sf<<endl;
+	file1<<"ro_oleic"<<"=="<<ro_oleic<<endl;
+	file1<<"mol_mass_oleic"<<"=="<<mol_mass_oleic<<endl;
+	file1<<"v_oleic"<<"=="<<v_oleic<<endl;
+	file1<<"mass_oleic"<<"=="<<mass_oleic<<endl;
+	file1<<"rop"<<"=="<<rop<<endl;
+	file1<<"A_H"<<"=="<<A_H<<endl;
+	file1<<"N_oa"<<"=="<<N_oa<<endl;
+	file1<<"k_o"<<"=="<<k_o<<endl;
+	file1<<"N_o"<<"=="<<N_o<<endl;
+	file1<<"K1"<<"=="<<K1<<endl;
+	file1<<"Ms_mass"<<"=="<<Ms_mass<<endl;
+	file1<<"Ms"<<"=="<<Ms<<endl;
+	file1<<"Ch"<<"=="<<Ch<<endl;
+	file1<<"Ch_ss"<<"=="<<Ch_ss<<endl;
+	file1<<"load_at_start"<<"=="<<load_at_start<<endl;
+	file1<<"auto_save"<<"=="<<auto_save<<endl;
+	file1<<"manual_field_control"<<"=="<<manual_field_control<<endl;
+	file1<<"ext_field_is_homo"<<"=="<<ext_field_is_homo<<endl;
+	file1<<"auto_reversal"<<"=="<<auto_reversal<<endl;
+	file1<<"setting_plot"<<"=="<<setting_plot<<endl;
+	file1<<"start_t"<<"=="<<start_t<<endl;
+	file1<<"T_ext"<<"=="<<T_ext<<endl;
+	file1<<"nu_ext"<<"=="<<nu_ext<<endl;
+	file1<<"start_ideal"<<"=="<<start_ideal<<endl;
+	file1<<"start_sediment"<<"=="<<start_sediment<<endl;
+	file1<<"ro0"<<"=="<<ro0<<endl;
+	file1<<"eta_car0"<<"=="<<eta_car0<<endl;
+	file1<<"eta_car"<<"=="<<eta_car<<endl;
+	file1<<"mol_mass_car"<<"=="<<mol_mass_car<<endl;
+	file1<<"v_car"<<"=="<<v_car<<endl;
+	file1<<"mass_car"<<"=="<<mass_car<<endl;
+	file1<<"B0"<<"=="<<B0<<endl;
+	file1<<"gradPerc"<<"=="<<gradPerc<<endl;
+	file1<<"gradL"<<"=="<<gradL<<endl;
+	file1<<"C1"<<"=="<<C1<<endl;
+	file1<<"C5"<<"=="<<C5<<endl;
+	file1<<"alpha_damp"<<"=="<<alpha_damp<<endl;
+	file1<<"ScreenCaptureStep"<<"=="<<ScreenCaptureStep<<endl;
+
+}

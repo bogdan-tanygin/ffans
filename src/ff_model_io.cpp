@@ -198,6 +198,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 	
 	case 'N': case 'n':
+		ParamInfo();
 		out<<"../tools/step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ <<".bmp";
 		GetScreenShot(out.str());
 		break;
@@ -392,14 +393,14 @@ void ff_io_save_setting(ff_vect_t m_tot,double I)
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III, *file3;
     double V_oleic = 0;
 
-    file  = fopen("setting_M.dat", "a");
-    file1 = fopen("setting_I.dat", "a");
-    file2 = fopen("setting_n_agg.dat", "a");
-    file2_phi = fopen("setting_phi_agg.dat", "a");
-    file2_I = fopen("setting_n_agg_I.dat", "a");
-    file2_II = fopen("setting_n_agg_II.dat", "a");
-    file2_III = fopen("setting_n_agg_III.dat", "a");
-    file3 = fopen("setting_P.dat", "a");
+    file  = fopen("../tools/setting_M.dat", "a");
+    file1 = fopen("../tools/setting_I.dat", "a");
+    file2 = fopen("../tools/setting_n_agg.dat", "a");
+    file2_phi = fopen("../tools/setting_phi_agg.dat", "a");
+    file2_I = fopen("../tools/setting_n_agg_I.dat", "a");
+    file2_II = fopen("../tools/setting_n_agg_II.dat", "a");
+    file2_III = fopen("../tools/setting_n_agg_III.dat", "a");
+    file3 = fopen("../tools/setting_P.dat", "a");
 
     //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
     //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));

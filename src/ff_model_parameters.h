@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 500 // number of the particles
+#define pN 100 // number of the particles
 
 // Math constants
 extern double pi;
@@ -160,3 +160,5 @@ extern double Ms;
 extern double K1;
 
 extern int ScreenCaptureStep; 
+
+extern void ParamInfo();
