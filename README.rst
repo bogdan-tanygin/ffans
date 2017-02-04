@@ -14,7 +14,9 @@ About
 -----
 The FFANS is a molecular dynamics and dipole-dipole micromagnetics based simulation package. It is powered by an interactive orthographic and perspective 3D presentation layer with the automatic screenshoting and state saving allowing researchers to investigate physical process continuously in an obvious and visual way. High numerical stability gives an ability of a long-term run. Atomic object of simulation is a nanoparticle. Implicit solvent is modeled by Langevin thermostat. The Langevin dynamics has been implemented by Analytical Dissipative Integrator approach. Units are given in SI.
 
-Product is written in C/C++ (physical process simulation) and OpenGL (3D graphics). If you have questions regarding usage and/or collaboration, feel free to `contact us <b.m.tanygin@gmail.com>`_. Original publication for `citation <http://cpb.iphy.ac.cn/EN/abstract/abstract65596.shtml>`_: ::
+Product is written in C/C++ (physical process simulation) and OpenGL (3D graphics). Currently supported OS is only Windows. The cross-platform Qt layer implementation was started within other `project <https://github.com/psci2195/qt-ffans>`_.
+
+If you have questions regarding usage and/or collaboration, feel free to `contact us <b.m.tanygin@gmail.com>`_. Original publication for `citation <http://cpb.iphy.ac.cn/EN/abstract/abstract65596.shtml>`_: ::
 
   @article{Tanygin2015,
   author = {Tanygin, B. M. and Shulyma, S. I. and Kovalenko, V. F. and Petrychuk, M. V.},
