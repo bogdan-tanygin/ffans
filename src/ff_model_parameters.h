@@ -160,3 +160,5 @@ extern double Ms;
 extern double K1;
 
 extern int ScreenCaptureStep; 
+
+extern void ParamInfo();

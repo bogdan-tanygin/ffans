@@ -25,8 +25,10 @@
 #include "ff_sys_graphics.h"
 #include "ff_model_graphics.h"
 #include "ff_model.h"
+#include "ff_iniParam.h"
 
 int main(int argc, char **argv)
+    //int _tmain(int argc, _TCHAR* argv[])
 {
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III;
 
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
     fclose(file2_I);
     fclose(file2_II);
     fclose(file2_III);
+	
 
     // system graphics init
     ff_gr_init(argc, argv);
@@ -57,10 +60,6 @@ int main(int argc, char **argv)
 
     // run graphics loop
     ff_gr_loop();
-
-    /*delete ff_gr_params;
-    delete ff_mgr_params;
-    delete ff_model_params;*/
 
     return 0;
 }

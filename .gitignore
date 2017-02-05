@@ -8,6 +8,9 @@
 *.sln
 *.sdf
 *.opensdf
+*.db
+*.opendb
+
 /ipch
 /Release
 /pack_bin
