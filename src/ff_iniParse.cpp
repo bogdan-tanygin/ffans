@@ -101,7 +101,7 @@ double iniGet(string section, string name)
 int ff_paramAnalysis( ) 
 {
 	string fileName = "ff_model_parameters.ini";
-	FILE *f1 =  fopen ("../samples/ff_model_parameters.ini", "r"); 
+	FILE *f1 =  fopen ("samples/ff_model_parameters.ini", "r"); 
 	wordsInStruct(f1);
 //	info();
 	cout<<"Import from:"<<fileName<<endl;

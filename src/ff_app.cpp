@@ -30,23 +30,15 @@
 int main(int argc, char **argv)
     //int _tmain(int argc, _TCHAR* argv[])
 {
-    /*ff_gr_params_t *ff_gr_params;
-    ff_mgr_params_t *ff_mgr_params;
-    ff_model_params_t *ff_model_params;
-
-    ff_gr_params = new ff_gr_params_t;
-    ff_mgr_params = new ff_mgr_params_t;
-    ff_model_params = new ff_model_params_t;*/
-
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III;
 
-    file  = fopen("../tools/setting_M.dat", "w");
-    file1 = fopen("../tools/setting_I.dat", "w");
-    file2 = fopen("../tools/setting_n_agg.dat", "w");
-    file2_phi = fopen("../tools/setting_phi_agg.dat", "w");
-    file2_I = fopen("../tools/setting_n_agg_I.dat", "w");
-    file2_II = fopen("../tools/setting_n_agg_II.dat", "w");
-    file2_III = fopen("../tools/setting_n_agg_III.dat", "w");
+    file  = fopen("setting_M.dat", "w");
+    file1 = fopen("setting_I.dat", "w");
+    file2 = fopen("setting_n_agg.dat", "w");
+    file2_phi = fopen("setting_phi_agg.dat", "w");
+    file2_I = fopen("setting_n_agg_I.dat", "w");
+    file2_II = fopen("setting_n_agg_II.dat", "w");
+    file2_III = fopen("setting_n_agg_III.dat", "w");
 
     fclose(file);
     fclose(file1);
@@ -68,10 +60,6 @@ int main(int argc, char **argv)
 
     // run graphics loop
     ff_gr_loop();
-
-    /*delete ff_gr_params;
-    delete ff_mgr_params;
-    delete ff_model_params;*/
 
     return 0;
 }
