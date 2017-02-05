@@ -27,16 +27,7 @@
 #include "ff_model.h"
 
 int main(int argc, char **argv)
-    //int _tmain(int argc, _TCHAR* argv[])
 {
-    /*ff_gr_params_t *ff_gr_params;
-    ff_mgr_params_t *ff_mgr_params;
-    ff_model_params_t *ff_model_params;
-
-    ff_gr_params = new ff_gr_params_t;
-    ff_mgr_params = new ff_mgr_params_t;
-    ff_model_params = new ff_model_params_t;*/
-
     FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III;
 
     file  = fopen("setting_M.dat", "w");
