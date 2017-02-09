@@ -78,12 +78,10 @@ void cbSpecialKeyPressed(int key, int x, int y)
         break;
 
     case GLUT_KEY_UP:
-        //x_speed -= 0.01f;
         space_k *= 1.1;
         break;
 
     case GLUT_KEY_DOWN:
-        //x_speed += 0.01f;
         space_k /= 1.1;
         break;
 

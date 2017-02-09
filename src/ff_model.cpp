@@ -51,30 +51,21 @@ int m_sat[pN + 1];
 ff_vect_t F[pN + 1]; // mean force
 ff_vect_t F1[pN + 1]; // force at the t = t
 ff_vect_t F2[pN + 1]; // force at the t = t + dt
-//ff_vect_t P[pN + 1];
 ff_vect_t tau[pN + 1]; // mean torque
 ff_vect_t tau1[pN + 1]; // torque at the t = t
 ff_vect_t tau2[pN + 1]; // // torque at the t = t + dt
-//ff_vect_t tau_r[pN + 1]; // random torque
 
 ff_vect_t v[pN + 1];
-//ff_vect_t v_r[pN + 1]; // random heat component
 ff_vect_t w[pN + 1]; // angular velocity vector
-//ff_vect_t w_r[pN + 1]; // random heat component
 
 ff_vect_t drt[pN + 1];
 ff_vect_t drt_r[pN + 1]; // instantiated random translation
 ff_vect_t dvt[pN + 1];
 ff_vect_t dvt_r[pN + 1];
-//ff_vect_t dvt_r[pN + 1]; // instantiated random velocity
-//double dv_r[pN + 1]; // extra random velocity magnitude
 ff_vect_t dphi[pN + 1];
 ff_vect_t dphi_r[pN + 1]; // instantiated random rotation
-//ff_vect_t dm[pN + 1];
 ff_vect_t dw[pN + 1];
 ff_vect_t dw_r[pN + 1];
-
-//ff_vect_t dir110[13];
 
 long i_min = 1;
 double V0_tot = 0; // total volume of the dispersed phase
@@ -87,7 +78,6 @@ int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
 int is_temp_sat[pN + 1]; // temperature saturation flag
 int is_inside_oleic[pN + 1];
-//int aggregated_p[pN + 1][pN + 1]; // map of particles aggregation, in case of dW > G_barrier
 double Rp0[pN + 1];
 double Rp[pN + 1];
 double Vp0[pN + 1];
@@ -96,7 +86,6 @@ double m0p[pN + 1];
 double M0p[pN + 1];
 double I0p[pN + 1]; // particle moment of inertia
 double r0modp[pN + 1];
-//double Vselfp[pN + 1];
 double C2[pN + 1];
 double gamma_rot[pN + 1];
 
