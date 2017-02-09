@@ -31,6 +31,6 @@ Product is written in C/C++ (physical process simulation) and OpenGL (3D graphic
 
 License
 -------
-Copyright (C) 2011,2013-2017 Dr. Bogdan Tanygin and Dmytro Matskevych.
+Copyright (C) 2006,2011,2013-2017 Dr. Bogdan Tanygin, Mr. Dmytro Matskevych, present repository contributors, and authors specified at the source files beginning.
 
 The FFANS is a free software made available under the GPL License. For details see the LICENSE file.
