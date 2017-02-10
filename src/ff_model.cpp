@@ -113,9 +113,6 @@ long step = 0;
 double kB = 0;
 int hyst_mode = 1;
 double mz_tot;
-long glob_start_step = 1;
-long glob_start_step_susc = 1;
-double glob_start_t;
 double mz_glob = 0; // global mean average start from the hyst. point switch
 ff_vect_t m_tot_glob;
 
@@ -1180,8 +1177,6 @@ void ff_model_init(void)
     var_uni = new boost::variate_generator<boost::mt19937&, boost::uniform_01<> > (rng, *ud);
 
     t = 0; // time
-
-    glob_start_t = start_t;
 
     m_tot_glob.x = m_tot_glob.y = m_tot_glob.z = 0;
 

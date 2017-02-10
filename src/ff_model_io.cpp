@@ -203,7 +203,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 	case '0':
         BmanX = BmanY = BmanZ = 0;
-        glob_start_step_susc = 0;
         break;
     case '1':
         if (manual_field_control)
@@ -353,8 +352,6 @@ void ff_io_load(long tstep)
     char str[50];
     long p;
 
-    glob_start_step = step;
-    glob_start_step_susc = step;
     //k_bm_inst = 1;
 
     if (tstep == 0)

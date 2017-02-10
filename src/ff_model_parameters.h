@@ -56,8 +56,6 @@ extern int auto_save;
 extern int manual_field_control;
 extern int ext_field_is_homo;
 extern int setting_plot;
-extern double start_t; // [s]
-extern double nu_ext;
 
 extern double start_ideal;
 
