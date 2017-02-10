@@ -1,1 +1,1 @@
-del /Q *.dat
+del /Q ..\*.dat
