@@ -481,34 +481,18 @@ ff_vect_t ff_model_nonloc_torque(long p)
     register long ps;
     double mxs, mys, mzs;
     double dx, dy, dz;
-    double dx_q_plus, dy_q_plus, dz_q_plus;
-    double dx_q_minus, dy_q_minus, dz_q_minus, dR_q_plus, dR_q_minus;
-    double eps, max_eps;
 
     double MUL2mod__dR5mod1, dR2__dR5mod1;
     double dR, dR2, dR5, dR5mod1, MUL2mod;
 
     double tBx, tBy, tBz;
     double dtBx, dtBy, dtBz;    // field of single ps-th particle
-    double dtBqx, dtBqy, dtBqz;
-    double tBmag, tm, tms;
-    double tk;
+    double tBmag;
 
-    double esx, esy, esz;
-
-    double mag_qs;
-
-    long p_prev;
-
-    double sign;
-    int is_last;
-
-    ff_vect_t tBext;
+	ff_vect_t tBext;
     ff_vect_t ttau;
 
     ttau.x = ttau.y = ttau.z = 0;
-
-    int di, dj, dk;
 
     if (exist_p[p])
     {
@@ -610,24 +594,17 @@ ff_vect_t ff_model_nonloc_force(long p)
     register long ps;
     double tFx, tFy, tFz;
     double dtFx, dtFy, dtFz;
-    double dreptFx, dreptFy, dreptFz; // repulsion
-    double dr, drtemp, l, dr2, dr3, dr2mod, dr5, dr5mod, MUL1, MUL2, MUL3;
+    double dr, dr2, dr3, dr2mod, dr5, dr5mod, MUL1, MUL2, MUL3;
     double Cmod;
     double dx, dy, dz;
-    double tk;
-    double sec_pow;
     ff_vect_t ttF, dBmaggrad;
 
     double MUL1__dr5mod, MUL2__dr5mod, MUL3__dr5mod, MUL1_MUL2__dr2mod__dr5mod;
 
     double mx, my, mz;
     double mxs, mys, mzs;
-    long p_prev;
-
-    int is_last;
-    double sign, tms, mag_qs;
 	
-    double dd, tt, dr_min, F_steric_mag;
+    double dr_min, F_steric_mag;
 
     tFx = 0;
     tFy = 0;
@@ -871,9 +848,7 @@ void ff_model_next_step(void)
     long mz_tot_n;
     ff_vect_t r0;
     double M0, I0;
-    ff_vect_t ex, ey, ez; // basis of rotation around ez = w
     double tmmag;
-    double theta_0_r, phi_0_r;
     double Mtot;
     double t_temp_1 = 0;
     double V_oleic = 0;
@@ -1301,15 +1276,6 @@ void ff_model_next_step(void)
                     phi_vol_fract_oleic /= (Lx * Ly * Lz);
                     phi_vol_fract_oleic *= 100;
                     
-                    P_pgas = kb * T * pN_oleic_drop / (V_oleic - V0_tot_oleic); // Van 't Hoff equation [Landau-V, eq. (88,3)]
-                    P_sf_oleic = 4 * sigma_sf / R_oleic;
-                    
-                    if (isPGasMode)
-                    {
-                        if (P_pgas / P_sf_oleic > 1.0) isPGasPrevail = 1.0;
-                        else isPGasPrevail = 0.0;
-                    }
-
                     if (auto_reversal) ff_model_auto_hyst();
                     if (step % 100000 == 0) ff_io_autosave();
                     else if ((step < 100000) && (step % 10000 == 0)) ff_io_autosave();
@@ -1337,7 +1303,6 @@ t_end:
 int ff_model_check_walls(long p)
 {
     int res = 0;
-    double dr;
 
     if (!is_periodic)
     {
@@ -1503,8 +1468,6 @@ ff_vect_t dBz_het_bem(ff_vect_t r)
 ff_vect_t Bext(double x, double y, double z)
 {
     ff_vect_t tBext,r;
-    double normX, normY, normZ;
-
     r.x = x; r.y = y; r.z = z;
 
     if (!manual_field_control)
@@ -1539,14 +1502,13 @@ ff_vect_t Bext(double x, double y, double z)
 
 void ff_model_init(void)
 {
-    long p, ps, tp, p_prev;
+    long p, tp, p_prev;
     double theta, phi;
     ff_vect_t dr;
     double dR;
     double sigma;
-    long i,j;
     double t_temp_1 = 0;
-    double dr_tmp, dr_min;
+    double dr_min;
     int cont_flag;
     long i_attempt; 
     double start_scale = 0.99;
@@ -1690,7 +1652,6 @@ cont2:
 // Update of the random motion
 void ff_model_effective_random_motion_update(long p)
 {
-    double Px, Py, Pz, tau_r_phi; // instantiated effective random force
     double theta_0, phi_0; // random direction of the torque 
     double dx, dy, dz, dvx, dvy, dvz, dphi, dw; // instantiated displacements for time dt * k_bm_inst_max
     double D, D_rot, gamma, gamma_rot;
@@ -1700,8 +1661,6 @@ void ff_model_effective_random_motion_update(long p)
     double speed_ballance = 1;
     double dR = 0;
 
-    ff_vect_t e1, e2, e3; // dynamic coordinate system
-    double P1, P2, P3;
     double tmp = 0;
 
     double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
@@ -1709,9 +1668,6 @@ void ff_model_effective_random_motion_update(long p)
 
     double sigma2 = 0, sigma2_rot = 0;
 	double sigma2v = 0, sigma2w_rot = 0;
-
-    //dt0 = dt * k_bm_inst_max;
-    //dt0 = dt;
 
     gamma_oleic = 6 * pi * eta_oleic * Rp[p];
     gamma_car = 6 * pi * eta_car * Rp[p];
