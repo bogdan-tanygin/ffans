@@ -28,7 +28,6 @@
 using namespace std;
 int isAnalysis = ff_paramAnalysis();
 double gl_scale = iniGet("ParticleDiam","gl_scale");//1.0; // particle diameter scale parameter
-	//
 
 // Math constants
 double pi = acos(-1.0);
@@ -47,8 +46,8 @@ const double gamma_e =iniGet("PhysConst","gamma_e");// 1.760859708 * 1E11; // [s
 double a0 =iniGet("Material","a0");// 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature) // \cite{Fleet1981}
 
 // Space
-double volume_reduce =iniGet("Space","volume_reduce");// 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
-double scale = 2 * 7 * 0.15 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
+//double volume_reduce =iniGet("Space","volume_reduce");// 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
+//double scale = 2 * volume_reduce * gl_scale / pow(500.0 / pN, 1 / 3.0); // / pow(50.0, 1 / 3.0);
 //double Lx = 1E-6 * scale, Ly = 1E-6 * scale, Lz = 25E-6 * scale; //meters
 double nano_size =iniGet("Space","nano_size");// 950;
 double Lx = nano_size * 1E-9 / 3.0, Ly = nano_size * 1E-9, Lz = nano_size * 1E-9 * 3; //meters
@@ -57,9 +56,6 @@ double delta_r_init =iniGet("Space","delta_r_init");// 20 * 1E-9; // delta_r;
 
 // periodic boundary conditions
 int is_periodic =(int)iniGet("PeriodBoundary","is_periodic");// 0;
-
-//double kExtra = 0.27 * 20 * 1; // change only this coef. instead Lz
-//double Lx = 10 * kExtra * 1E-6, Ly = kExtra * 1E-6, Lz = kExtra * 1E-6;
 
 // Basic physical model parameters
 double dt_neel =iniGet("BasicPhysModelPar","dt_neel");// 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
@@ -70,18 +66,13 @@ long k_bm_inst_max =(long)iniGet("BasicPhysModelPar","k_bm_inst_max");// 100; //
 long k_bm_inst =(long)iniGet("BasicPhysModelPar","k_bm_inst");// 1;
 double k_force_adapt_0 =iniGet("BasicPhysModelPar","k_force_adapt_0");// 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
 long slow_steps =(long)iniGet("BasicPhysModelPar","slow_steps");// 0;
-//double smooth_v = 10; // disabled in code
 double smooth_r =iniGet("BasicPhysModelPar","smooth_r");// 0.4;
-//double m_h_eff_tol = 1; // max. angle [rad] between m and B
 
 double T =iniGet("BasicPhysModelPar","T");// 273.15; // K
 double sigma_sf_nano =iniGet("BasicPhysModelPar","sigma_sf_nano");// 5E-4; //1E-4;
 
 double kr = gl_scale; // particle size parameter []
-//double R00 = 0.5 * 15E-9; // Radius of the nanoparticle [m]
 double delta =iniGet("BasicPhysModelPar","delta");// 2.0E-9;
-//double R0 = R00 + delta; // Radius including the acid sphere [m]
-//double Vself = (4 * pi / 3.0) * pow(R00, 3); // [m^3]
 
 int is_uniform_field_test =(int)iniGet("BasicPhysModelPar","is_uniform_field_test");// 0;
 
@@ -101,14 +92,11 @@ int isPGasMode =(int)iniGet("MicroDropModePar","isPGasMode");// 0;
 int isPGasPrevail =(int)iniGet("MicroDropModePar","isPGasPrevail");// 0;
 double P_pgas =iniGet("MicroDropModePar","P_pgas");// 0; // particles gas pressure inside the oleic drop
 double P_sf_oleic =iniGet("MicroDropModePar","P_sf_oleic");// 0; // oleic droplet surface tension pressure
-//double eta_oleic = 25.6 * 1E-3; // [Pa * s]
-//double eta_oleic = 14.285 * 1E-3; // [Pa * s]
 double eta_oleic =iniGet("MicroDropModePar","eta_oleic");// 0;
 double a3_eta_oleic =iniGet("MicroDropModePar","a3_eta_oleic");// - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
 double a2_eta_oleic =iniGet("MicroDropModePar","a2_eta_oleic");// 2E-05;
 double a1_eta_oleic =iniGet("MicroDropModePar","a1_eta_oleic");// - 0.0018;
 double a0_eta_oleic =iniGet("MicroDropModePar","a0_eta_oleic");// 0.0559;
-//double sigma_sf = 32.5 * 1E-3; // [N / m]
 double sigma_sf =iniGet("MicroDropModePar","sigma_sf");// 0;
 double a_sigma_sf =iniGet("MicroDropModePar","a_sigma_sf");// 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
 double b_sigma_sf =iniGet("MicroDropModePar","b_sigma_sf");// - 0.061298 * 1E-3; // [N / m] // linear coefficient
@@ -117,21 +105,15 @@ double mol_mass_oleic =iniGet("MicroDropModePar","mol_mass_oleic");// 282*1E-3; 
 double v_oleic =iniGet("MicroDropModePar","v_oleic");//  2* 1E-7; //m^3 volume of oleic acid
 double mass_oleic = ro_oleic * v_oleic;
 
-//double sigma_sf_nano = sigma_sf * 1 * 5.017559E-04; // [N / m]
-//double sigma_sf_nano = 5E-2 * sigma_sf;
-
 double rop =iniGet("MicroDropModePar","rop");// 5240; // magnetite mass density [kg / m^3]
-//double M0 = Vself * rop;  // mass [kg]
 double A_H =iniGet("MicroDropModePar","A_H");// 4E-20; // Hamaker constant [J]
 
 double N_oa =iniGet("MicroDropModePar","N_oa");// 1E18; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
 double k_o =iniGet("MicroDropModePar","k_o");// 0.5; // 5E-4 - same result //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
-//double G_barrier = pow(kr, 2) * 25 * kb * T; // [TEMP] barrier which prevents particles aggregation
 double K1 =iniGet("MicroDropModePar","K1");// 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
-//double m0 = Ms_mass * M0 /* Bohr magnetons */* 927.400915 * (1E-26); // Magnetic moment [J / T]
 double Ms =iniGet("MicroDropModePar","Ms");// 478 * 1E3; // [A / m]
 
 double Ch =iniGet("MicroDropModePar","Ch");// 0.01; // [DEPRECATED] adhesion / magnetic relation
@@ -157,8 +139,6 @@ double eta_car =iniGet("MicroDropModePar","eta_car");// 1; //Pa * s //Mix eta
 double mol_mass_car =iniGet("MicroDropModePar","mol_mass_car");// 170*1E-3; //molar mass of kerosene
 double v_car =iniGet("MicroDropModePar","v_car");// 3*1E-6; //volume of kerosine
 double mass_car = ro0*v_car;//mas of kerosine
-//int __deprecated__brownian_shifts = 0;
-//int __deprecated__brownian_force = 1;
 
 //default order of magnitude of the external field but exact function is hardcoded 
 double B0 = 2500 /*Oe*/ * 79.577 * mu0; // Tesla
@@ -167,25 +147,7 @@ double gradL = Lx / 2.0;
 
 // Derived parameters
 double C1 = 3 * mu0 / (4 * pi);
-//double C2 = 6 * pi * eta * R0;
-//double C3 = M0 * g;
-//double D = R * T / (6 * Na * pi * R0 * eta);
-//double gamma = 6 * pi * R0 * eta;
-//double r0 = sqrt(3 * 2 * D * dt);
-//double r0mod = sqrt(3 * 2 * D); // needs extra * dt^(1/2.0)
-//double C4 = r0;
 double C5 = mu0 / (4 * pi);
-
-//double Mself = m0 / Vself;
-
-//double Hself = - (1 / 3.0) * Mself;
-//double Bself = mu0 * (Hself + Mself);
-
-// 0.740 is atomic packing factor of the fcc lattice
-// total mean total vol. of the clusters
-//double Vtot = (4 / 3.0) * pi * pow(R0, 3) * (1 / 0.740) * pN;
-
-//double C6 = ro0 * Vself * g;
 
 double alpha_damp =iniGet("DefaultOrder","alpha_damp");// 0.05; //magnetization dynamic damping
 int ScreenCaptureStep =(int)iniGet("DefaultOrder","ScreenCaptureStep");// 10000; //every ScreenCaptureStep`s steps will make screen  shot
@@ -206,8 +168,6 @@ void ParamInfo()
 	file1<<"ta0"<<"=="<<ta0<<endl;
 	file1<<"gamma_e"<<"=="<<gamma_e<<endl;
 	file1<<"a0"<<"=="<<a0<<endl;
-	file1<<"volume_reduce"<<"=="<<volume_reduce<<endl;
-	file1<<"scale"<<"=="<<scale<<endl;
 	file1<<"nano_size"<<"=="<<nano_size<<endl;
 	file1<<"Lx"<<"=="<<Lx<<endl;
 	file1<<"Ly"<<"=="<<Ly<<endl;

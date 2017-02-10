@@ -46,12 +46,6 @@ extern double Rp[];
 
 extern double G_dd[];
 
-//extern ff_vect_t P[];  // effective instantiated random force
-
-//extern ff_vect_t F0[];
-
-//extern ff_vect_t B[]; //distribution of the magnetic field between the particles
-
 extern double B_hyst[];
 extern double Mz_hyst[];
 extern double B_hyst_n[];
@@ -127,12 +121,6 @@ void ff_model_size_dispersion_init(void);
 void ff_model_size_dispersion_param_calc(double,long);
 
 int ff_model_check_walls(long);
-
-//void ff_model_check_overlapp(long);
-
-void ff_model_brownian_validation(long);
-void ff_model_update_conc_in_oleic(long);
-void ff_model_update_mdrop_parameters(void);
 
 double ff_model_G_steric(long p, long ps);
 double ff_model_G_london(long p, long ps);

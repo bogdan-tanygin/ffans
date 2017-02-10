@@ -51,15 +51,10 @@ extern long k_bm_inst_max;
 extern long k_bm_inst;
 extern double k_force_adapt_0;
 extern long slow_steps;
-//extern double smooth_v;
 extern double smooth_r;
-//extern double m_h_eff_tol;
 
 extern double Ch;
 extern double Ch_ss;
-//extern double EPS;
-//extern double ro1;
-//extern double ro2;
 extern int load_at_start;
 extern int auto_reversal;
 extern int auto_save;
@@ -72,16 +67,7 @@ extern double nu_ext;
 extern double start_ideal;
 extern double start_sediment;
 
-//extern int __deprecated__brownian_shifts;
-//extern int __deprecated__brownian_force;
-
-//extern double gap;
-
-//extern double R00; // Radius of the nanoparticle [m]
 extern double delta;
-//extern double R0; // Radius including the acid sphere [m]
-//extern double M0; // mass [kg]
-//extern double m0; // Magnetic moment [J / T]
 
 extern int is_uniform_field_test;
 
@@ -135,24 +121,9 @@ extern double gradPerc;
 extern double gradL;
 
 // Derived parameters
-//extern double C2;
-//extern double C3;
-//extern double D;
-//extern double gamma;
-//extern double r0;
-//extern double r0mod;
-//extern double C4;
 extern double C5;
 
 extern double Vself;
-//extern double Mself;
-
-//extern double Hself;
-//extern double Bself;
-
-//extern double Vtot;
-
-//extern double C6;
 
 extern double alpha_damp;
 
