@@ -1,5 +1,6 @@
 /**************************************************************************
-* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* Copyright (C) 2011,2013-2014,2017 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* Copyright (C) 2016,2017 Dmytro Matskevych<dimqqqq@mail.ru>
 * All rights reserved.
 * 
 * This program is free software: you can redistribute it and/or modify
@@ -77,12 +78,10 @@ void cbSpecialKeyPressed(int key, int x, int y)
         break;
 
     case GLUT_KEY_UP:
-        //x_speed -= 0.01f;
         space_k *= 1.1;
         break;
 
     case GLUT_KEY_DOWN:
-        //x_speed += 0.01f;
         space_k /= 1.1;
         break;
 
@@ -158,16 +157,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
         else if (BmanX == 0) {BmanX = -BmanY; BmanY = 0;}
         break;
 
-        /*case '[':
-        smooth_r *= 0.9;
-        m_h_eff_tol *= 0.9;
-        break;
-
-        case ']':
-        smooth_r *= 1.1;
-        m_h_eff_tol *= 1.1;
-        break;*/
-
     case 'l':
         ff_io_load(0);
         break;
@@ -211,54 +200,26 @@ void cbKeyPressed(unsigned char key, int x, int y)
 	case 'f':
 		ChangePosition();
 		break;
-    /*case 'h':
-        hyst_mode++;
-        tmp = 0;
-        if (hyst_mode == 21) {hyst_mode = 5; tmp = 1;}
-        ff_model_upgrade_ext_field();
-        if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
 
-        //        ff_io_save_hyst();
-
-        mz_glob = 0;
-        glob_start_step = step;
-
-        break;*/
-
-    case '0':
+	case '0':
         BmanX = BmanY = BmanZ = 0;
         glob_start_step_susc = 0;
         break;
     case '1':
         if (manual_field_control)
         {
-            /*ff_io_save_susceptX(); // save previous point
-            m_tot_glob.x = 0;
-            m_tot_glob.y = 0;
-            m_tot_glob.z = 0;
-            glob_start_step_susc = step;*/
             BmanX += 10;
         }
         break;
     case '2':
         if (manual_field_control)
         {
-            /*ff_io_save_susceptY();
-            m_tot_glob.x = 0;
-            m_tot_glob.y = 0;
-            m_tot_glob.z = 0;
-            glob_start_step_susc = step; */
             BmanY += 10;
         }
         break;
     case '3':
         if (manual_field_control)
         {
-            /*ff_io_save_susceptZ();
-            m_tot_glob.x = 0;
-            m_tot_glob.y = 0;
-            m_tot_glob.z = 0;
-            glob_start_step_susc = step; */
             BmanZ += 10;
         }
         break;
@@ -270,7 +231,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         Ly /= 2;
         Lz /= 2;
         break;
-    case ' ':  // F (Space) - Freeze Rotation!
+    case ' ':
         time_go = time_go?0:1;
 		ActiveWindow();
         break;
@@ -329,101 +290,19 @@ void cbKeyPressed(unsigned char key, int x, int y)
     }
 }
 
-/*void ff_io_save_hyst(void)
-{
-FILE* file;
-char s[100];
-
-if (g_hyst_start_line)
-{
-file = fopen("start_hyst.dat", "a");
-B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-B_hyst_n[hyst_mode] ++;
-
-Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-Mz_hyst_n[hyst_mode] ++;
-
-fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-fclose(file);
-}
-
-if (g_hyst_up_line)
-{
-if (hyst_mode == 5)
-{
-remove("up_hyst_old.dat");
-rename("up_hyst.dat", "up_hyst_old.dat");
-file = fopen("up_hyst.dat", "w");
-}
-else file = fopen("up_hyst.dat", "a");
-
-B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-B_hyst_n[hyst_mode] ++;
-
-Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-Mz_hyst_n[hyst_mode] ++;
-
-fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-fclose(file);
-}
-
-if (g_hyst_bottom_line)
-{
-if (hyst_mode == 13)
-{
-remove("bottom_hyst_old.dat");
-rename("bottom_hyst.dat", "bottom_hyst_old.dat");
-file = fopen("bottom_hyst.dat", "w");
-}
-else file = fopen("bottom_hyst.dat", "a");
-
-B_hyst[hyst_mode] += 0.5 * (g_Bz_prev + Bext(0,0,0).z);
-B_hyst_n[hyst_mode] ++;
-
-Mz_hyst[hyst_mode] += mz_glob / (Vtot * (step - glob_start_step));
-Mz_hyst_n[hyst_mode] ++;
-
-fprintf(file, "%5.3e %5.3e \n", B_hyst[hyst_mode] / B_hyst_n[hyst_mode], Mz_hyst[hyst_mode] / Mz_hyst_n[hyst_mode]);
-fclose(file);
-}
-}*/
-
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
-    FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III, *file3;
+    FILE *file, *file1;
     double V_oleic = 0;
 
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
-    file2 = fopen("setting_n_agg.dat", "a");
-    file2_phi = fopen("setting_phi_agg.dat", "a");
-    file2_I = fopen("setting_n_agg_I.dat", "a");
-    file2_II = fopen("setting_n_agg_II.dat", "a");
-    file2_III = fopen("setting_n_agg_III.dat", "a");
-    file3 = fopen("setting_P.dat", "a");
 
-    //fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)) / m0);
-    //fprintf(file1, "%5.3e %5.3e \n", t, I / (R00 * R00));
     fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
     fprintf(file1, "%5.3e %5.3e \n", t, I);
 
-    V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
-    fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
-    fprintf(file2_phi, "%5.3e %5.3e \n", t, phi_vol_fract_oleic);
-    fprintf(file2_I, "%5.3e %5.3e \n", t, pN_oleic_drop_I / V_oleic);
-    fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
-    fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
-
-    fprintf(file3, "%5.3e %5.3e %5.3e \n", t, P_pgas, P_pgas / P_sf_oleic);
-
     fclose(file);
     fclose(file1);
-    fclose(file2);
-    fclose(file2_phi);
-    fclose(file2_I);
-    fclose(file2_II);
-    fclose(file2_III);
-    fclose(file3);
 }
 
 void ff_io_autosave(void)
@@ -538,87 +417,6 @@ void ff_io_load(long tstep)
     } //tstep > 0
 }
 
-/*void ff_io_save_susceptX(void) // different susceptibility terms from the Bext.x
-{
-FILE* file;
-double Mx, My, Mz; // time-average
-double Hx; // external field
-
-Hx = Bext(0,0,0).x / mu0;
-Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
-
-if (BmanX == 0) remove("susceptXX.dat");
-file  = fopen("susceptXX.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hx, Mx);
-fclose(file);
-
-if (BmanX == 0) remove("susceptXY.dat");
-file  = fopen("susceptXY.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hx, My);
-fclose(file);
-
-if (BmanX == 0) remove("susceptXZ.dat");
-file  = fopen("susceptXZ.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hx, Mz);
-fclose(file);
-}
-
-void ff_io_save_susceptY(void) // different susceptibility terms from the Bext.x
-{
-FILE* file;
-double Mx, My, Mz; // time-average
-double Hy; // external field
-
-Hy = Bext(0,0,0).y / mu0;
-Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
-
-if (BmanY == 0) remove("susceptYX.dat");
-file  = fopen("susceptYX.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hy, Mx);
-fclose(file);
-
-if (BmanY == 0) remove("susceptYY.dat");
-file  = fopen("susceptYY.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hy, My);
-fclose(file);
-
-if (BmanY == 0) remove("susceptYZ.dat");
-file  = fopen("susceptYZ.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hy, Mz);
-fclose(file);
-}
-
-void ff_io_save_susceptZ(void) // different susceptibility terms from the Bext.x
-{
-FILE* file;
-double Mx, My, Mz; // time-average
-double Hz; // external field
-
-Hz = Bext(0,0,0).z / mu0;
-Mx = m_tot_glob.x / (Vtot * (step - glob_start_step_susc));
-My = m_tot_glob.y / (Vtot * (step - glob_start_step_susc));
-Mz = m_tot_glob.z / (Vtot * (step - glob_start_step_susc));
-
-if (BmanZ == 0) remove("susceptZX.dat");
-file  = fopen("susceptZX.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hz, Mx);
-fclose(file);
-
-if (BmanZ == 0) remove("susceptZY.dat");
-file  = fopen("susceptZY.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hz, My);
-fclose(file);
-
-if (BmanZ == 0) remove("susceptZZ.dat");
-file  = fopen("susceptZZ.dat", "a");
-fprintf(file, "%5.3e %5.3e \n", Hz, Mz);
-fclose(file);
-}*/
-
 void ff_io_entropy_change(void)
 {
 	double k_r = 1.01;
@@ -634,20 +432,16 @@ void ff_io_entropy_change(void)
 	for (p = 1; p <= pN - 1; p++)
 	{
 		G += G_dd[p] / 2.0 + ff_model_G_zeeman(p);
-		//printf("\n  G_dd[p] / 2.0 = %e",  G_dd[p] / 2.0);
-		//printf("\n  ff_model_G_zeeman(p) = %e",  ff_model_G_zeeman(p));
 
 		for (ps = p + 1; ps <= pN; ps++)
 		{
 			G += ff_model_G_london(p, ps) + ff_model_G_steric(p, ps);
-			//printf("\n ff_model_G_london(%d, %d) = %e", p, ps, ff_model_G_london(p, ps));
-			//printf("\n ff_model_G_steric(p, ps) = %e",  ff_model_G_steric(p, ps));
 		}
 	}
 	G /= pN;
 
 	// entropy calculation (only for monodisperse ferrofluid!)
-	a_free = pow(pi * 1.35 * pow(2 * Rp0[1], 3) / (6 * phi_vol_fract_oleic / 100), 1 / 3.0);
+	a_free = pow(pi * 1.35 * pow(2 * Rp0[1], 3) / (6 * phi_vol_fract / 100), 1 / 3.0);
 	V = (4 * pi / 3.0) * pow(a_free - 2 * Rp0[1], 3);
 	S = kb * log(V);
 
@@ -658,7 +452,7 @@ void ff_io_entropy_change(void)
 	printf("\n F / (k * T) = %e", F / (kb * T));
 
 	file  = fopen("F(phi).dat", "a");
-	fprintf(file, "%5.3e %5.3e \n", phi_vol_fract_oleic, F / (kb * T));
+	fprintf(file, "%5.3e %5.3e \n", phi_vol_fract, F / (kb * T));
 	fclose(file);
 
 	for (p = 1; p <= pN - 1; p++)
@@ -667,8 +461,6 @@ void ff_io_entropy_change(void)
 		r[p].y *= k_r;
 		r[p].z *= k_r;
 	}
-
-	R_oleic *= k_r;
 
 	Lx *= k_r;
 	Ly *= k_r;

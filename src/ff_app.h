@@ -1,5 +1,5 @@
 /**************************************************************************
-* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* Copyright (C) 2011,2013-2014,2017 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
 * All rights reserved.
 * 
 * This program is free software: you can redistribute it and/or modify
@@ -16,4 +16,4 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************/
 
-#define PROGRAM_TITLE "Ferrofluid Aggregates Nano Simulator (FFANS) - v.0.6.0.0"
+#define PROGRAM_TITLE "Ferrofluid Aggregates Nano Simulator (FFANS) - v.0.7.0.0"

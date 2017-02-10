@@ -1,5 +1,5 @@
 /**************************************************************************
-* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* Copyright (C) 2011,2013-2014,2017 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
 * All rights reserved.
 * 
 * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,6 @@
 void ff_io_save_setting(ff_vect_t m_tot,double I);
 void ff_io_autosave(void);
 void ff_io_load(long);
-/*void ff_io_save_susceptX(void);
-void ff_io_save_susceptY(void);
-void ff_io_save_susceptZ(void);*/
 void ff_io_entropy_change(void);
 
 extern void cbMouseInput(int button, int state, int x, int y);

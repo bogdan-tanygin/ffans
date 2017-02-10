@@ -1,5 +1,5 @@
 /**************************************************************************
-* Copyright (C) 2011,2013-2014 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
+* Copyright (C) 2011,2013-2014,2017 Dr. Bogdan Tanygin<b.m.tanygin@gmail.com>
 * All rights reserved.
 * 
 * This program is free software: you can redistribute it and/or modify
@@ -45,10 +45,9 @@ double gr_x0 = 0, gr_y0 = 0, gr_z0 = 0;
 
 // vector parameters
 double v_len;
-//double v_diam;
 ff_color4f_t v_col;
 
-double space_k = 9E6;// * (1 / 2.6E4 * isMicroDrop + 1 * (1 - isMicroDrop));
+double space_k = 9E6;
 
 void ff_mgr_draw_vector(ff_vect_t r, ff_vect_t v)
 {
@@ -126,28 +125,9 @@ void ff_mgr_draw_vector(ff_vect_t r, ff_vect_t v)
     glEnd();
 }
 
-/*void ff_mgr_set_m_vector(void)
-{
-double k = 0.2;
-
-v_len = k / 10.0;
-//v_diam = k / 50.0;
-
-v_col.r = 0;
-v_col.g = 0;
-v_col.b = 0;
-v_col.a = 0;
-
-glLineWidth(1);
-}*/
-
 void ff_mgr_set_bext_vector(void) //should be proportional to the field
 {
     v_len  = (50 / 10.0) * fabs(kB);
-    //v_diam = (50 / 50.0) * fabs(kB * B0 / Bself);
-
-    /*v_len  = 1 / 10.0;
-    v_diam = 1 / 50.0;*/
 
     v_col.r = 0;
     v_col.g = 1;
@@ -157,45 +137,13 @@ void ff_mgr_set_bext_vector(void) //should be proportional to the field
     glLineWidth(1);
 }
 
-/*void ff_mgr_set_b_vector(long p) //should be proportional to the field
-{
-double k = 0.2;
-
-v_len  = (k / 10.0) * sqrt(MUL(B[p],B[p])) / Bself;
-//v_diam = (k / 50.0) * sqrt(MUL(B[p],B[p])) / Bself;
-
-v_col.r = 0;
-v_col.g = 0;
-v_col.b = 1;
-v_col.a = 0;
-
-glLineWidth(1);
-}*/
-
-/*void ff_mgr_draw_hysteresis() {
-glBegin(GL_LINE_STRIP);
-
-glColor3f(1.0, 1.0, 0.0);
-glVertex3d(-0.5, -0.5, 0.0);
-
-
-glEnd();
-}*/
-
-
-
-
 void ff_mgr_show_next_step()
 {
     ff_vect_t r0, r1, v1;
     double theta, phi;
     double tmag;
     double kvec;
-    //double space_k = 9E6;
     double kSecondary = 1;
-
-    //step++;
-    //if (step%5 == 0) printf("\n !!! %e",r[15].x / Lx);
 
     if (show_cube)
     {
@@ -230,23 +178,6 @@ void ff_mgr_show_next_step()
 
         glEnd();
     }
-    /*else
-    {
-        glLineWidth(4.0f);
-        glBegin(GL_LINE_LOOP);
-
-        glColor3f(0.0, 0.0, 0.0);
-
-        glVertex3d(space_k * R_oleic, 0.0, 0.0);
-        glVertex3d(0, 0, 0);
-        glVertex3d(0, space_k * R_oleic, 0);
-        glVertex3d(0, 0, 0);
-        glVertex3d(0, 0, space_k * R_oleic);
-        glVertex3d(0, 0, 0);
-
-        glEnd();
-
-    }*/
 
     for (long p = 1; p <= pN; p++)
         if (exist_p[p])
@@ -264,7 +195,6 @@ void ff_mgr_show_next_step()
 
             glTranslatef(r1.x, r1.y, r1.z);
             glColor3f(1.0, 0.5, 0.5);
-            //glColor3f(0.5, 0.5, 0.5);
             if (show_sphere) 
             {
                 gluSphere(g_quad, space_k * Rp0[p], gr_quality, gr_quality);
@@ -292,16 +222,9 @@ void ff_mgr_show_next_step()
                 kvec = 2;
                 kSecondary = space_k * Rp[p] * 150;
 
-                //r1.x = space_k * r[p].x / Lx;
-                //r1.y = space_k * r[p].y / Ly;
-                //r1.z = space_k * r[p].z / Lz;
-
                 tmag = sqrt(m[p].x * m[p].x + m[p].y * m[p].y);
 
                 theta = acos(m[p].z / sqrt(MUL(m[p],m[p])));
-                /*if (m[p].x != 0) phi = atan(m[p].y / m[p].x);
-                else phi = 0.5 * pi * m[p].y / (fabs(m[p].y) + 0.00000000001);
-                if (m[p].x < 0) phi += pi;*/
 
                 glTranslatef(r1.x, r1.y, r1.z);
                 glRotatef(theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
@@ -320,23 +243,8 @@ void ff_mgr_show_next_step()
 
                 glRotatef(-theta * 180 / pi, -m[p].y / tmag, m[p].x / tmag, 0);
                 glTranslatef(-r1.x, -r1.y, -r1.z);
-
-                /*ff_mgr_set_m_vector();
-                r1.x = space_k * r[p].x / Lx;
-                r1.y = space_k * r[p].y / Ly;
-                r1.z = space_k * r[p].z / Lz;
-                ff_mgr_draw_vector(r1, m[p]);*/
-
             }
 
-            /*if (show_b)
-            {
-            ff_mgr_set_b_vector(p);
-            r1.x = space_k * r[p].x / Lx;
-            r1.y = space_k * r[p].y / Ly;
-            r1.z = space_k * r[p].z / Lz;
-            ff_mgr_draw_vector(r1, B[p]);
-            }*/
         } // particles loop
         if (show_bext)
         {
@@ -346,19 +254,6 @@ void ff_mgr_show_next_step()
             ff_mgr_set_bext_vector();
             v1 = Bext(0,0,0);
             ff_mgr_draw_vector(r0, v1);
-        }
-
-        if (show_droplet)
-        {
-            glEnable(GL_ALPHA_TEST);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-            glColor4f(0.2, 0.1, 0.6, 0.5);
-            gluSphere(g_quad, space_k * R_oleic, 20, 20);
-
-            glDisable(GL_BLEND);
-            glDisable(GL_ALPHA_TEST);
         }
 }
 
@@ -376,12 +271,6 @@ void ff_mgr_print_info()
     glRasterPos2i(6,0);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    /*glColor4f(0.9,0.2,0.2,0.75);
-    sprintf(buf,"FPS: %f F: %2d", FrameRate, FrameCount);
-
-    glRasterPos2i(6,0);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
     glColor4f(0,0,0,0.75);
     sprintf(buf,"dt = %5.3e s", dt);
 
@@ -389,7 +278,6 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    ///////////
     glColor4f(0,0,0,0.75);
     sprintf(buf,"t = %5.3e s", t);
 
@@ -397,7 +285,6 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    ///////////
     glColor4f(0,0,0,0.75);
     sprintf(buf,"precision_rate = %d", slow_steps);
 
@@ -405,56 +292,8 @@ void ff_mgr_print_info()
     shift--;
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    ///////////
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"k_force_adapt = %e", k_force_adapt);
-
-    glRasterPos2i(6, shift * 20);
+	glRasterPos2i(6, shift * 20);
     shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"Hysteresis mode = %d", hyst_mode);
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-
-    ///////////
-    /*glColor4f(0.0,1.0,1.0,0.75);
-    sprintf(buf,"Average Concentration = %5.3e m^-3", pN / (Lx * Ly * Lz));
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
-    ///////////
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"Mx = %5.3e A / m", m_tot.x / Vtot);
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"My = %5.3e A / m", m_tot.y / Vtot);
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"Mz = %5.3e A / m", m_tot.z / Vtot);
-
-    glRasterPos2i(6, shift * 20);
-    shift--;
-    shift--;
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    */
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"Hx = %5.3e Oe", BmanX);
@@ -485,53 +324,11 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol (drop) = %5.3e %%", phi_vol_fract_oleic);
+    sprintf(buf,"phi_vol_total (l-mode) = %5.3e %%", phi_vol_fract * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol_total (l-mode) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-	/*glColor4f(0,0,0,0.75);
-    sprintf(buf,"k_force_adapt_mean = %5.3e", k_force_adapt_mean_print);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"k_delta_force_rel_mean = %5.3e", k_delta_force_rel_tot / k_delta_force_rel_p);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"k_delta_torque_rel_mean = %5.3e", k_delta_torque_rel_tot / k_delta_torque_rel_p);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-    
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"pseudo_dT = %5.3e K", dT);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"T_mean = %5.3e K", T_mean / k_mean);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"T_mean_loc = %5.3e K", T_mean_loc_prev / (k_bm_inst_max - 1));
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
+		
     glColor4f(0,0,0,0.75);
     sprintf(buf,"T_set = %5.3e °C", T + ta0);
 
@@ -544,7 +341,7 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0.0, 1.0, 0.0, 0.75);
+	glColor4f(0, 0, 0, 0.75);
 	sprintf(buf, "Ek_calc = %5.3e J (%5.3e K)", Ek, Ek * 2 / (6.0 * kb * pN));
 
 	glRasterPos2i(6, shift * 20);
@@ -569,25 +366,7 @@ void ff_mgr_print_info()
 	glRasterPos2i(6, (shift--) * 20);
 	ff_gr_print(GLUT_BITMAP_HELVETICA_12, buf);
 
-    /*glColor4f(0,0,0,0.75);
-    sprintf(buf,"V0_tot = %5.3e m^-3", V0_tot);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"V0_tot_EV = %5.3e m^-3", V0_tot_EV);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"V0_largest_EV = %5.3e m^-3", V0_largest_EV);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);*/
-
-	glColor4f(0,0,0,0.75);
     sprintf(buf,"I = %5.3e kg * m^2", I_glob);
 
     glRasterPos2i(6, (shift--) * 20);
@@ -599,7 +378,6 @@ void ff_mgr_print_info()
     glRasterPos2i(6, ((shift--) - 23) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-    // ------------------
     glEnable(GL_LIGHTING);
 }
 
@@ -614,9 +392,6 @@ void ff_mgr_init()
     show_b    = 0;
     show_bext = 0;
 
-    //y_rot = 30.0f;
-    //x_rot = -60.0f;
-    //z_off = -1.0f;
     z_off = -4.0f;
 
     //glCullFace(GL_BACK);
