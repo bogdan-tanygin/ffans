@@ -108,38 +108,6 @@ double T_mean_loc_prev = 0;
 double T_mean_loc_prev_revert = 0;
 long k_mean = 0;
 
-double dT_p_x[pN + 1];
-double dT_p_y[pN + 1];
-double dT_p_z[pN + 1];
-double dT_p_rot_x[pN + 1];
-double dT_p_rot_y[pN + 1];
-double dT_p_rot_z[pN + 1];
-double dT_prev_p_x[pN + 1];
-double dT_prev_p_y[pN + 1];
-double dT_prev_p_z[pN + 1];
-double dT_prev_p_rot_x[pN + 1];
-double dT_prev_p_rot_y[pN + 1];
-double dT_prev_p_rot_z[pN + 1];
-double T_basic_p_x[pN + 1];
-double T_basic_p_y[pN + 1];
-double T_basic_p_z[pN + 1];
-double T_basic_p_rot_x[pN + 1];
-double T_basic_p_rot_y[pN + 1];
-double T_basic_p_rot_z[pN + 1];
-double T_mean_p_x[pN + 1];
-double T_mean_p_y[pN + 1];
-double T_mean_p_z[pN + 1];
-double T_mean_p_rot_x[pN + 1];
-double T_mean_p_rot_y[pN + 1];
-double T_mean_p_rot_z[pN + 1];
-double T_mean_loc_p_x[pN + 1];
-double T_mean_loc_p_y[pN + 1];
-double T_mean_loc_p_z[pN + 1];
-double T_mean_loc_p_rot_x[pN + 1];
-double T_mean_loc_p_rot_y[pN + 1];
-double T_mean_loc_p_rot_z[pN + 1];
-long k_mean_p[pN + 1];
-
 double Ek = 0;
 double Ek_rot = 0;
 double Ek_tr = 0;
@@ -195,12 +163,6 @@ long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
 double dt_red = 0; // reducing time indicator for the random translation
-double k_delta_force_rel[pN + 1]; // relation of random force to attractive forces sum
-double k_delta_force_rel_tot = 0;
-double k_delta_force_rel_p = 0;
-double k_delta_torque_rel[pN + 1];
-double k_delta_torque_rel_tot = 0;
-double k_delta_torque_rel_p = 0;
 
 double phi_vol_fract_oleic = 0;
 double phi_vol_fract_oleic_0 = 0;
@@ -431,45 +393,6 @@ int ff_model_check_smooth_dr(long p)
             {
                 dT= dT_prev;
                 T_mean_loc_prev = T_mean_loc_prev_revert;
-            }
-
-            for(ps = 1; ps <= pN; ps ++)
-            {
-                T_mean_p_x[ps] -= T_basic_p_x[ps];
-                T_mean_p_y[ps] -= T_basic_p_y[ps];
-                T_mean_p_z[ps] -= T_basic_p_z[ps];
-                T_mean_p_rot_x[ps] -= T_basic_p_rot_x[ps];
-                T_mean_p_rot_y[ps] -= T_basic_p_rot_y[ps];
-                T_mean_p_rot_z[ps] -= T_basic_p_rot_z[ps];
-                k_mean_p[ps] --;
-                T_mean_loc_p_x[ps] -= T_basic_p_x[ps];
-                T_mean_loc_p_y[ps] -= T_basic_p_y[ps];
-                T_mean_loc_p_z[ps] -= T_basic_p_z[ps];
-                T_mean_loc_p_rot_x[ps] -= T_basic_p_rot_x[ps];
-                T_mean_loc_p_rot_y[ps] -= T_basic_p_rot_y[ps];
-                T_mean_loc_p_rot_z[ps] -= T_basic_p_rot_z[ps];
-                if (k_bm_inst == k_bm_inst_max - 1)
-                {
-                    if (dT_p_x[ps] <= 0) k_force_adapt_p_x[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_x[ps] /= k_force_adapt_0;
-                    if (dT_p_y[ps] <= 0) k_force_adapt_p_y[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_y[ps] /= k_force_adapt_0;
-                    if (dT_p_z[ps] <= 0) k_force_adapt_p_z[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_z[ps] /= k_force_adapt_0;
-                    if (dT_p_rot_x[ps] <= 0) k_force_adapt_p_rot_x[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_rot_x[ps] /= k_force_adapt_0;
-                    if (dT_p_rot_y[ps] <= 0) k_force_adapt_p_rot_y[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_rot_y[ps] /= k_force_adapt_0;
-                    if (dT_p_rot_z[ps] <= 0) k_force_adapt_p_rot_z[ps] *= k_force_adapt_0;
-                    else k_force_adapt_p_rot_z[ps] /= k_force_adapt_0;
-
-                    dT_p_x[ps] = dT_prev_p_x[ps];
-                    dT_p_y[ps] = dT_prev_p_y[ps];
-                    dT_p_z[ps] = dT_prev_p_z[ps];
-                    dT_p_rot_x[ps] = dT_prev_p_rot_x[ps];
-                    dT_p_rot_y[ps] = dT_prev_p_rot_y[ps];
-                    dT_p_rot_z[ps] = dT_prev_p_rot_z[ps];
-                }
             }
         }
 
@@ -863,8 +786,6 @@ void ff_model_next_step(void)
     pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
     phi_vol_fract_oleic = 0;
     V0_tot_oleic = 0;
-    k_delta_force_rel_tot = 0;
-    k_delta_force_rel_p = 0;
     P_pgas = 0;
 
     t_temp = T + ta0;
@@ -929,7 +850,6 @@ void ff_model_next_step(void)
     {
         step++;
         ff_model_update_dT();
-        for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_update_dT_p(p);
 
         for (p = 1; p <= pN; p++) if (exist_p[p]) ff_model_effective_random_motion_update(p);
         if (dt_red <= 0)
@@ -1180,7 +1100,6 @@ void ff_model_next_step(void)
                 {
                     k_bm_inst = 1;
                     T_mean_loc = 0;
-                    for (p = 1; p <= pN; p++) T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
                     k_force_adapt_mean /= (6 * pN);
                     k_force_adapt_mean_print = k_force_adapt_mean;
                     k_force_adapt_mean = 0;
@@ -1627,14 +1546,6 @@ cont2:
         m_sat[p] = 0;
 
         k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot_x[p] = k_force_adapt_p_rot_y[p] = k_force_adapt_p_rot_z[p] = 1.0;
-        dT_p_x[p] = dT_p_y[p] = dT_p_z[p] = dT_p_rot_x[p] = dT_p_rot_y[p] = dT_p_rot_z[p] = T;
-        dT_prev_p_x[p] = dT_prev_p_y[p] = dT_prev_p_z[p] = dT_prev_p_rot_x[p] = dT_prev_p_rot_y[p] = dT_prev_p_rot_z[p] = T;
-        T_basic_p_x[p] = T_basic_p_y[p] = T_basic_p_z[p] = T_basic_p_rot_x[p] = T_basic_p_rot_y[p] = T_basic_p_rot_z[p] = 0;
-        T_mean_p_x[p] = T_mean_p_y[p] = T_mean_p_z[p] = T_mean_p_rot_x[p] = T_mean_p_rot_y[p] = T_mean_p_rot_z[p] = 0;
-        T_mean_loc_p_x[p] = T_mean_loc_p_y[p] = T_mean_loc_p_z[p] = T_mean_loc_p_rot_x[p] = T_mean_loc_p_rot_y[p] = T_mean_loc_p_rot_z[p] = 0;
-        k_mean_p[p] = 0;
-        k_delta_force_rel[p] = 0;
-
         is_inside_oleic[p] = 1;
         is_temp_sat[p] = 0;
         k_force_adapt_p_0[p] = k_force_adapt_0;
@@ -1755,98 +1666,6 @@ void ff_model_update_dT(void)
         T_mean_loc_prev = T_mean_loc;
     }
     //k_bm_inst ++;
-}
-
-void ff_model_update_dT_p(long p)
-{
-    double rel_T = 1;
-    double T_mean_p_tol = 0;
-
-    T_basic_p_x[p] = 2 * Ekp_x[p] / kb; // degree of freedom number is 6
-    T_basic_p_y[p] = 2 * Ekp_y[p] / kb;
-    T_basic_p_z[p] = 2 * Ekp_z[p] / kb;
-    T_basic_p_rot_x[p] = 2 * Ekp_rot_x[p] / kb;
-    T_basic_p_rot_y[p] = 2 * Ekp_rot_y[p] / kb;
-    T_basic_p_rot_z[p] = 2 * Ekp_rot_z[p] / kb;
-    //dT = T - T_basic;
-    T_mean_p_x[p] += T_basic_p_x[p];
-    T_mean_p_y[p] += T_basic_p_y[p];
-    T_mean_p_z[p] += T_basic_p_z[p];
-    T_mean_p_rot_x[p] += T_basic_p_rot_x[p];
-    T_mean_p_rot_y[p] += T_basic_p_rot_y[p];
-    T_mean_p_rot_z[p] += T_basic_p_rot_z[p];
-    k_mean_p[p] ++;
-    
-    T_mean_p_tol = (T_mean_p_x[p] + T_mean_p_y[p] + T_mean_p_z[p] + T_mean_p_rot_x[p] + T_mean_p_rot_y[p] + T_mean_p_rot_z[p]) / (6.0 * k_mean_p[p]);
-    if (T_mean_p_tol >= T) is_temp_sat[p] = 1;
-	
-    T_mean_loc_p_x[p] += T_basic_p_x[p];
-    T_mean_loc_p_y[p] += T_basic_p_y[p];
-    T_mean_loc_p_z[p] += T_basic_p_z[p];
-    T_mean_loc_p_rot_x[p] += T_basic_p_rot_x[p];
-    T_mean_loc_p_rot_y[p] += T_basic_p_rot_y[p];
-    T_mean_loc_p_rot_z[p] += T_basic_p_rot_z[p];
-
-    if (k_bm_inst == k_bm_inst_max - 1)
-    {
-        dT_prev_p_x[p] = dT_p_x[p];
-        dT_prev_p_y[p] = dT_p_y[p];
-        dT_prev_p_z[p] = dT_p_z[p];
-        dT_prev_p_rot_x[p] = dT_p_rot_x[p];
-        dT_prev_p_rot_y[p] = dT_p_rot_y[p];
-        dT_prev_p_rot_z[p] = dT_p_rot_z[p];
-
-        if (!(is_temp_sat[p]))
-        {
-            dT_p_x[p] = T - T_mean_loc_p_x[p] / k_bm_inst;
-            dT_p_y[p] = T - T_mean_loc_p_y[p] / k_bm_inst;
-            dT_p_z[p] = T - T_mean_loc_p_z[p] / k_bm_inst;
-            dT_p_rot_x[p] = T - T_mean_loc_p_rot_x[p] / k_bm_inst;
-            dT_p_rot_y[p] = T - T_mean_loc_p_rot_y[p] / k_bm_inst;
-            dT_p_rot_z[p] = T - T_mean_loc_p_rot_z[p] / k_bm_inst;
-        }
-        else
-        {
-            dT_p_x[p] = T - T_mean_p_x[p] / k_mean_p[p];
-            dT_p_y[p] = T - T_mean_p_y[p] / k_mean_p[p];
-            dT_p_z[p] = T - T_mean_p_z[p] / k_mean_p[p];
-            dT_p_rot_x[p] = T - T_mean_p_rot_x[p] / k_mean_p[p];
-            dT_p_rot_y[p] = T - T_mean_p_rot_y[p] / k_mean_p[p];
-            dT_p_rot_z[p] = T - T_mean_p_rot_z[p] / k_mean_p[p];
-        }
-
-        //if (dT_p[p] < - 5 * T) k_force_adapt_p[p] = 1; //rel_T = (T_mean_loc_p[p] / k_bm_inst) / T;
-        if (dT_p_x[p] > 0) k_force_adapt_p_x[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_x[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_x[p];
-
-        if (dT_p_y[p] > 0) k_force_adapt_p_y[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_y[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_y[p];
-
-        if (dT_p_z[p] > 0) k_force_adapt_p_z[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_z[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_z[p];
-
-        if (dT_p_rot_x[p] > 0) k_force_adapt_p_rot_x[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_rot_x[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_rot_x[p];
-
-        if (dT_p_rot_y[p] > 0) k_force_adapt_p_rot_y[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_rot_y[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_rot_y[p];
-
-        if (dT_p_rot_z[p] > 0) k_force_adapt_p_rot_z[p] *= k_force_adapt_p_0[p];
-        else k_force_adapt_p_rot_z[p] /= k_force_adapt_p_0[p];
-
-        k_force_adapt_mean += k_force_adapt_p_rot_z[p];
-        
-    }
 }
 
 void ff_model_size_dispersion_init(void)

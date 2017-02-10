@@ -26,7 +26,6 @@ typedef struct {
 
 void ff_model_init(void);
 void ff_model_next_step(void);
-void ff_model_check_collisions(long);
 
 void ff_model_upgrade_ext_field(void);
 
@@ -104,10 +103,6 @@ extern long pN_oleic_drop_II;
 extern long pN_oleic_drop_III;
 extern double phi_vol_fract_oleic;
 
-extern double k_delta_force_rel_tot;
-extern double k_delta_force_rel_p;
-extern double k_delta_torque_rel_tot;
-extern double k_delta_torque_rel_p;
 extern double k_force_adapt;
 
 extern double R_oleic;
@@ -115,7 +110,6 @@ extern double R_oleic;
 // Update of the effective instantiated random force
 void ff_model_effective_random_motion_update(long);
 void ff_model_update_dT(void);
-void ff_model_update_dT_p(long);
 
 void ff_model_size_dispersion_init(void);
 void ff_model_size_dispersion_param_calc(double,long);
