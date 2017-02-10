@@ -57,9 +57,6 @@ extern double kB;
 
 extern double mz_tot;
 
-extern long glob_start_step;
-extern long glob_start_step_susc;
-extern double glob_start_t;
 extern double mz_glob;
 extern ff_vect_t m_tot_glob;
 

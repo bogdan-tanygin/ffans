@@ -27,7 +27,7 @@
 
 using namespace std;
 int isAnalysis = ff_paramAnalysis();
-double gl_scale = iniGet("ParticleDiam","gl_scale");//1.0; // particle diameter scale parameter
+double gl_scale = iniGet("Space","gl_scale");//1.0; // particle diameter scale parameter
 
 // Math constants
 double pi = acos(-1.0);
@@ -43,7 +43,7 @@ const double ta0 =iniGet("PhysConst","ta0");// -273.15; // [°C]
 const double gamma_e =iniGet("PhysConst","gamma_e");// 1.760859708 * 1E11; // [s^-1 T^-1] // electron gyromagnetic ratio
 
 // Material
-double a0 =iniGet("Material","a0");// 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature) // \cite{Fleet1981}
+double a0 =iniGet("ExperimentalMaterial","a0");// 0.8397E-9; // [m] // magnetite unit cell size - a cubic spinel structure with space group Fd3m (above the Verwey temperature) // \cite{Fleet1981}
 
 // Space
 //double volume_reduce =iniGet("Space","volume_reduce");// 0.15; //0.25; // 0.09; //0.085; // 0.1862; // initial density set
@@ -55,79 +55,75 @@ double delta_r = a0 * 0.5; // minimal distance between particles // order of mag
 double delta_r_init =iniGet("Space","delta_r_init");// 20 * 1E-9; // delta_r;
 
 // periodic boundary conditions
-int is_periodic =(int)iniGet("PeriodBoundary","is_periodic");// 0;
+int is_periodic =(int)iniGet("Space","is_periodic");// 0;
 
 // Basic physical model parameters
-double dt_neel =iniGet("BasicPhysModelPar","dt_neel");// 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
-const double dt0 =iniGet("BasicPhysModelPar","dt0");// 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
-double d_neel =iniGet("BasicPhysModelPar","d_neel");// 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
-double d_min =iniGet("BasicPhysModelPar","d_min");// 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
-long slow_steps =(long)iniGet("BasicPhysModelPar","slow_steps");// 0;
-double smooth_r =iniGet("BasicPhysModelPar","smooth_r");// 0.4;
+double dt_neel =iniGet("ExperimentalMaterial","dt_neel");// 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
+const double dt0 =iniGet("SimulationSetup","dt0");// 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
+double d_neel =iniGet("ExperimentalMaterial","d_neel");// 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
+double d_min =iniGet("ExperimentalMaterial","d_min");// 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
+long slow_steps =(long)iniGet("SimulationSetup","slow_steps");// 0;
+double smooth_r =iniGet("SimulationSetup","smooth_r");// 0.4;
 
-double T =iniGet("BasicPhysModelPar","T");// 273.15; // K
+double T =iniGet("ExperimentalConditions","T");// 273.15; // K
 
 double kr = gl_scale; // particle size parameter []
-double delta =iniGet("BasicPhysModelPar","delta");// 2.0E-9;
+double delta =iniGet("ExperimentalMaterial","delta");// 2.0E-9;
 
-int is_large_mode =(int)iniGet("OleicDrop","is_large_mode");// 1; // largest particles mode
-double large_fraction =iniGet("OleicDrop","large_fraction");// 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse ferrocolloids) // 6.92E-02 (my sim); // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
-double k_large =iniGet("OleicDrop","k_large");// 1.0; // 0.91; // 0.925; // correction of the large particles size
+int is_large_mode =(int)iniGet("SimulationSetup","is_large_mode");// 1; // largest particles mode
+double large_fraction =iniGet("SimulationSetup","large_fraction");// 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse ferrocolloids) // 6.92E-02 (my sim); // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
+double k_large =iniGet("SimulationSetup","k_large");// 1.0; // 0.91; // 0.925; // correction of the large particles size
 
 // microdrop mode parameters
 
-double eta_oleic =iniGet("MicroDropModePar","eta_oleic");// 0;
-double a3_eta_oleic =iniGet("MicroDropModePar","a3_eta_oleic");// - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
-double a2_eta_oleic =iniGet("MicroDropModePar","a2_eta_oleic");// 2E-05;
-double a1_eta_oleic =iniGet("MicroDropModePar","a1_eta_oleic");// - 0.0018;
-double a0_eta_oleic =iniGet("MicroDropModePar","a0_eta_oleic");// 0.0559;
-double ro_oleic =iniGet("MicroDropModePar","ro_oleic");// 853;// density of oleic acid kg/m^3
-double mol_mass_oleic =iniGet("MicroDropModePar","mol_mass_oleic");// 282*1E-3; //mol mass of oleic acid C18H34O2
-double v_oleic =iniGet("MicroDropModePar","v_oleic");//  2* 1E-7; //m^3 volume of oleic acid
+double eta_oleic =iniGet("ExperimentalMaterial","eta_oleic");// 0;
+double a3_eta_oleic =iniGet("ExperimentalMaterial","a3_eta_oleic");// - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
+double a2_eta_oleic =iniGet("ExperimentalMaterial","a2_eta_oleic");// 2E-05;
+double a1_eta_oleic =iniGet("ExperimentalMaterial","a1_eta_oleic");// - 0.0018;
+double a0_eta_oleic =iniGet("ExperimentalMaterial","a0_eta_oleic");// 0.0559;
+double ro_oleic =iniGet("ExperimentalMaterial","ro_oleic");// 853;// density of oleic acid kg/m^3
+double mol_mass_oleic =iniGet("ExperimentalMaterial","mol_mass_oleic");// 282*1E-3; //mol mass of oleic acid C18H34O2
+double v_oleic =iniGet("ExperimentalConditions","v_oleic");//  2* 1E-7; //m^3 volume of oleic acid
 double mass_oleic = ro_oleic * v_oleic;
 
-double rop =iniGet("MicroDropModePar","rop");// 5240; // magnetite mass density [kg / m^3]
-double A_H =iniGet("MicroDropModePar","A_H");// 4E-20; // Hamaker constant [J]
+double rop =iniGet("ExperimentalMaterial","rop");// 5240; // magnetite mass density [kg / m^3]
+double A_H =iniGet("ExperimentalMaterial","A_H");// 4E-20; // Hamaker constant [J]
 
-double N_oa =iniGet("MicroDropModePar","N_oa");// 1E18; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
-double k_o =iniGet("MicroDropModePar","k_o");// 0.5; // 5E-4 - same result //0.1; // Level of coverage of surface by the oleic acid
+double N_oa =iniGet("ExperimentalMaterial","N_oa");// 1E18; // Surface density of oleic acid at the 50% coating [m-2] //[Fertman]
+double k_o =iniGet("ExperimentalMaterial","k_o");// 0.5; // 5E-4 - same result //0.1; // Level of coverage of surface by the oleic acid
 double N_o; // Surface density of oleic acid
 
-double K1 =iniGet("MicroDropModePar","K1");// 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
+double K1 =iniGet("ExperimentalMaterial","K1");// 1.35 * 1E4 ; // [J/m] // First constant of the magnetite crystallographic anisotropy // (Goya2003)
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
-double Ms =iniGet("MicroDropModePar","Ms");// 478 * 1E3; // [A / m]
+double Ms =iniGet("ExperimentalMaterial","Ms");// 478 * 1E3; // [A / m]
 
-int load_at_start =(int)iniGet("MicroDropModePar","load_at_start");// 0;
-int auto_save =(int)iniGet("MicroDropModePar","auto_save");// 1;
-int manual_field_control =(int)iniGet("MicroDropModePar","manual_field_control");// 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ control 
-int ext_field_is_homo =(int)iniGet("MicroDropModePar","ext_field_is_homo");// 1;
-int auto_reversal =(int)iniGet("MicroDropModePar","auto_reversal");// 0;
+int load_at_start =(int)iniGet("SimulationSetup","load_at_start");// 0;
+int auto_save =(int)iniGet("SimulationSetup","auto_save");// 1;
+int manual_field_control =(int)iniGet("SimulationSetup","manual_field_control");// 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ control 
+int ext_field_is_homo =(int)iniGet("SimulationSetup","ext_field_is_homo");// 1;
+int auto_reversal =(int)iniGet("SimulationSetup","auto_reversal");// 0;
 
-int setting_plot =(int)iniGet("MicroDropModePar","setting_plot");// 1; // cluster creation plot m_tot / m0 and I.
+int setting_plot =(int)iniGet("SimulationSetup","setting_plot");// 1; // cluster creation plot m_tot / m0 and I.
 
-double start_t =iniGet("MicroDropModePar","start_t");// 30 /* [micro_s] */ * (1E-6); // [s]
-double T_ext =iniGet("MicroDropModePar","T_ext");// 0.2 * (1E6); // [micro_s] // external field period
-double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
-
-double start_ideal =iniGet("MicroDropModePar","start_ideal");// 1; // start chaos (ideal superparam. gas)
-double ro0 =iniGet("MicroDropModePar","ro0");// 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
-double eta_car0 =iniGet("MicroDropModePar","eta_car0");// 0.00164; //Pa * s //kerosene (carrier liquid)
-double eta_car =iniGet("MicroDropModePar","eta_car");// 1; //Pa * s //Mix eta
-double mol_mass_car =iniGet("MicroDropModePar","mol_mass_car");// 170*1E-3; //molar mass of kerosene
-double v_car =iniGet("MicroDropModePar","v_car");// 3*1E-6; //volume of kerosine
+double start_ideal =iniGet("SimulationSetup","start_ideal");// 1; // start chaos (ideal superparam. gas)
+double ro0 =iniGet("ExperimentalMaterial","ro0");// 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
+double eta_car0 =iniGet("ExperimentalMaterial","eta_car0");// 0.00164; //Pa * s //kerosene (carrier liquid)
+double eta_car =iniGet("ExperimentalMaterial","eta_car");// 1; //Pa * s //Mix eta
+double mol_mass_car =iniGet("ExperimentalMaterial","mol_mass_car");// 170*1E-3; //molar mass of kerosene
+double v_car =iniGet("ExperimentalConditions","v_car");// 3*1E-6; //volume of kerosine
 double mass_car = ro0*v_car;//mas of kerosine
 
 //default order of magnitude of the external field but exact function is hardcoded 
 double B0 = 2500 /*Oe*/ * 79.577 * mu0; // Tesla
-double gradPerc =iniGet("DefaultOrder","gradPerc");// 5E-1;
+double gradPerc =iniGet("ExperimentalConditions","gradPerc");// 5E-1;
 double gradL = Lx / 2.0;
 
 // Derived parameters
 double C1 = 3 * mu0 / (4 * pi);
 double C5 = mu0 / (4 * pi);
 
-double alpha_damp =iniGet("DefaultOrder","alpha_damp");// 0.05; //magnetization dynamic damping
-int ScreenCaptureStep =(int)iniGet("DefaultOrder","ScreenCaptureStep");// 10000; //every ScreenCaptureStep`s steps will make screen  shot
+double alpha_damp =iniGet("ExperimentalMaterial","alpha_damp");// 0.05; //magnetization dynamic damping
+int ScreenCaptureStep =(int)iniGet("SimulationSetup","ScreenCaptureStep");// 10000; //every ScreenCaptureStep`s steps will make screen  shot
 
 
 void ParamInfo()
@@ -187,9 +183,6 @@ void ParamInfo()
 	file1<<"ext_field_is_homo"<<"=="<<ext_field_is_homo<<endl;
 	file1<<"auto_reversal"<<"=="<<auto_reversal<<endl;
 	file1<<"setting_plot"<<"=="<<setting_plot<<endl;
-	file1<<"start_t"<<"=="<<start_t<<endl;
-	file1<<"T_ext"<<"=="<<T_ext<<endl;
-	file1<<"nu_ext"<<"=="<<nu_ext<<endl;
 	file1<<"start_ideal"<<"=="<<start_ideal<<endl;
 	file1<<"ro0"<<"=="<<ro0<<endl;
 	file1<<"eta_car0"<<"=="<<eta_car0<<endl;
