@@ -292,38 +292,17 @@ void cbKeyPressed(unsigned char key, int x, int y)
 
 void ff_io_save_setting(ff_vect_t m_tot,double I)
 {
-    FILE *file, *file1, *file2, *file2_phi, *file2_I, *file2_II, *file2_III, *file3;
+    FILE *file, *file1;
     double V_oleic = 0;
 
     file  = fopen("setting_M.dat", "a");
     file1 = fopen("setting_I.dat", "a");
-    file2 = fopen("setting_n_agg.dat", "a");
-    file2_phi = fopen("setting_phi_agg.dat", "a");
-    file2_I = fopen("setting_n_agg_I.dat", "a");
-    file2_II = fopen("setting_n_agg_II.dat", "a");
-    file2_III = fopen("setting_n_agg_III.dat", "a");
-    file3 = fopen("setting_P.dat", "a");
 
     fprintf(file,  "%5.3e %5.3e \n", t, sqrt(MUL(m_tot,m_tot)));
     fprintf(file1, "%5.3e %5.3e \n", t, I);
 
-    V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
-    fprintf(file2, "%5.3e %5.3e \n", t, pN_oleic_drop / V_oleic);
-    fprintf(file2_phi, "%5.3e %5.3e \n", t, phi_vol_fract_oleic);
-    fprintf(file2_I, "%5.3e %5.3e \n", t, pN_oleic_drop_I / V_oleic);
-    fprintf(file2_II, "%5.3e %5.3e \n", t, pN_oleic_drop_II / V_oleic);
-    fprintf(file2_III, "%5.3e %5.3e \n", t, pN_oleic_drop_III / V_oleic);
-
-    fprintf(file3, "%5.3e %5.3e %5.3e \n", t, P_pgas, P_pgas / P_sf_oleic);
-
     fclose(file);
     fclose(file1);
-    fclose(file2);
-    fclose(file2_phi);
-    fclose(file2_I);
-    fclose(file2_II);
-    fclose(file2_III);
-    fclose(file3);
 }
 
 void ff_io_autosave(void)
@@ -462,7 +441,7 @@ void ff_io_entropy_change(void)
 	G /= pN;
 
 	// entropy calculation (only for monodisperse ferrofluid!)
-	a_free = pow(pi * 1.35 * pow(2 * Rp0[1], 3) / (6 * phi_vol_fract_oleic / 100), 1 / 3.0);
+	a_free = pow(pi * 1.35 * pow(2 * Rp0[1], 3) / (6 * phi_vol_fract / 100), 1 / 3.0);
 	V = (4 * pi / 3.0) * pow(a_free - 2 * Rp0[1], 3);
 	S = kb * log(V);
 
@@ -473,7 +452,7 @@ void ff_io_entropy_change(void)
 	printf("\n F / (k * T) = %e", F / (kb * T));
 
 	file  = fopen("F(phi).dat", "a");
-	fprintf(file, "%5.3e %5.3e \n", phi_vol_fract_oleic, F / (kb * T));
+	fprintf(file, "%5.3e %5.3e \n", phi_vol_fract, F / (kb * T));
 	fclose(file);
 
 	for (p = 1; p <= pN - 1; p++)
@@ -482,8 +461,6 @@ void ff_io_entropy_change(void)
 		r[p].y *= k_r;
 		r[p].z *= k_r;
 	}
-
-	R_oleic *= k_r;
 
 	Lx *= k_r;
 	Ly *= k_r;

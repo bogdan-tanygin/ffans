@@ -62,44 +62,25 @@ double dt_neel =iniGet("BasicPhysModelPar","dt_neel");// 1E-9; // [s] // Neel re
 const double dt0 =iniGet("BasicPhysModelPar","dt0");// 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5
 double d_neel =iniGet("BasicPhysModelPar","d_neel");// 10 * 1E-9; // [m] // Neel-to-Brown relaxation diameter threashold, (Fertman-p-62)
 double d_min =iniGet("BasicPhysModelPar","d_min");// 2 * 1E-9; // [m] // minimal diameter of particle, wher Ms and T_curie is identical to ones in the bulk material, (Fertman-p-43)
-long k_bm_inst_max =(long)iniGet("BasicPhysModelPar","k_bm_inst_max");// 100; // coefficient of a brownian motion instantiation: dt_bm_inst = dt * k_bm_inst_max
-long k_bm_inst =(long)iniGet("BasicPhysModelPar","k_bm_inst");// 1;
-double k_force_adapt_0 =iniGet("BasicPhysModelPar","k_force_adapt_0");// 1.00; // 1.05 is a regular value for the adaptive force model // 1.00 means an overdamped model at the dt >> m / gamma
 long slow_steps =(long)iniGet("BasicPhysModelPar","slow_steps");// 0;
 double smooth_r =iniGet("BasicPhysModelPar","smooth_r");// 0.4;
 
 double T =iniGet("BasicPhysModelPar","T");// 273.15; // K
-double sigma_sf_nano =iniGet("BasicPhysModelPar","sigma_sf_nano");// 5E-4; //1E-4;
 
 double kr = gl_scale; // particle size parameter []
 double delta =iniGet("BasicPhysModelPar","delta");// 2.0E-9;
 
-int is_uniform_field_test =(int)iniGet("BasicPhysModelPar","is_uniform_field_test");// 0;
-
-// Parameters of oleic acid drop
 int is_large_mode =(int)iniGet("OleicDrop","is_large_mode");// 1; // largest particles mode
 double large_fraction =iniGet("OleicDrop","large_fraction");// 7.5E-2; // 0.1 (Ivanov, Phase separation in bidisperse ferrocolloids) // 6.92E-02 (my sim); // fraction of the largest particles which form the primary aggregate (circle) in case of mode is_large_mode == 0
 double k_large =iniGet("OleicDrop","k_large");// 1.0; // 0.91; // 0.925; // correction of the large particles size
-int is_oleic =(int)iniGet("OleicDrop","is_oleic");// 0;
-double R_oleic_0 = (Lx / 2.0);
 
 // microdrop mode parameters
-int isMicroDrop =(int)iniGet("MicroDropModePar","isMicroDrop");// 0; // enable the microdrop mode
-double phi_v =iniGet("MicroDropModePar","phi_v");// 0.12; // volume concentration of the dispersed phase [Padalka, exp]
-double alpha =iniGet("MicroDropModePar","alpha");// 0.5; // default saturation of the microdrop
 
-int isPGasMode =(int)iniGet("MicroDropModePar","isPGasMode");// 0;
-int isPGasPrevail =(int)iniGet("MicroDropModePar","isPGasPrevail");// 0;
-double P_pgas =iniGet("MicroDropModePar","P_pgas");// 0; // particles gas pressure inside the oleic drop
-double P_sf_oleic =iniGet("MicroDropModePar","P_sf_oleic");// 0; // oleic droplet surface tension pressure
 double eta_oleic =iniGet("MicroDropModePar","eta_oleic");// 0;
 double a3_eta_oleic =iniGet("MicroDropModePar","a3_eta_oleic");// - 1E-07; // my approximation of DOI: 10.1007/s11746-000-0197-z
 double a2_eta_oleic =iniGet("MicroDropModePar","a2_eta_oleic");// 2E-05;
 double a1_eta_oleic =iniGet("MicroDropModePar","a1_eta_oleic");// - 0.0018;
 double a0_eta_oleic =iniGet("MicroDropModePar","a0_eta_oleic");// 0.0559;
-double sigma_sf =iniGet("MicroDropModePar","sigma_sf");// 0;
-double a_sigma_sf =iniGet("MicroDropModePar","a_sigma_sf");// 34.060119 * 1E-3; // [N / m] // linear coefficient: sigma_sf = a + b * t
-double b_sigma_sf =iniGet("MicroDropModePar","b_sigma_sf");// - 0.061298 * 1E-3; // [N / m] // linear coefficient
 double ro_oleic =iniGet("MicroDropModePar","ro_oleic");// 853;// density of oleic acid kg/m^3
 double mol_mass_oleic =iniGet("MicroDropModePar","mol_mass_oleic");// 282*1E-3; //mol mass of oleic acid C18H34O2
 double v_oleic =iniGet("MicroDropModePar","v_oleic");//  2* 1E-7; //m^3 volume of oleic acid
@@ -116,9 +97,6 @@ double K1 =iniGet("MicroDropModePar","K1");// 1.35 * 1E4 ; // [J/m] // First con
 double Ms_mass = 80 /* emu / g */ * (1E3) /* emu / kg */ * (1 / (9.274009 * (1E-21))); /* Bohr magnetons / kg */
 double Ms =iniGet("MicroDropModePar","Ms");// 478 * 1E3; // [A / m]
 
-double Ch =iniGet("MicroDropModePar","Ch");// 0.01; // [DEPRECATED] adhesion / magnetic relation
-double Ch_ss =iniGet("MicroDropModePar","Ch_ss");// 0; // 3E4; // 50 * 1E5; // soft-sphere repulsion parameter (parameter of the numerical model)
-
 int load_at_start =(int)iniGet("MicroDropModePar","load_at_start");// 0;
 int auto_save =(int)iniGet("MicroDropModePar","auto_save");// 1;
 int manual_field_control =(int)iniGet("MicroDropModePar","manual_field_control");// 1; // 0-1-2-3 keys control to skip, Bx+, By+, Bz+ control 
@@ -132,7 +110,6 @@ double T_ext =iniGet("MicroDropModePar","T_ext");// 0.2 * (1E6); // [micro_s] //
 double nu_ext = (1 / T_ext) * (1E6); // [Hz] // frequency of the external field (sin(w*t) dependence)
 
 double start_ideal =iniGet("MicroDropModePar","start_ideal");// 1; // start chaos (ideal superparam. gas)
-double start_sediment =iniGet("MicroDropModePar","start_sediment");// 0;
 double ro0 =iniGet("MicroDropModePar","ro0");// 0.5 * (0.78 + 0.85) * 1E3; // kerosene density
 double eta_car0 =iniGet("MicroDropModePar","eta_car0");// 0.00164; //Pa * s //kerosene (carrier liquid)
 double eta_car =iniGet("MicroDropModePar","eta_car");// 1; //Pa * s //Mix eta
@@ -179,36 +156,19 @@ void ParamInfo()
 	file1<<"dt0"<<"=="<<dt0<<endl;
 	file1<<"d_neel"<<"=="<<d_neel<<endl;
 	file1<<"d_min"<<"=="<<d_min<<endl;
-	file1<<"k_bm_inst_max"<<"=="<<k_bm_inst_max<<endl;
-	file1<<"k_bm_inst"<<"=="<<k_bm_inst<<endl;
-	file1<<"k_force_adapt_0"<<"=="<<k_force_adapt_0<<endl;
 	file1<<"slow_steps"<<"=="<<slow_steps<<endl;
 	file1<<"smooth_r"<<"=="<<smooth_r<<endl;
 	file1<<"T"<<"=="<<T<<endl;
-	file1<<"sigma_sf_nano"<<"=="<<sigma_sf_nano<<endl;
 	file1<<"kr"<<"=="<<kr<<endl;
 	file1<<"delta"<<"=="<<delta<<endl;
-	file1<<"is_uniform_field_test"<<"=="<<is_uniform_field_test<<endl;
 	file1<<"is_large_mode"<<"=="<<is_large_mode<<endl;
 	file1<<"large_fraction"<<"=="<<large_fraction<<endl;
 	file1<<"k_large"<<"=="<<k_large<<endl;
-	file1<<"is_oleic"<<"=="<<is_oleic<<endl;
-	file1<<"R_oleic_0"<<"=="<<R_oleic_0<<endl;
-	file1<<"isMicroDrop"<<"=="<<isMicroDrop<<endl;
-	file1<<"phi_v"<<"=="<<phi_v<<endl;
-	file1<<"alpha"<<"=="<<alpha<<endl;
-	file1<<"isPGasMode"<<"=="<<isPGasMode<<endl;
-	file1<<"isPGasPrevail"<<"=="<<isPGasPrevail<<endl;
-	file1<<"P_pgas"<<"=="<<P_pgas<<endl;
-	file1<<"P_sf_oleic"<<"=="<<P_sf_oleic<<endl;
 	file1<<"eta_oleic"<<"=="<<eta_oleic<<endl;
 	file1<<"a3_eta_oleic"<<"=="<<a3_eta_oleic<<endl;
 	file1<<"a2_eta_oleic"<<"=="<<a2_eta_oleic<<endl;
 	file1<<"a1_eta_oleic"<<"=="<<a1_eta_oleic<<endl;
 	file1<<"a0_eta_oleic"<<"=="<<a0_eta_oleic<<endl;
-	file1<<"sigma_sf"<<"=="<<sigma_sf<<endl;
-	file1<<"a_sigma_sf"<<"=="<<a_sigma_sf<<endl;
-	file1<<"b_sigma_sf"<<"=="<<b_sigma_sf<<endl;
 	file1<<"ro_oleic"<<"=="<<ro_oleic<<endl;
 	file1<<"mol_mass_oleic"<<"=="<<mol_mass_oleic<<endl;
 	file1<<"v_oleic"<<"=="<<v_oleic<<endl;
@@ -221,8 +181,6 @@ void ParamInfo()
 	file1<<"K1"<<"=="<<K1<<endl;
 	file1<<"Ms_mass"<<"=="<<Ms_mass<<endl;
 	file1<<"Ms"<<"=="<<Ms<<endl;
-	file1<<"Ch"<<"=="<<Ch<<endl;
-	file1<<"Ch_ss"<<"=="<<Ch_ss<<endl;
 	file1<<"load_at_start"<<"=="<<load_at_start<<endl;
 	file1<<"auto_save"<<"=="<<auto_save<<endl;
 	file1<<"manual_field_control"<<"=="<<manual_field_control<<endl;
@@ -233,7 +191,6 @@ void ParamInfo()
 	file1<<"T_ext"<<"=="<<T_ext<<endl;
 	file1<<"nu_ext"<<"=="<<nu_ext<<endl;
 	file1<<"start_ideal"<<"=="<<start_ideal<<endl;
-	file1<<"start_sediment"<<"=="<<start_sediment<<endl;
 	file1<<"ro0"<<"=="<<ro0<<endl;
 	file1<<"eta_car0"<<"=="<<eta_car0<<endl;
 	file1<<"eta_car"<<"=="<<eta_car<<endl;

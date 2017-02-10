@@ -69,15 +69,14 @@ ff_vect_t dw_r[pN + 1];
 
 long i_min = 1;
 double V0_tot = 0; // total volume of the dispersed phase
-double V0_tot_oleic = 0; // total volume of the dispersed phase inside the oleic droplet
 double V0_largest_EV = 0; // mathematical expected value of largest particles total volume // see is_large_mode variable
 double V0_tot_EV = 0; // mathematical expected value of particles total volume
 double I_glob = 0;
+double phi_vol_fract = 0;
 
 int exist_p[pN + 1]; // particle existence; number of primary aggregate inside
 int is_neel[pN + 1]; // Neel relaxation
 int is_temp_sat[pN + 1]; // temperature saturation flag
-int is_inside_oleic[pN + 1];
 double Rp0[pN + 1];
 double Rp[pN + 1];
 double Vp0[pN + 1];
@@ -91,21 +90,11 @@ double gamma_rot[pN + 1];
 
 int time_go = 0;
 
-double B_hyst[21];
-double Mz_hyst[21];
-double B_hyst_n[21];
-double Mz_hyst_n[21];
-
 double dt = 0;
 double t = 0; // time
 double t_temp = 0; // temperature, [C]
-double dT = 0;
-double dT_prev = 0;
 double T_basic = 0;
 double T_mean = 0;
-double T_mean_loc = 0;
-double T_mean_loc_prev = 0;
-double T_mean_loc_prev_revert = 0;
 long k_mean = 0;
 
 double Ek = 0;
@@ -130,10 +119,6 @@ double glob_start_t;
 double mz_glob = 0; // global mean average start from the hyst. point switch
 ff_vect_t m_tot_glob;
 
-int g_hyst_start_line;
-int g_hyst_up_line;
-int g_hyst_bottom_line;
-
 double BmanX = 0;
 double BmanY = 0;
 double BmanZ = 0;
@@ -142,206 +127,14 @@ ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
 
-double k_force_adapt_p_0[pN + 1];
-
-double k_force_adapt;
-double k_force_adapt_p_x[pN + 1];
-double k_force_adapt_p_y[pN + 1];
-double k_force_adapt_p_z[pN + 1];
-double k_force_adapt_p_rot_x[pN + 1];
-double k_force_adapt_p_rot_y[pN + 1];
-double k_force_adapt_p_rot_z[pN + 1];
-double k_force_adapt_mean = 0;
-double k_force_adapt_mean_print = 0;
-
 ff_vect_t r_brown_valid_0;
 
-long pN_oleic_drop = 0;
-long pN_oleic_drop_I = 0;
-long pN_oleic_drop_II = 0;
-long pN_oleic_drop_III = 0;
 double d[14 + 1];
 
 double dt_red = 0; // reducing time indicator for the random translation
 
-double phi_vol_fract_oleic = 0;
-double phi_vol_fract_oleic_0 = 0;
-double R_oleic;
 long pN0 = pN;
 double R0_min;
-
-void ff_model_upgrade_ext_field(void)
-{
-    g_Bz_prev = Bext(0,0,0).z;
-    switch (hyst_mode)
-    {
-    case 1:
-        kB = 0;
-        g_hyst_start_line = 1;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 2:
-        kB = 0.25;
-        g_hyst_start_line = 1;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 3:
-        kB = 0.5;
-        g_hyst_start_line = 1;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 4:
-        kB = 0.75;
-        g_hyst_start_line = 1;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 5:
-        kB = 1;
-        g_hyst_start_line = 1;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 6:
-        kB = 0.75;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 7:
-        kB = 0.5;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 8:
-        kB = 0.25;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 9:
-        kB = 0;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 10:
-        kB = -0.25;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 11:
-        kB = -0.5;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 12:
-        kB = -0.75;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 0;
-        break;
-
-    case 13:
-        kB = -1;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 1;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 14:
-        kB = -0.75;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 15:
-        kB = -0.5;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 16:
-        kB = -0.25;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 17:
-        kB = 0;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 18:
-        kB = 0.25;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 19:
-        kB = 0.5;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-
-    case 20:
-        kB = 0.75;
-        g_hyst_start_line = 0;
-        g_hyst_up_line = 0;
-        g_hyst_bottom_line = 1;
-        break;
-    }
-}
-
-void ff_model_auto_hyst(void)
-{
-    int tmp;
-
-    if ((glob_start_step == 1) && (t - glob_start_t >= 0))
-        glob_start_step = step;
-
-
-    if ((t - glob_start_t) >= 0.25 /*0.25 of the 1/4.0 of period*/ * 0.25 * (1 / nu_ext))
-    {
-
-        hyst_mode++;
-        tmp = 0;
-        if (hyst_mode == 21) {hyst_mode = 5; tmp = 1;}
-        ff_model_upgrade_ext_field();
-        if (tmp) {g_hyst_up_line = 1;g_hyst_start_line = 0;}
-
-        //       ff_io_save_hyst();
-
-        mz_glob = 0;
-        glob_start_t = t;
-        glob_start_step = step;
-
-    }
-}
 
 int ff_model_check_smooth_dr(long p)
 {
@@ -387,13 +180,6 @@ int ff_model_check_smooth_dr(long p)
 
             T_mean -= T_basic;
             k_mean --;
-            T_mean_loc -= T_basic;
-            k_bm_inst --;
-            if (k_bm_inst == k_bm_inst_max - 1)
-            {
-                dT= dT_prev;
-                T_mean_loc_prev = T_mean_loc_prev_revert;
-            }
         }
 
         return res;
@@ -487,7 +273,6 @@ ff_vect_t ff_model_nonloc_torque(long p)
                 } // if (p != ps)
 
                 tBmag = sqrt(tBx * tBx + tBy * tBy + tBz * tBz);
-                if (is_uniform_field_test) tBx = tBy = tBz = 0;
 
 #ifndef SECONDARY
 
@@ -498,7 +283,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
 					ttau.z =   m[p].x * tBy - m[p].y * tBx;
 				}
 
-                if ((is_neel[p]) && (!is_uniform_field_test) && (tBmag))
+                if ((is_neel[p]) && (tBmag))
                 {
 					m[p].x = m0p[p] * tBx / tBmag;
                     m[p].y = m0p[p] * tBy / tBmag;
@@ -595,7 +380,7 @@ ff_vect_t ff_model_nonloc_force(long p)
                     tFz += dtFz;
                 }
 
-                if ((dr < dr_min) && (!isMicroDrop)) //soft sphere condition
+                if (dr < dr_min) //soft sphere condition
                 {
                     Cmod = 10 * m0p[p] * m0p[ps] * (C1 / dr5);
 					
@@ -720,20 +505,6 @@ ff_vect_t ff_model_force(long p)
 
     F_nonloc_mag = sqrt(MUL(tddF,tddF));
 
-    // oleic droplet surface tension force
-    if ((fabs(Rp_to_c[p] - R_oleic) < Rp0[p]) && (is_oleic) && (R_oleic > Rp0[p]) && (!isPGasPrevail))
-    {
-        tF.x += - sigma_sf * 2 * pi * Rp0[p] * r[p].x / Rp_to_c[p];
-        tF.y += - sigma_sf * 2 * pi * Rp0[p] * r[p].y / Rp_to_c[p];
-        tF.z += - sigma_sf * 2 * pi * Rp0[p] * r[p].z / Rp_to_c[p];
-    }
-
-    if (is_uniform_field_test)
-    {
-        tF.x = tF.y = tF.z = 0;
-        tF.z += - 1E0 * sigma_sf * 2 * pi * 5E-9;
-    }
-
     return tF;
 }
 
@@ -774,7 +545,6 @@ void ff_model_next_step(void)
     double tmmag;
     double Mtot;
     double t_temp_1 = 0;
-    double V_oleic = 0;
 
 	double per_x_plus, per_x_minus, per_y_plus, per_y_minus, per_z_plus, per_z_minus;
 
@@ -782,17 +552,11 @@ void ff_model_next_step(void)
     mz_tot = 0;
     m_tot.x = m_tot.y = m_tot.z = 0;
     mz_tot_n = 0;
-    pN_oleic_drop = 0;
-    pN_oleic_drop_I = pN_oleic_drop_II = pN_oleic_drop_III = 0;
-    phi_vol_fract_oleic = 0;
-    V0_tot_oleic = 0;
-    P_pgas = 0;
 
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
     ro_oleic = 902.0 - 0.62 * T;
-    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 	
     //Screen capturing
@@ -873,16 +637,9 @@ void ff_model_next_step(void)
            for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-                    {
                         C2[p] = 6 * pi * eta_car * Rp[p];
                         gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
-                    }
-                    else
-                    {
-                        C2[p] = 6 * pi * eta_oleic * Rp[p];
-                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
-                    }
+
 
                         M0 = M0p[p];
                         I0 = I0p[p];
@@ -947,16 +704,8 @@ void ff_model_next_step(void)
             for (p = 1; p <= pN; p++)
                 if (exist_p[p])
                 {
-                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-                    {
                         C2[p] = 6 * pi * eta_car * Rp[p];
                         gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
-                    }
-                    else
-                    {
-                        C2[p] = 6 * pi * eta_oleic * Rp[p];
-                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
-                    }
 
                     M0 = M0p[p];
                     I0 = I0p[p];
@@ -1060,16 +809,8 @@ void ff_model_next_step(void)
            for (p = 1; p <= pN; p++)
                     if (exist_p[p])
                     {
-                    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-                    {
                         C2[p] = 6 * pi * eta_car * Rp[p];
                         gamma_rot[p] = 8 * pi * eta_car * pow(Rp[p], 3);
-                    }
-                    else
-                    {
-                        C2[p] = 6 * pi * eta_oleic * Rp[p];
-                        gamma_rot[p] = 8 * pi * eta_oleic * pow(Rp[p], 3);
-                    }
 
                         M0 = M0p[p];
                         I0 = I0p[p];
@@ -1095,15 +836,6 @@ void ff_model_next_step(void)
                         if (v[p].y != v[p].y) printf("\n DEBUG 3 p = %d v[p].y = %e", p, v[p].y);
                         if (v[p].z != v[p].z) printf("\n DEBUG 3 p = %d v[p].z = %e", p, v[p].z);
                     } // end of loop for dv
-
-                if (k_bm_inst == k_bm_inst_max)
-                {
-                    k_bm_inst = 1;
-                    T_mean_loc = 0;
-                    k_force_adapt_mean /= (6 * pN);
-                    k_force_adapt_mean_print = k_force_adapt_mean;
-                    k_force_adapt_mean = 0;
-                }
 
                 r0.x = r0.y = r0.z = 0;
 				for (int t1 = 0; t1 <= 2; t1++)
@@ -1187,15 +919,6 @@ void ff_model_next_step(void)
                         Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
                     }
 
-                    if (phi_vol_fract_oleic_0 == 0) phi_vol_fract_oleic_0 = phi_vol_fract_oleic;
-                    if ((is_oleic) && (phi_vol_fract_oleic_0 > 0) && (phi_vol_fract_oleic == phi_vol_fract_oleic))
-                        R_oleic = R_oleic_0 * (phi_vol_fract_oleic / phi_vol_fract_oleic_0);
-                    //printf("\n TRACE-1 %e %e", phi_vol_fract_oleic_0, phi_vol_fract_oleic);
-                    V_oleic = (4 / 3.0) * pi * pow(R_oleic, 3);
-                    phi_vol_fract_oleic /= (Lx * Ly * Lz);
-                    phi_vol_fract_oleic *= 100;
-                    
-                    if (auto_reversal) ff_model_auto_hyst();
                     if (step % 100000 == 0) ff_io_autosave();
                     else if ((step < 100000) && (step % 10000 == 0)) ff_io_autosave();
                     else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
@@ -1434,22 +1157,15 @@ void ff_model_init(void)
 
     dt = dt0;
 
-    R_oleic = R_oleic_0;
-
-    if (is_uniform_field_test) Lz *= 5;
-    
     t_temp = T + ta0;
     if (t_temp > 90) t_temp_1 = 90;
     if (t_temp < 20) t_temp_1 = 20;
-    sigma_sf = sigma_sf_nano * (a_sigma_sf + b_sigma_sf * t_temp_1);
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 
     N_o = N_oa * k_o / 0.5;
 
     // Brownian motion -  parameters
     ///////////////////////////////////////////////////
-
-    k_force_adapt = 1;
 
     // Dimensionless variance (sigma^2) of the random displacement along the single axis e_x
     sigma = 1;
@@ -1468,11 +1184,6 @@ void ff_model_init(void)
     glob_start_t = start_t;
 
     m_tot_glob.x = m_tot_glob.y = m_tot_glob.z = 0;
-
-    for (long h = 1; h <= 20; h++)
-    {
-        B_hyst[h] = B_hyst_n[h] = Mz_hyst[h] = Mz_hyst_n[h] = 0;
-    }
 
     ff_model_size_dispersion_init();
     p = 1;
@@ -1545,10 +1256,7 @@ cont2:
         exist_p[p] = 1;
         m_sat[p] = 0;
 
-        k_force_adapt_p_x[p] = k_force_adapt_p_y[p] = k_force_adapt_p_z[p] = k_force_adapt_p_rot_x[p] = k_force_adapt_p_rot_y[p] = k_force_adapt_p_rot_z[p] = 1.0;
-        is_inside_oleic[p] = 1;
         is_temp_sat[p] = 0;
-        k_force_adapt_p_0[p] = k_force_adapt_0;
 
 		G_dd[p] = 0;
 
@@ -1569,29 +1277,15 @@ void ff_model_effective_random_motion_update(long p)
     double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
     double M0, I0;
 
-    double speed_ballance = 1;
-    double dR = 0;
-
-    double tmp = 0;
-
-    double fract_oleic_positive = 0, fract_oleic_negative = 0, fract_car_positive = 0, fract_car_negative = 0;
-    double N_mol_col = 0;
-
     double sigma2 = 0, sigma2_rot = 0;
 	double sigma2v = 0, sigma2w_rot = 0;
 
     gamma_oleic = 6 * pi * eta_oleic * Rp[p];
     gamma_car = 6 * pi * eta_car * Rp[p];
-    if ((Rp_to_c[p] > R_oleic) || (!is_oleic))
-    {
-        gamma = gamma_car;
-        gamma_rot = 8 * pi * eta_car * pow(Rp[p], 3);
-    }
-    else
-    {
-        gamma = gamma_oleic;
-        gamma_rot = 8 * pi * eta_oleic * pow(Rp[p], 3);
-    }
+
+    gamma = gamma_car;
+    gamma_rot = 8 * pi * eta_car * pow(Rp[p], 3);
+
 
     D = kb * T / gamma;
     D_rot = kb * T / gamma_rot;
@@ -1637,35 +1331,13 @@ void ff_model_effective_random_motion_update(long p)
 	dw_r[p].x = dw * sin(theta_0) * cos(phi_0);
 	dw_r[p].y = dw * sin(theta_0) * sin(phi_0);
 	dw_r[p].z = dw * cos(theta_0);
-
-    speed_ballance = 1;
-    dR = Rp_to_c[p] + Rp0[p] - R_oleic;
 }
 
 void ff_model_update_dT(void)
 {
     T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
-    //dT = T - T_basic;
     T_mean += T_basic;
     k_mean ++;
-    T_mean_loc += T_basic;
-
-    if (dT < 0)
-    {
-        printf("\n WARNING: dT < 0");
-        dT = 0;
-    }
-
-    //printf("\n dT = %e", dT);
-
-    if (k_bm_inst == k_bm_inst_max - 1)
-    {
-        dT_prev = dT;
-        dT = T - T_mean_loc / k_bm_inst;
-        T_mean_loc_prev_revert = T_mean_loc_prev;
-        T_mean_loc_prev = T_mean_loc;
-    }
-    //k_bm_inst ++;
 }
 
 void ff_model_size_dispersion_init(void)
@@ -1761,7 +1433,6 @@ void ff_model_size_dispersion_init(void)
     }
 	
     V0_tot = 0;
-
     for (p = 1; p <= pN; p++)
     {
         is_set = 0;
@@ -1795,6 +1466,7 @@ void ff_model_size_dispersion_init(void)
                 break;
             }
         if (is_set == 0) goto again_size_disp;
+		phi_vol_fract = 100 * V0_tot / (Lx * Ly * Lz);
     }
 }
 

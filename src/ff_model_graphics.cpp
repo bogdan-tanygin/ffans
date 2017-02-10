@@ -255,19 +255,6 @@ void ff_mgr_show_next_step()
             v1 = Bext(0,0,0);
             ff_mgr_draw_vector(r0, v1);
         }
-
-        if (show_droplet)
-        {
-            glEnable(GL_ALPHA_TEST);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-            glColor4f(0.2, 0.1, 0.6, 0.5);
-            gluSphere(g_quad, space_k * R_oleic, 20, 20);
-
-            glDisable(GL_BLEND);
-            glDisable(GL_ALPHA_TEST);
-        }
 }
 
 void ff_mgr_print_info()
@@ -337,13 +324,7 @@ void ff_mgr_print_info()
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol (drop) = %5.3e %%", phi_vol_fract_oleic);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"phi_vol_total (l-mode) = %5.3e %%", phi_vol_fract_oleic * V0_tot_EV / V0_largest_EV); // see is_large_mode
+    sprintf(buf,"phi_vol_total (l-mode) = %5.3e %%", phi_vol_fract * V0_tot_EV / V0_largest_EV); // see is_large_mode
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
@@ -360,7 +341,7 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0.0, 1.0, 0.0, 0.75);
+	glColor4f(0, 0, 0, 0.75);
 	sprintf(buf, "Ek_calc = %5.3e J (%5.3e K)", Ek, Ek * 2 / (6.0 * kb * pN));
 
 	glRasterPos2i(6, shift * 20);
