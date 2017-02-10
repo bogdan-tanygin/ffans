@@ -328,12 +328,6 @@ void ff_mgr_print_info()
 
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
-		
-    glColor4f(0,0,0,0.75);
-    sprintf(buf,"T_set = %5.3e °C", T + ta0);
-
-    glRasterPos2i(6, (shift--) * 20);
-    ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
     glColor4f(0,0,0,0.75);
     sprintf(buf,"T_set = %5.3e K", T);
@@ -341,12 +335,14 @@ void ff_mgr_print_info()
     glRasterPos2i(6, (shift--) * 20);
     ff_gr_print(GLUT_BITMAP_HELVETICA_12,buf);
 
-	glColor4f(0, 0, 0, 0.75);
+	/*glColor4f(0, 0, 0, 0.75);
 	sprintf(buf, "Ek_calc = %5.3e J (%5.3e K)", Ek, Ek * 2 / (6.0 * kb * pN));
 
 	glRasterPos2i(6, shift * 20);
 	shift--;
-	ff_gr_print(GLUT_BITMAP_HELVETICA_12, buf);
+	ff_gr_print(GLUT_BITMAP_HELVETICA_12, buf);*/
+
+	shift--;
 
 	glColor4f(0, 0, 0, 0.75);
 	sprintf(buf, "T_tr_calc = %5.3e J", (2 / 6.0) * Ek_tr / (kb * pN));
