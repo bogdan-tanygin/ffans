@@ -10,6 +10,8 @@ FFANS
 
 Ferrofluid Aggregates Nano Simulator (FFANS) is a ferrofluid simulation platform.
 
+.. image:: https://ce5cb8b5-a-62cb3a1a-s-sites.googlegroups.com/site/btanygin/research/physics/simulation/ferrofluids/doc-images/Screen-Recording-_12-Feb-17-1-26-24-AM_.gif
+
 About
 -----
 The FFANS is a molecular dynamics and dipole-dipole micromagnetics based simulation package. It is powered by an interactive orthographic and perspective 3D presentation layer with the automatic screenshoting and state saving allowing researchers to investigate physical process continuously in an obvious and visual way. High numerical stability gives an ability of a long-term run. Atomic object of simulation is a nanoparticle. Implicit solvent is modeled by Langevin thermostat. The Langevin dynamics has been implemented by Analytical Dissipative Integrator approach. Units are given in SI.
@@ -34,3 +36,5 @@ License
 Copyright (C) 2006,2011,2013-2017 Dr. Bogdan Tanygin, Mr. Dmytro Matskevych, present repository contributors, and authors specified at the source files beginning.
 
 The FFANS is a free software made available under the GPL License. For details see the LICENSE file.
+
+.. image:: https://ce5cb8b5-a-62cb3a1a-s-sites.googlegroups.com/site/btanygin/research/physics/simulation/ferrofluids/doc-images/Screen-Recording-_12-Feb-17-1-27-08-AM_.gif
