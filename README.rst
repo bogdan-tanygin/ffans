@@ -1,8 +1,8 @@
 FFANS
 =====
 .. image:: https://sites.google.com/site/btanygin/_/rsrc/1430314739953/research/physics/simulation/ferrofluids/doc-images/logo-header-48px.png
-.. image:: http://img.shields.io/travis/psci2195/ffans/master.svg?style=flat
-        :target: http://travis-ci.org/psci2195/ffans
+.. image:: https://img.shields.io/appveyor/ci/psci2195/ffans/master.svg?style=flat
+        :target: https://ci.appveyor.com/project/psci2195/ffans
 .. image:: http://img.shields.io/badge/license-GPL-yellow.svg?style=flat
         :target: https://github.com/psci2195/ffans/blob/master/LICENSE.txt
 .. image:: http://img.shields.io/badge/arXiv-1503.05854-orange.svg?style=flat

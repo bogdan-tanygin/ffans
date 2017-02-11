@@ -4,21 +4,26 @@
 
 # IDE files & directories #
 ###########################
-*.vcxproj*
-*.sln
+#*.vcxproj*
+#*.sln
 *.sdf
 *.opensdf
 *.db
 *.opendb
 
+/x64
 /ipch
 /Release
+/Debug
 /pack_bin
+/packages
 
-# Logs #
-########
+# Logs & Outputs #
+##################
 *.log
+*.tlog
 *.dat
+*.bmp
 
 # OS generated files #
 ######################
