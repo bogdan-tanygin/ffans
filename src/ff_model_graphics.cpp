@@ -23,7 +23,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <gl/glut.h>
-#include <gl/glaux.h>
+//#include <glaux.h>
 
 #include "ff_sys_graphics.h"
 #include "ff_model_graphics.h"
