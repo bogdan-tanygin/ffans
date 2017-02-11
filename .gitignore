@@ -4,8 +4,8 @@
 
 # IDE files & directories #
 ###########################
-*.vcxproj*
-*.sln
+#*.vcxproj*
+#*.sln
 *.sdf
 *.opensdf
 *.db
