@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "ff_iniParam.h"
-
+#include "ff_model_parameters.h"
 using namespace std;
 struct iniParam
 {
@@ -108,7 +108,10 @@ double iniGet(string section, string name)
 	{
 		if(Param[i].section==section&&Param[i].name==name)
 		{
-			cout<<section<<"->"<<name<<"="<<Param[i].value<<"---Sucsses"<<endl;
+            if(isShowInfo!=0)
+            {
+			  cout<<section<<"->"<<name<<"="<<Param[i].value<<"---Sucsses"<<endl;
+            }
 			return Param[i].value;
 		}
 	}
