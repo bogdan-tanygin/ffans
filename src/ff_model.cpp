@@ -32,6 +32,7 @@
 #include "ff_model_graphics.h"
 #include "ff_model_io.h"
 #include "ff_analysis.h"
+#include "ff_iniParam.h"
 // working variables 
 ////////////////////
 boost::mt19937 rng;
@@ -1141,6 +1142,78 @@ ff_vect_t Bext(double x, double y, double z)
 
 void ff_model_init(void)
 {
+    int isAnalysis = ff_paramAnalysis();
+    isShowInfo = (int)iniGet("SimulationSetup","isShowInfo");
+    isAutoSetPosition = (int)iniGet("SimulationSetup","isAutoSetPosition");
+    gl_scale = iniGet("Space","gl_scale");
+    muB =iniGet("PhysConst","muB");
+    R =iniGet("PhysConst","R");
+    Na =iniGet("PhysConst","Na");
+    g =iniGet("PhysConst","g");
+    kb =iniGet("PhysConst","kb");
+    ta0 =iniGet("PhysConst","ta0");
+    gamma_e =iniGet("PhysConst","gamma_e");
+    a0 =iniGet("ExperimentalMaterial","a0");
+    nano_size =iniGet("Space","nano_size");
+    delta_r_init =iniGet("Space","delta_r_init");
+    is_periodic =(int)iniGet("Space","is_periodic");
+    dt_neel =iniGet("ExperimentalMaterial","dt_neel");
+    dt0 =iniGet("SimulationSetup","dt0");
+    d_neel =iniGet("ExperimentalMaterial","d_neel");
+    d_min =iniGet("ExperimentalMaterial","d_min");
+    slow_steps =(long)iniGet("SimulationSetup","slow_steps");
+    smooth_r =iniGet("SimulationSetup","smooth_r");
+    T =iniGet("ExperimentalConditions","T");
+    delta =iniGet("ExperimentalMaterial","delta");
+    is_large_mode =(int)iniGet("SimulationSetup","is_large_mode");
+    large_fraction =iniGet("SimulationSetup","large_fraction");
+    k_large =iniGet("SimulationSetup","k_large");
+    eta_oleic =iniGet("ExperimentalMaterial","eta_oleic");
+    a3_eta_oleic =iniGet("ExperimentalMaterial","a3_eta_oleic");
+    a2_eta_oleic =iniGet("ExperimentalMaterial","a2_eta_oleic");
+    a1_eta_oleic =iniGet("ExperimentalMaterial","a1_eta_oleic");
+    a0_eta_oleic =iniGet("ExperimentalMaterial","a0_eta_oleic");
+    ro_oleic =iniGet("ExperimentalMaterial","ro_oleic");
+    mol_mass_oleic =iniGet("ExperimentalMaterial","mol_mass_oleic");
+    v_oleic =iniGet("ExperimentalConditions","v_oleic");
+    rop =iniGet("ExperimentalMaterial","rop");
+    A_H =iniGet("ExperimentalMaterial","A_H");
+    N_oa =iniGet("ExperimentalMaterial","N_oa");
+    k_o =iniGet("ExperimentalMaterial","k_o");
+    K1 =iniGet("ExperimentalMaterial","K1");
+    Ms =iniGet("ExperimentalMaterial","Ms");
+    load_at_start =(int)iniGet("SimulationSetup","load_at_start");
+    auto_save =(int)iniGet("SimulationSetup","auto_save");
+    manual_field_control =(int)iniGet("SimulationSetup","manual_field_control");
+    ext_field_is_homo =(int)iniGet("SimulationSetup","ext_field_is_homo");
+    auto_reversal =(int)iniGet("SimulationSetup","auto_reversal");
+    setting_plot =(int)iniGet("SimulationSetup","setting_plot");
+    start_ideal =iniGet("SimulationSetup","start_ideal");
+    ro0 =iniGet("ExperimentalMaterial","ro0");
+    eta_car0 =iniGet("ExperimentalMaterial","eta_car0");
+    eta_car =iniGet("ExperimentalMaterial","eta_car");
+    mol_mass_car =iniGet("ExperimentalMaterial","mol_mass_car");
+    v_car =iniGet("ExperimentalConditions","v_car");
+    gradPerc =iniGet("ExperimentalConditions","gradPerc");
+    alpha_damp =iniGet("ExperimentalMaterial","alpha_damp");
+    ScreenCaptureStep =(int)iniGet("SimulationSetup","ScreenCaptureStep");
+    BmanX = iniGet("ExperimentalConditions","BmanX");
+    BmanY = iniGet("ExperimentalConditions","BmanY");
+    BmanZ = iniGet("ExperimentalConditions","BmanZ");
+
+    Lx = nano_size * 1E-9 / 3.0;
+    Ly = nano_size * 1E-9;
+    Lz = nano_size * 1E-9 * 3;
+    kr = gl_scale;
+    delta_r = a0 * 0.5;
+    mass_oleic = ro_oleic * v_oleic;
+    B0 = 2500 /*Oe*/ * 79.577 * mu0;
+    gradL = Lx / 2.0;
+    C1 = 3 * mu0 / (4 * pi);
+    C5 = mu0 / (4 * pi);
+
+    auto_set_position(isAutoSetPosition);
+
     long p, tp, p_prev;
     double theta, phi;
     ff_vect_t dr;
@@ -1345,48 +1418,17 @@ void ff_model_size_dispersion_init(void)
     double random_value;
     double large_fraction_tmp = 0;
     int is_set = 0;
-
-    d[1] = 33.33333;
-    F[1] = 0.0108843537;
-
-    d[2] = 50;
-    F[2] = 0.0795918367;
-
-    d[3] = 66.6666;
-    F[3] = 0.1850340136;
-
-    d[4] = 83.333;
-    F[4] = 0.1972789116;
-
-    d[5] = 100;
-    F[5] = 0.1925170068;
-
-    d[6] = 116.66666;
-    F[6] = 0.1217687075;
-
-    d[7] = 133.3333;
-    F[7] = 0.1006802721;
-
-    d[8] = 150;
-    F[8] = 0.074829932;
-
-    d[9] = 166.666666;
-    F[9] = 0.056462585;
-
-    d[10] = 183.33333;
-    F[10] = 0.0394557823;
-
-    d[11] = 200;
-    F[11] = 0.0278911565;
-
-    d[12] = 216.66666;
-    F[12] = 0.019047619;
-
-    d[13] = 233.33333;
-    F[13] = 0.0115646259;
-
-    d[14] = 250;
-    F[14] = 0.006122449;
+    for(int j = 1;j<=imax;j++)
+    {
+       ostringstream d_to_str;
+       ostringstream F_to_str;
+       d_to_str<<"d"<<j;
+       F_to_str<<"F"<<j;
+       d[j] = iniGet("ModelSizeDispersion",d_to_str.str());
+       F[j] = iniGet("ModelSizeDispersion",F_to_str.str());
+       d_to_str.flush();
+       F_to_str.flush();
+    }
 
     Ftot = 0;
     for (i = 1; i <= imax; i++)

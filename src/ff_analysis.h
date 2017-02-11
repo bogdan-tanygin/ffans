@@ -32,3 +32,5 @@ extern void delPosition();
 extern void ChangePosition();
 extern int MaxPointOfPosition;
 extern int counterOfPosition;
+extern void auto_set_position(int isAutoSet_);
+

@@ -21,19 +21,20 @@
 #include <math.h>
 
 #define pN 500 // number of the particles
-
+extern double gl_scale;
+extern int isAutoSetPosition;
 // Math constants
 extern double pi;
-
+extern int isShowInfo;
 // Physics constants
 extern const double mu0;
-extern const double muB;
-extern const double R;
-extern const double Na;
-extern double g;
-extern const double kb;
-extern const double ta0;
-extern const double gamma_e;
+extern  double muB;
+extern  double R;
+extern  double Na;
+extern  double g;
+extern  double kb;
+extern  double ta0;
+extern  double gamma_e;
 
 extern double C1;
 
@@ -41,14 +42,17 @@ extern double C1;
 extern double Lx, Ly, Lz; //meters
 extern double delta_r;
 extern double delta_r_init;
+extern double nano_size;
 
 extern int is_periodic;
 
 // Basic physical model parameters
-extern const double dt0;
+extern double dt0;
 extern double d_neel;
 extern long slow_steps;
 extern double smooth_r;
+extern double dt_neel;
+extern double d_min;
 
 extern int load_at_start;
 extern int auto_reversal;

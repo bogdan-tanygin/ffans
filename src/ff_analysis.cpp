@@ -19,6 +19,7 @@
 #include "ff_sys_graphics.h"
 #include "ff_model.h"
 #include "ff_model_graphics.h"
+#include "ff_iniParam.h"
 
 #include <Windows.h>
 #include <GdiPlus.h>
@@ -27,7 +28,10 @@
 #include <Ole2.h>
 #include <OleCtl.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <stdio.h>
+
 
 using namespace Gdiplus;
 using namespace std;
@@ -154,7 +158,10 @@ void GetScreenShot(string name1) //Make Screen Shot
 	//var DataSet = 
 	LPCSTR name = name1.c_str();
 	bool error = saveBitmap(name,hBitmap,NULL);
-	cout<<"Screen Shot ~~~ "<<name<<"  "<<error<<endl;
+    if(isShowInfo!=0)
+    {
+	    cout<<"Screen Shot ~~~ "<<name<<"  "<<error<<endl;
+    }
 	
 	
 	// clean up
@@ -173,16 +180,22 @@ void addPosition(float x, float y, float z, int pts)
 	position[counterOfPosition].y = y;
 	position[counterOfPosition].z = z;
 	position[counterOfPosition].projection_type_status = pts;
-	cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is saved"<<endl;
-	counterOfPosition++;
+    if(isShowInfo!=0)
+    {
+	    cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is saved"<<endl;
+    }
+    counterOfPosition++;
 }
 
 void delPosition()
 {
 	if(MaxPointOfPosition)
 	{
-		cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is removed"<<endl;
-		position.erase(position.begin()+counterOfPosition);
+        if(isShowInfo!=0)
+        {
+		    cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is removed"<<endl;
+        }
+        position.erase(position.begin()+counterOfPosition);
 		MaxPointOfPosition--;
 		if(counterOfPosition<MaxPointOfPosition-1)
 		{
@@ -211,8 +224,11 @@ void ChangePosition()
 		{
 			counterOfPosition=0;
 		}
-		cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is changed"<<endl;
-		projection_type = position[counterOfPosition].projection_type_status;
+        if(isShowInfo!=0)
+        {
+		    cout<<"Position["<<counterOfPosition<<"] ("<<position[counterOfPosition].x<<","<<position[counterOfPosition].y<<","<<position[counterOfPosition].z<<") is changed"<<endl;
+        }
+        projection_type = position[counterOfPosition].projection_type_status;
 		x_rot = position[counterOfPosition].x;
 		y_rot = position[counterOfPosition].y;
 		space_k = position[counterOfPosition].z;
@@ -225,3 +241,23 @@ void ChangePosition()
 	}
 }
 
+void auto_set_position(int isAutoSet_)
+{
+    int iMax;
+    if(isAutoSet_ != 0)
+    {
+    iMax=(int)iniGet("SetPosition","PositionMax");
+        for(int i = 1;i<=iMax;i++)
+        {
+        ostringstream x;
+        ostringstream y;
+        ostringstream z;
+        ostringstream pts;
+        x<<"x"<<i;
+        y<<"y"<<i;
+        z<<"z"<<i;
+        pts<<"pts"<<i;
+        addPosition(iniGet("SetPosition",x.str()),iniGet("SetPosition",y.str()),iniGet("SetPosition",z.str()),iniGet("SetPosition",pts.str()));
+        }
+    }
+}
