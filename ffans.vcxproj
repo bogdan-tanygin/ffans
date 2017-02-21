@@ -105,6 +105,7 @@
   <ItemGroup>
     <ClCompile Include="src\ff_analysis.cpp" />
     <ClCompile Include="src\ff_app.cpp" />
+    <ClCompile Include="src\ff_image_module.cpp" />
     <ClCompile Include="src\ff_iniParse.cpp" />
     <ClCompile Include="src\ff_model.cpp" />
     <ClCompile Include="src\ff_model_graphics.cpp" />
@@ -115,6 +116,7 @@
   <ItemGroup>
     <ClInclude Include="src\ff_analysis.h" />
     <ClInclude Include="src\ff_app.h" />
+    <ClInclude Include="src\ff_image_module.h" />
     <ClInclude Include="src\ff_iniParam.h" />
     <ClInclude Include="src\ff_model.h" />
     <ClInclude Include="src\ff_model_graphics.h" />
