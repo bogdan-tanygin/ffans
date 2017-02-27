@@ -41,13 +41,15 @@ void SaveImage(HBITMAP hBitmap, WCHAR* fileName, FileTypes fileType)
 {
 	WCHAR* fType = GetImageType(fileType);
 	// Add "image/" to fileType for encoders searching (should be "image/png", "image/bmp", etc).
-	WCHAR type[10];
+	WCHAR type[15];
 	wcscpy(type, L"image/");
 	wcsncat(type, fType, wcslen(fType));
 
 	// Add file type to file name.
-	wcsncat(fileName, L".", 1);
-	wcsncat(fileName, fType, wcslen(fType));
+	WCHAR name[100];
+	wcscpy(name, fileName);
+	wcsncat(name, L".", 1);
+	wcsncat(name, fType, wcslen(fType));
 
 	GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR gdiplusToken;
@@ -64,7 +66,7 @@ void SaveImage(HBITMAP hBitmap, WCHAR* fileName, FileTypes fileType)
 	if (shouldLog && stat != 0) 
 		printf("Failure (image was not saved): stat = %d\n", stat);
 
-	stat = DllExports::GdipSaveImageToFile(bitmap, fileName, &encoderClsid, NULL);
+	stat = DllExports::GdipSaveImageToFile(bitmap, name, &encoderClsid, NULL);
 	DllExports::GdipDisposeImage(bitmap);
 
 	if (shouldLog) {
@@ -75,6 +77,7 @@ void SaveImage(HBITMAP hBitmap, WCHAR* fileName, FileTypes fileType)
 	}
 
 	GdiplusShutdown(gdiplusToken);
+	delete fType;
 }
 #pragma endregion
 
@@ -123,13 +126,27 @@ Parameters:
  - type (see image_module.h FileTypes enum)
 */
 WCHAR* GetImageType(FileTypes type) {
+	WCHAR* fileType = new WCHAR[4];
+
 	switch (type) {
-		case FileTypes::Bmp: return L"bmp";
-		case FileTypes::Png: return L"png";
-		case FileTypes::Jpeg: return L"jpeg";
-		case FileTypes::Gif: return L"gif";
-		case FileTypes::Tiff: return L"tiff";
-		default: return L"";
+		case FileTypes::Bmp: 
+			wcscpy(fileType, L"bmp");
+			return fileType;
+		case FileTypes::Png: 
+			wcscpy(fileType, L"png");
+			return fileType;
+		case FileTypes::Jpeg: 
+			wcscpy(fileType, L"jpeg");
+			return fileType;
+		case FileTypes::Gif: 
+			wcscpy(fileType, L"gif");
+			return fileType;
+		case FileTypes::Tiff: 
+			wcscpy(fileType, L"tiff");
+			return fileType;
+		default: 
+			wcscpy(fileType, L"");
+			return fileType;
 	}
 }
 #pragma endregion

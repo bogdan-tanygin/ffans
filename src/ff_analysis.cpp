@@ -113,6 +113,7 @@ void GetScreenShot(string name1) //Make Screen Shot
 	SaveImage(hBitmap, name, (FileTypes)type);
 	
 	// clean up
+	delete name;
     SelectObject(hDC, old_obj);
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
