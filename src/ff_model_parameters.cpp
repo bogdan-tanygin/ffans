@@ -21,7 +21,7 @@
 
 #include <math.h>
 #include "ff_model_parameters.h"
-#include "ff_iniParam.h"
+#include "ff_iniParse.h"
 #include <fstream>
 #include <iostream>
 
