@@ -20,7 +20,7 @@
 #include <fstream>
 #include <vector>
 
-#include "ff_iniParam.h"
+#include "ff_iniParse.h"
 #include "ff_model_parameters.h"
 using namespace std;
 struct iniParam

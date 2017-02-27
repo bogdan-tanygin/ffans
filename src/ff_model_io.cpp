@@ -187,7 +187,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 	
 	case 'N': case 'n':
-		ParamInfo();
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ;
 		GetScreenShot(out.str());
 		out.str("");

@@ -32,7 +32,7 @@
 #include "ff_model_graphics.h"
 #include "ff_model_io.h"
 #include "ff_analysis.h"
-#include "ff_iniParam.h"
+#include "ff_iniParse.h"
 // working variables 
 ////////////////////
 boost::mt19937 rng;
@@ -557,13 +557,6 @@ void ff_model_next_step(void)
     ro_oleic = 902.0 - 0.62 * T;
     eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
 	
-    //Screen capturing
-    //----------------
-	if(step==1000000)
-	{
-		BmanZ=2000;
-		ScreenCaptureStep = 2000;
-	}
 	if(v_oleic!=0)
 	{
 	eta_car = ff_visousity_mix(
@@ -578,11 +571,11 @@ void ff_model_next_step(void)
 	}
 	else
 	{
-	eta_car = eta_car0;//Oleic acid = 0 mll
+	eta_car = eta_car0; //Oleic acid = 0 mll
 	}
-	//cout<<eta_car<<" "<<eta_oleic<<" "<<eta_car0<<endl;
-	
-	//if(step%ScreenCaptureStep==0){counterOfPosition=0;}
+
+	//Screen capturing
+	//----------------
 	if(step%ScreenCaptureStep == counterOfPosition*10 && step>=ScreenCaptureStep)
 	{
 		ChangePosition();

@@ -25,7 +25,7 @@
 #include "ff_sys_graphics.h"
 #include "ff_model_graphics.h"
 #include "ff_model.h"
-#include "ff_iniParam.h"
+#include "ff_iniParse.h"
 
 int main(int argc, char **argv)
     //int _tmain(int argc, _TCHAR* argv[])

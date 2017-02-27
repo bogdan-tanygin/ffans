@@ -19,7 +19,7 @@
 #include "ff_sys_graphics.h"
 #include "ff_model.h"
 #include "ff_model_graphics.h"
-#include "ff_iniParam.h"
+#include "ff_iniParse.h"
 #include "ff_image_module.h"
 
 #include <Windows.h>
