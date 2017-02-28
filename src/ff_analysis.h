@@ -33,4 +33,6 @@ extern void ChangePosition();
 extern int MaxPointOfPosition;
 extern int counterOfPosition;
 extern void auto_set_position(int isAutoSet_);
+extern void ff_pieces_coord_info();
+
 

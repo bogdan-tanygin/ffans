@@ -48,7 +48,14 @@ struct CameraPosition
 };
 int counterOfPosition = 0;
 int MaxPointOfPosition =0;
+struct par
+{
+	int n;
+	int m;
+	int index;
+};
 vector<CameraPosition> position;
+
 void ActiveWindow()
 {
 	if(Active){hWnd = GetForegroundWindow();Active = false;}
@@ -210,3 +217,79 @@ void auto_set_position(int isAutoSet_)
         }
     }
 }
+
+void ff_pieces_coord_info()
+{
+	vector<par> pars;
+	vector<vector<int>>parList;
+	int counter = 0;
+	for (int i = 1; i < pN + 1; i++)
+	{
+		//cout << "Pieces #:" << i << "  X_coord: " << r[i].x << "  Y_coord: " << r[i].y << "  Z_coord: " << r[i].z << endl;
+		for (int j = i + 1; j < pN + 1; j++)
+		{
+			if (sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) <= 3.5E-8)
+			{
+				cout << i << " and " << j << "distance" << sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) << endl;
+				pars.push_back(par());
+				pars[i - 1].n = i;
+				pars[i - 1].m = j;
+				pars[i - 1].index = 0;
+			}
+		}
+	}
+		
+		while (pars.size()!=0)
+		{
+			bool isRight = false;
+			while (!isRight)
+			{
+				parList.push_back(vector<int>());
+				parList[counter].push_back(pars[0].m);
+				parList[counter].push_back(pars[0].n);
+				pars.erase(pars.begin());
+				isRight = true;
+				for (int i = 0; i < pars.size(); i++)
+				{
+					for (int j = 0; j < parList[counter].size(); j++)
+					{
+					/*	if ((pars[i].m == parList[counter][j]) && (pars[i].n == parList[counter][j]))
+						{
+							continue;
+						}*/
+						if (pars[i].m == parList[counter][j])
+							{
+							parList[counter].push_back(pars[i].n);
+							pars.erase(pars.begin() + j);
+							isRight = false;
+							break;
+							}
+						if (pars[i].n == parList[counter][j])
+							{
+							parList[counter].push_back(pars[i].m);
+							pars.erase(pars.begin() + j);
+							isRight = false;
+							break;
+							}
+						}
+					
+				}
+				
+			}
+				counter++;
+			
+			
+		}
+		for (int i = 0; i < parList.size(); i++)
+		{
+			for (int j = 0; j < parList[i].size(); j++)
+			{
+				cout << parList[i][j];
+				parList[i].clear();
+			}
+			cout << endl;
+		}
+
+		pars.clear();
+		parList.clear();
+	}	
