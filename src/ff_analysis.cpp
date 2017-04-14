@@ -52,7 +52,6 @@ struct par
 {
 	int n;
 	int m;
-	int index;
 };
 vector<CameraPosition> position;
 
@@ -234,12 +233,11 @@ void ff_pieces_coord_info()
 				pars.push_back(par());
 				pars[i - 1].n = i;
 				pars[i - 1].m = j;
-				pars[i - 1].index = 0;
 			}
 		}
 	}
 		
-		while (pars.size()!=0)
+		/*while (pars.size()!=0)
 		{
 			bool isRight = false;
 			while (!isRight)
@@ -257,11 +255,12 @@ void ff_pieces_coord_info()
 						{
 							continue;
 						}*/
-						if (pars[i].m == parList[counter][j])
+						/*if (pars[i].m == parList[counter][j])
 							{
 							parList[counter].push_back(pars[i].n);
 							pars.erase(pars.begin() + j);
 							isRight = false;
+							//j--;
 							break;
 							}
 						if (pars[i].n == parList[counter][j])
@@ -269,6 +268,7 @@ void ff_pieces_coord_info()
 							parList[counter].push_back(pars[i].m);
 							pars.erase(pars.begin() + j);
 							isRight = false;
+							//j--;
 							break;
 							}
 						}
@@ -289,7 +289,7 @@ void ff_pieces_coord_info()
 			}
 			cout << endl;
 		}
-
+		vector<par>().swap(pars);
 		pars.clear();
-		parList.clear();
+		parList.clear();*/
 	}	
