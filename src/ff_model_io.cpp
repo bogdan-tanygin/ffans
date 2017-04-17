@@ -187,6 +187,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 	
 	case 'N': case 'n':
+		
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ;
 		GetScreenShot(out.str());
 		out.str("");
@@ -203,6 +204,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
 		break;
 
 	case '0':
+		ff_pieces_coord_info();
         BmanX = BmanY = BmanZ = 0;
         break;
     case '1':
