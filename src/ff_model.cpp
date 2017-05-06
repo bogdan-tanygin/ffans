@@ -1194,6 +1194,7 @@ void ff_model_init(void)
     BmanX = iniGet("ExperimentalConditions","BmanX");
     BmanY = iniGet("ExperimentalConditions","BmanY");
     BmanZ = iniGet("ExperimentalConditions","BmanZ");
+	distances = iniGet("SimulationSetup", "distances");
 
     Lx = nano_size * 1E-9 / 3.0;
     Ly = nano_size * 1E-9;

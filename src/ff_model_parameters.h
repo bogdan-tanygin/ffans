@@ -113,3 +113,5 @@ extern double K1;
 extern int ScreenCaptureStep; 
 
 extern void ParamInfo();
+extern double distances;
+
