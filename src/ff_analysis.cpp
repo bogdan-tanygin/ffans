@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <fstream>
 #include <stdio.h>
 
 
@@ -49,7 +50,7 @@ public:
 		n = n_;
 	}
 };
-
+fstream CSVresult = fstream("Savg.csv");
 HWND hWnd;
 bool Active = true;
 struct CameraPosition
@@ -243,7 +244,7 @@ void ff_pieces_coord_info()
 		{
 			if (sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) <= distances)
 			{
-				cout << i << " and " << j << "distance" << sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) << endl;
+			//	cout << i << " and " << j << "distance" << sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) << endl;
 				pars.push_back(par(i,j));
 			}
 		}
@@ -320,11 +321,14 @@ void ff_pieces_coord_info()
 		//cout << e.~exception << endl;
 	}
 	int sum = 0;
-	for (int i = 0; i < parList.size();i++)
+	int aggregates = parList.size();
+	for (int i = 0; i < aggregates;i++)
 	{
 		sum += parList[i].size();
 		cout << parList[i].size() << endl;
 	}
-	cout <<"Num pieses ,which created agregats"<< sum <<"  Num of agregats = "<<parList.size() <<endl;
-		
+//	double Savg1 = (sum / aggregates);
+	double Savg2 = (pN / (aggregates + (pN - sum)));
+	cout <<"Num pieses ,which created agregats"<< sum <<"  Num of agregats = "<<aggregates <<endl;
+	CSVresult << step << ";" << step*dt0 << ";" << aggregates << ";" << sum << ";" << Savg2 << ";" << endl;
 }	

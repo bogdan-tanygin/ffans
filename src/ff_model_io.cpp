@@ -202,10 +202,6 @@ void cbKeyPressed(unsigned char key, int x, int y)
 	case 'f':
 		ChangePosition();
 		break;
-		//test
-	case 'F':
-		ff_pieces_coord_info();
-		break;
 	case '0':
 		ff_pieces_coord_info();
         BmanX = BmanY = BmanZ = 0;
