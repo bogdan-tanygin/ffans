@@ -21,6 +21,7 @@
 #include "ff_model_graphics.h"
 #include "ff_iniParse.h"
 #include "ff_image_module.h"
+#include "ff_model_parameters.h"
 
 #include <Windows.h>
 #include <GdiPlus.h>
@@ -31,12 +32,25 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <fstream>
 #include <stdio.h>
 
 
 using namespace Gdiplus;
 using namespace std;
 
+class par
+{
+public:
+	int m;
+	int n;
+	par(int n_, int m_)
+	{
+		m = m_;
+		n = n_;
+	}
+};
+fstream CSVresult = fstream("Savg.csv");
 HWND hWnd;
 bool Active = true;
 struct CameraPosition
@@ -48,12 +62,12 @@ struct CameraPosition
 };
 int counterOfPosition = 0;
 int MaxPointOfPosition =0;
+/*
 struct par
 {
 	int n;
 	int m;
-	int index;
-};
+};*/
 vector<CameraPosition> position;
 
 void ActiveWindow()
@@ -223,73 +237,98 @@ void ff_pieces_coord_info()
 	vector<par> pars;
 	vector<vector<int>>parList;
 	int counter = 0;
-	for (int i = 1; i < pN + 1; i++)
+	for (int i = 0; i < pN-1 ; i++)
 	{
 		//cout << "Pieces #:" << i << "  X_coord: " << r[i].x << "  Y_coord: " << r[i].y << "  Z_coord: " << r[i].z << endl;
-		for (int j = i + 1; j < pN + 1; j++)
+		for (int j = i+1 ; j < pN-1 ; j++)
 		{
-			if (sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) <= 3.5E-8)
+			if (sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) <= distances)
 			{
-				cout << i << " and " << j << "distance" << sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) << endl;
-				pars.push_back(par());
-				pars[i - 1].n = i;
-				pars[i - 1].m = j;
-				pars[i - 1].index = 0;
+			//	cout << i << " and " << j << "distance" << sqrt(pow(r[i].x - r[j].x, 2) + pow(r[i].y - r[j].y, 2) + pow(r[i].z - r[j].z, 2)) << endl;
+				pars.push_back(par(i,j));
 			}
 		}
 	}
-		
-		while (pars.size()!=0)
+	try
+	{
+		while (pars.size() != 0)
 		{
-			bool isRight = false;
-			while (!isRight)
+			bool isSorted = false;
+			for (int i = 0; i < pars.size(); i++)
 			{
-				parList.push_back(vector<int>());
-				parList[counter].push_back(pars[0].m);
-				parList[counter].push_back(pars[0].n);
+				vector<int> intList;
+				intList.push_back(pars[0].m);
+				intList.push_back(pars[0].n);
 				pars.erase(pars.begin());
-				isRight = true;
-				for (int i = 0; i < pars.size(); i++)
+				isSorted = false;
+				while (!isSorted)
 				{
-					for (int j = 0; j < parList[counter].size(); j++)
+					isSorted = true;
+					for (int j = 0; j < pars.size(); j++)
 					{
-					/*	if ((pars[i].m == parList[counter][j]) && (pars[i].n == parList[counter][j]))
+						isSorted = true;
+						for (int k = 0; k < intList.size(); k++)
 						{
-							continue;
-						}*/
-						if (pars[i].m == parList[counter][j])
+							if (pars[j].m == intList[k])
 							{
-							parList[counter].push_back(pars[i].n);
-							pars.erase(pars.begin() + j);
-							isRight = false;
-							break;
+								isSorted = false;
+								bool isRepeat = false;
+								for (int l = 0; l < intList.size(); l++)
+								{
+									if (pars[j].n == intList[l])
+									{
+										isRepeat = true;
+										break;
+									}
+								}
+								if (!isRepeat)
+								{
+									intList.push_back(pars[j].n);
+								}
+								pars.erase(pars.begin() + j);
+								j = -1;
+								break;
 							}
-						if (pars[i].n == parList[counter][j])
+							if (pars[j].n == intList[k])
 							{
-							parList[counter].push_back(pars[i].m);
-							pars.erase(pars.begin() + j);
-							isRight = false;
-							break;
+								isSorted = false;
+								bool isRepeat = false;
+								for (int l = 0; l < intList.size(); l++)
+								{
+									if (pars[j].m == intList[l])
+									{
+										isRepeat = true;
+										break;
+									}
+								}
+								if (!isRepeat)
+								{
+									intList.push_back(pars[j].m);
+								}
+								pars.erase(pars.begin() + j);
+								j = -1;
+								break;
 							}
 						}
-					
+					}
 				}
-				
+				parList.push_back(intList);
 			}
-				counter++;
-			
-			
 		}
-		for (int i = 0; i < parList.size(); i++)
-		{
-			for (int j = 0; j < parList[i].size(); j++)
-			{
-				cout << parList[i][j];
-				parList[i].clear();
-			}
-			cout << endl;
-		}
-
-		pars.clear();
-		parList.clear();
-	}	
+	}
+	catch (exception e)
+	{
+		//cout << e.~exception << endl;
+	}
+	int sum = 0;
+	int aggregates = parList.size();
+	for (int i = 0; i < aggregates;i++)
+	{
+		sum += parList[i].size();
+		cout << parList[i].size() << endl;
+	}
+//	double Savg1 = (sum / aggregates);
+	double Savg2 = (pN / (aggregates + (pN - sum)));
+	cout <<"Num pieses ,which created agregats"<< sum <<"  Num of agregats = "<<aggregates <<endl;
+	CSVresult << step << ";" << step*dt0 << ";" << aggregates << ";" << sum << ";" << Savg2 << ";" << endl;
+}	

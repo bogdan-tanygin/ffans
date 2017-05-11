@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 20 // number of the particles
+#define pN 500 // number of the particles
 extern double gl_scale;
 extern int isAutoSetPosition;
 // Math constants
@@ -113,3 +113,5 @@ extern double K1;
 extern int ScreenCaptureStep; 
 
 extern void ParamInfo();
+extern double distances;
+

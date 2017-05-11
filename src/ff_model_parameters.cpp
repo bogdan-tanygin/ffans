@@ -57,7 +57,7 @@ double delta_r_init =1.0;// 20 * 1E-9; // delta_r;
 
 // periodic boundary conditions
 int is_periodic =0;// 0;
-
+double distances = 1.0;
 // Basic physical model parameters
 double dt_neel =1.0;// 1E-9; // [s] // Neel relaxation time threashold for d ~ 10 nm, (Fertman-p-62)
 double dt0 =1.0;// 1.088* 1E-8; //1E-1 * dt_neel; // 1E2 * dt_neel; // 100 * dt_neel; // s // old approach 1.5E-5

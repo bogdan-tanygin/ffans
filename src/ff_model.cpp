@@ -581,6 +581,7 @@ void ff_model_next_step(void)
 		ChangePosition();
 		ostringstream out;
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ;
+		ff_pieces_coord_info;
 		GetScreenShot(out.str());
 		out.flush();
 	}
@@ -909,8 +910,9 @@ void ff_model_next_step(void)
                     {
                         Rp_to_c[p] = sqrt(MUL(r[p], r[p]));
                     }
-
-                    if (step % 100000 == 0) ff_io_autosave();
+					//more bat-save files
+					if (step % 10000 == 0) ff_io_autosave();
+                    else if (step % 100000 == 0) ff_io_autosave();
                     else if ((step < 100000) && (step % 10000 == 0)) ff_io_autosave();
                     else if ((step < 10000) && (step % 1000 == 0)) ff_io_autosave();
 
@@ -1193,6 +1195,11 @@ void ff_model_init(void)
     BmanX = iniGet("ExperimentalConditions","BmanX");
     BmanY = iniGet("ExperimentalConditions","BmanY");
     BmanZ = iniGet("ExperimentalConditions","BmanZ");
+	distances = iniGet("SimulationSetup", "distances");
+	////////////////////
+	FILE* CSVres = fopen("Savg.csv", "w");
+	fclose(CSVres);
+	///////////////////////
 
     Lx = nano_size * 1E-9 / 3.0;
     Ly = nano_size * 1E-9;
@@ -1204,6 +1211,7 @@ void ff_model_init(void)
     gradL = Lx / 2.0;
     C1 = 3 * mu0 / (4 * pi);
     C5 = mu0 / (4 * pi);
+	mass_car = ro0*v_car;
 
     auto_set_position(isAutoSetPosition);
 
