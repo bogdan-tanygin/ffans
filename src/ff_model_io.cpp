@@ -28,6 +28,7 @@
 #include "ff_model_graphics.h"
 #include "ff_model_parameters.h"
 #include "ff_analysis.h"
+#include <iostream>
 double mouse_x, mouse_y;
 int mouse_rotate = 0;
 int is_ctrl;
@@ -224,6 +225,11 @@ void cbKeyPressed(unsigned char key, int x, int y)
             BmanZ += 10;
         }
         break;
+	case '4':
+			
+			cout << eta_car0 << "-----" << eta_car << "-----------" << eta_oleic <<"------------" <<T<< endl;
+			T += 10;
+		break;
     case 'i':case 'I':
         show_info = show_info?0:1;
         break;

@@ -332,3 +332,56 @@ void ff_pieces_coord_info()
 	cout <<"Num pieses ,which created agregats"<< sum <<"  Num of agregats = "<<aggregates <<endl;
 	CSVresult << step << ";" << step*dt0 << ";" << aggregates << ";" << sum << ";" << Savg2 << ";" << endl;
 }	
+int nearest_point(double X0, double* array_eta_car, int n, bool isNext)
+{
+	double* absDifference = new double[n / 2];
+	double most_absDiffSumm = 1;
+	int i1 = 0;//1st point for aprox || isNext = true
+	int i2 = 3;//2nd point for aprox || isNext = false
+	for (int i = 0, j = 0; i < n; i += 2, j++)
+	{
+		absDifference[j] = abs(array_eta_car[i] - X0);
+	}
+	most_absDiffSumm = absDifference[0] + absDifference[1] + absDifference[2] + absDifference[3];
+	for (int i = 3; i < n / 2; i++)
+	{
+		if ((absDifference[i] + absDifference[i - 1] + absDifference[i - 2] + absDifference[i - 3]) < most_absDiffSumm)
+		{
+			most_absDiffSumm = absDifference[i] + absDifference[i - 1] + absDifference[i - 2] + absDifference[i - 3];
+			i1 = i-3;
+			i2 = i;
+			
+		}
+	}
+	delete absDifference;
+	if (isNext)
+	{
+		return i1;
+	}
+	else
+	{
+		return i2;
+	}
+}
+double ff_lagrangeAprox(double X0, double* array_eta_car, int n)
+{
+	int i1 = 2* nearest_point(X0, array_eta_car, n, true) ;//1st point
+	int i2 = 2* nearest_point(X0, array_eta_car, n, false);//2nd point
+	double result = 0;	
+	for (int i = i1; i < i2; i+=2)
+	{
+		double numerator=1;
+		double denominator=1;
+		for (int j = i1; j < i2; j += 2)
+		{
+			if (i != j)
+			{
+				denominator *= (array_eta_car[i] - array_eta_car[j]);
+				numerator *= (X0 - array_eta_car[j]);
+			}
+		}
+		result += array_eta_car[i+1] * (numerator / denominator);
+	}
+	delete array_eta_car;
+	return result;
+}

@@ -126,6 +126,8 @@ double C5 = 1.0;
 double alpha_damp =1.0;// 0.05; //magnetization dynamic damping
 int ScreenCaptureStep =1;// 10000; //every ScreenCaptureStep`s steps will make screen  shot
 
+double* array_eta_car;
+int n_eta_car;
 
 void ParamInfo()
 {

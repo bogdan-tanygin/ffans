@@ -121,6 +121,9 @@ double BmanX = 0;
 double BmanY = 0;
 double BmanZ = 0;
 
+//////////////////
+bool isEtaCarSet = false;
+
 ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
@@ -542,7 +545,6 @@ void ff_model_next_step(void)
     double M0, I0;
     double tmmag;
     double Mtot;
-    double t_temp_1 = 0;
 
 	double per_x_plus, per_x_minus, per_y_plus, per_y_minus, per_z_plus, per_z_minus;
 
@@ -552,11 +554,17 @@ void ff_model_next_step(void)
     mz_tot_n = 0;
 
     t_temp = T + ta0;
-    if (t_temp > 90) t_temp_1 = 90;
-    if (t_temp < 20) t_temp_1 = 20;
+    if (t_temp > 90) t_temp = 90;
+    if (t_temp < 20) t_temp = 20;
     ro_oleic = 902.0 - 0.62 * T;
-    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-	
+	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
+	//eta_car0 = 6 * pow(10,7)* pow(T, -4.26);//Lagrange
+	if (!isEtaCarSet)
+	{
+		eta_car0 = ff_lagrangeAprox(T, array_eta_car, n_eta_car);
+		isEtaCarSet = true;
+	}
+
 	if(v_oleic!=0)
 	{
 	eta_car = ff_visousity_mix(
@@ -1200,7 +1208,22 @@ void ff_model_init(void)
 	FILE* CSVres = fopen("Savg.csv", "w");
 	fclose(CSVres);
 	///////////////////////
+	//Viscousity kerosine aprox elements
+	n_eta_car = 2*(int)iniGet("EtaCarPoints","n");
+	array_eta_car = new double[n_eta_car];
+	for (int i = 0; i < (n_eta_car/2); i++)
+	{
+		ostringstream T_to_str;
+		ostringstream eta_to_str;
+		T_to_str << "T" << i;
+		eta_to_str << "eta" << i;
+		array_eta_car[2 * i] = iniGet("EtaCarPoints",T_to_str.str());
+		array_eta_car[(2*i)+1] = iniGet("EtaCarPoints",eta_to_str.str())*1E-3;
+		T_to_str.flush();
+		eta_to_str.flush();
 
+	}
+	//////////////////////
     Lx = nano_size * 1E-9 / 3.0;
     Ly = nano_size * 1E-9;
     Lz = nano_size * 1E-9 * 3;
@@ -1220,7 +1243,6 @@ void ff_model_init(void)
     ff_vect_t dr;
     double dR;
     double sigma;
-    double t_temp_1 = 0;
     double dr_min;
     int cont_flag;
     long i_attempt; 
@@ -1229,10 +1251,10 @@ void ff_model_init(void)
     dt = dt0;
 
     t_temp = T + ta0;
-    if (t_temp > 90) t_temp_1 = 90;
-    if (t_temp < 20) t_temp_1 = 20;
-    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-
+    if (t_temp > 90) t_temp = 90;
+    if (t_temp < 20) t_temp = 20;
+	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
+	//eta_car0 = 6 * pow(10, pow(7*T, -4.26));
     N_o = N_oa * k_o / 0.5;
 
     // Brownian motion -  parameters
