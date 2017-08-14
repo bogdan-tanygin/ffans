@@ -325,11 +325,11 @@ void ff_pieces_coord_info()
 	for (int i = 0; i < aggregates;i++)
 	{
 		sum += parList[i].size();
-		cout << parList[i].size() << endl;
 	}
+	double pN1 = pN;
 //	double Savg1 = (sum / aggregates);
-	double Savg2 = (pN / (aggregates + (pN - sum)));
-	cout <<"Num pieses ,which created agregats"<< sum <<"  Num of agregats = "<<aggregates <<endl;
+	double Savg2 = ((pN1) / ((aggregates + (pN1 - sum))));
+	cout <<"Num pieses ,which created agregats is "<< sum <<"  Num of agregats = "<<aggregates<<"Savg ="<<Savg2 <<endl;
 	CSVresult << step << ";" << step*dt0 << ";" << aggregates << ";" << sum << ";" << Savg2 << ";" << endl;
 }	
 int nearest_point(double X0, double* array_eta_car, int n, bool isNext)

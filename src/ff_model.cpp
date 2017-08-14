@@ -589,9 +589,13 @@ void ff_model_next_step(void)
 		ChangePosition();
 		ostringstream out;
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ;
-		ff_pieces_coord_info;
 		GetScreenShot(out.str());
 		out.flush();
+	}
+	//----Analysis of date
+	if (!(step%AnalysisStep)&&(step>0))
+	{
+		ff_pieces_coord_info();
 	}
     //----------------
 
@@ -1204,6 +1208,7 @@ void ff_model_init(void)
     BmanY = iniGet("ExperimentalConditions","BmanY");
     BmanZ = iniGet("ExperimentalConditions","BmanZ");
 	distances = iniGet("SimulationSetup", "distances");
+	AnalysisStep = iniGet("SimulationSetup", "AnalysisStep");
 	////////////////////
 	FILE* CSVres = fopen("Savg.csv", "w");
 	fclose(CSVres);

@@ -95,7 +95,7 @@ void cbSpecialKeyPressed(int key, int x, int y)
         break;
 
     default:
-        printf ("SKP: No action assigned for %d.\n", key);
+        printf ("SKP: No action assigned for %c.\n", key);
         break;
     }
 }
@@ -292,7 +292,7 @@ void cbKeyPressed(unsigned char key, int x, int y)
         break;
 
     default:
-        printf ("KP: No action assigned for %d.\n", key);
+        printf ("KP: No action assigned for %c.\n", key);
         break;
     }
 }
@@ -359,67 +359,68 @@ void ff_io_load(long tstep)
     float tmp;
     char str[50];
     long p;
-
+	bool isOpen = false;
     //k_bm_inst = 1;
-
+	
     if (tstep == 0)
     {
         printf("Step to load (must be > 0) = ");
         scanf("%d", &tstep);
     }
+		sprintf(str, "%d.dat", tstep);
+		isOpen = (file = fopen(str, "r"));
+		if (tstep > 0 && isOpen)
+		{
+			fscanf(file, "%f", &tmp);
+			t = tmp;
 
-    if (tstep > 0)
-    {
-        sprintf(str, "%d.dat", tstep);
+			do
+			{
+				fscanf(file, "p = %d", &p);
+				// -------------------
 
-        file  = fopen(str, "r");
+				fscanf(file, "%f", &tmp);
+				Rp[p] = tmp;
 
-        fscanf(file, "%f", &tmp);
-        t = tmp;
+				fscanf(file, "%f", &tmp);
+				r[p].x = tmp;
+				fscanf(file, "%f", &tmp);
+				r[p].y = tmp;
+				fscanf(file, "%f", &tmp);
+				r[p].z = tmp;
 
-        do
-        {
-            fscanf(file,"p = %d", &p);
-            // -------------------
+				fscanf(file, "%f", &tmp);
+				m[p].x = tmp;
+				fscanf(file, "%f", &tmp);
+				m[p].y = tmp;
+				fscanf(file, "%f", &tmp);
+				m[p].z = tmp;
 
-            fscanf(file, "%f", &tmp);
-            Rp[p] = tmp;
+				fscanf(file, "%f", &tmp);
+				v[p].x = tmp;
+				fscanf(file, "%f", &tmp);
+				v[p].y = tmp;
+				fscanf(file, "%f", &tmp);
+				v[p].z = tmp;
 
-            fscanf(file, "%f", &tmp);
-            r[p].x = tmp;
-            fscanf(file, "%f", &tmp);
-            r[p].y = tmp;
-            fscanf(file, "%f", &tmp);
-            r[p].z = tmp;
+				fscanf(file, "%f", &tmp);
+				w[p].x = tmp;
+				fscanf(file, "%f", &tmp);
+				w[p].y = tmp;
+				fscanf(file, "%f ", &tmp);
+				w[p].z = tmp;
 
-            fscanf(file, "%f", &tmp);
-            m[p].x = tmp;
-            fscanf(file, "%f", &tmp);
-            m[p].y = tmp;
-            fscanf(file, "%f", &tmp);
-            m[p].z = tmp;
-
-            fscanf(file, "%f", &tmp);
-            v[p].x = tmp;
-            fscanf(file, "%f", &tmp);
-            v[p].y = tmp;
-            fscanf(file, "%f", &tmp);
-            v[p].z = tmp;
-
-            fscanf(file, "%f", &tmp);
-            w[p].x = tmp;
-            fscanf(file, "%f", &tmp);
-            w[p].y = tmp;
-            fscanf(file, "%f ", &tmp);
-            w[p].z = tmp;
-
-            Rp0[p] = Rp[p] - delta;
-            ff_model_size_dispersion_param_calc(Rp0[p], p);
-        }
-        while(!feof(file));
-		step = tstep;
-        fclose(file);
+				Rp0[p] = Rp[p] - delta;
+				ff_model_size_dispersion_param_calc(Rp0[p], p);
+			} while (!feof(file));
+			step = tstep;
+			fclose(file);
     } //tstep > 0
+		else
+		{
+			cout << "ERROR 404, file " << tstep << ".dat not found\nTry again!" << endl;
+		}
+		
 }
 
 void ff_io_entropy_change(void)

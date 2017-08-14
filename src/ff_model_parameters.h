@@ -111,6 +111,7 @@ extern double Ms;
 extern double K1;
 
 extern int ScreenCaptureStep; 
+extern int AnalysisStep;
 
 extern void ParamInfo();
 extern double distances;
