@@ -111,7 +111,10 @@ extern double Ms;
 extern double K1;
 
 extern int ScreenCaptureStep; 
+extern int AnalysisStep;
 
 extern void ParamInfo();
 extern double distances;
 
+extern double* array_eta_car;
+extern int n_eta_car;

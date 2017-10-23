@@ -23,8 +23,9 @@
 #include "ff_iniParse.h"
 #include "ff_model_parameters.h"
 using namespace std;
-struct iniParam
+class iniParam
 {
+public:
 	string fileName;
 	string section;
 	string name;
