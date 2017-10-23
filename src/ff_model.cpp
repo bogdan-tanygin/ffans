@@ -121,6 +121,9 @@ double BmanX = 0;
 double BmanY = 0;
 double BmanZ = 0;
 
+//////////////////
+bool isEtaCarSet = false;
+
 ff_vect_t m_tot;
 
 ff_vect_t dir110[13];
@@ -542,7 +545,6 @@ void ff_model_next_step(void)
     double M0, I0;
     double tmmag;
     double Mtot;
-    double t_temp_1 = 0;
 
 	double per_x_plus, per_x_minus, per_y_plus, per_y_minus, per_z_plus, per_z_minus;
 
@@ -552,11 +554,17 @@ void ff_model_next_step(void)
     mz_tot_n = 0;
 
     t_temp = T + ta0;
-    if (t_temp > 90) t_temp_1 = 90;
-    if (t_temp < 20) t_temp_1 = 20;
+    if (t_temp > 90) t_temp = 90;
+    if (t_temp < 20) t_temp = 20;
     ro_oleic = 902.0 - 0.62 * T;
-    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-	
+	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
+	//eta_car0 = 6 * pow(10,7)* pow(T, -4.26);//Lagrange
+	if (!isEtaCarSet)
+	{
+		eta_car0 = ff_lagrangeAprox(T, array_eta_car, n_eta_car);
+		isEtaCarSet = true;
+	}
+
 	if(v_oleic!=0)
 	{
 	eta_car = ff_visousity_mix(
@@ -581,9 +589,13 @@ void ff_model_next_step(void)
 		ChangePosition();
 		ostringstream out;
 		out<<"step ="<<step << " V_oleic = " << v_oleic<<" V_car = "<<v_car<<" Bmanz ="<<BmanZ;
-		ff_pieces_coord_info;
 		GetScreenShot(out.str());
 		out.flush();
+	}
+	//----Analysis of date
+	if (!(step%AnalysisStep)&&(step>0))
+	{
+		ff_pieces_coord_info();
 	}
     //----------------
 
@@ -1196,11 +1208,27 @@ void ff_model_init(void)
     BmanY = iniGet("ExperimentalConditions","BmanY");
     BmanZ = iniGet("ExperimentalConditions","BmanZ");
 	distances = iniGet("SimulationSetup", "distances");
+	AnalysisStep = iniGet("SimulationSetup", "AnalysisStep");
 	////////////////////
 	FILE* CSVres = fopen("Savg.csv", "w");
 	fclose(CSVres);
 	///////////////////////
+	//Viscousity kerosine aprox elements
+	n_eta_car = 2*(int)iniGet("EtaCarPoints","n");
+	array_eta_car = new double[n_eta_car];
+	for (int i = 0; i < (n_eta_car/2); i++)
+	{
+		ostringstream T_to_str;
+		ostringstream eta_to_str;
+		T_to_str << "T" << i;
+		eta_to_str << "eta" << i;
+		array_eta_car[2 * i] = iniGet("EtaCarPoints",T_to_str.str());
+		array_eta_car[(2*i)+1] = iniGet("EtaCarPoints",eta_to_str.str())*1E-3;
+		T_to_str.flush();
+		eta_to_str.flush();
 
+	}
+	//////////////////////
     Lx = nano_size * 1E-9 / 3.0;
     Ly = nano_size * 1E-9;
     Lz = nano_size * 1E-9 * 3;
@@ -1220,7 +1248,6 @@ void ff_model_init(void)
     ff_vect_t dr;
     double dR;
     double sigma;
-    double t_temp_1 = 0;
     double dr_min;
     int cont_flag;
     long i_attempt; 
@@ -1229,10 +1256,10 @@ void ff_model_init(void)
     dt = dt0;
 
     t_temp = T + ta0;
-    if (t_temp > 90) t_temp_1 = 90;
-    if (t_temp < 20) t_temp_1 = 20;
-    eta_oleic = a3_eta_oleic * pow(t_temp_1, 3) + a2_eta_oleic * pow(t_temp_1, 2) + a1_eta_oleic * pow(t_temp_1, 1) + a0_eta_oleic;
-
+    if (t_temp > 90) t_temp = 90;
+    if (t_temp < 20) t_temp = 20;
+	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
+	//eta_car0 = 6 * pow(10, pow(7*T, -4.26));
     N_o = N_oa * k_o / 0.5;
 
     // Brownian motion -  parameters
@@ -1340,7 +1367,7 @@ cont2:
 // Update of the random motion
 void ff_model_effective_random_motion_update(long p)
 {
-    double theta_0, phi_0; // random direction of the torque 
+    double theta_0, phi_0, sintheta_0, costheta_0; // random direction of the torque 
     double dx, dy, dz, dvx, dvy, dvz, dphi, dw; // instantiated displacements for time dt * k_bm_inst_max
     double D, D_rot, gamma, gamma_rot;
     double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
@@ -1363,7 +1390,8 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of position change
     // [Langevin equation + Stokes' law]
-    sigma2 = 2 * D * (dt + (M0 / (2 * gamma)) * (- 3 + 4 * exp(- gamma * dt / M0) - exp(- 2 * gamma * dt / M0)));
+
+	sigma2 = 2 * D * (dt + (M0 / (2 * gamma)) * (-3 + 4 * exp(-gamma * dt / M0) - exp(-2 * gamma * dt / M0)));
     dx = (*var_nor)() * sqrt(sigma2);
     dy = (*var_nor)() * sqrt(sigma2);
     dz = (*var_nor)() * sqrt(sigma2);
@@ -1383,23 +1411,27 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of rotation of the magnetization direction
     // [Euler-Langevin equation + Stokes' law]
-	sigma2_rot = 2 * D_rot * (dt + (I0 / (2 * gamma_rot)) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
+  
+	sigma2_rot = 2 * D_rot * (dt + (I0 / (2 * gamma_rot)) * (-3 + 4 * exp(-gamma_rot * dt / I0) - exp(-2 * gamma_rot * dt / I0)));
+
     dphi = (*var_nor)() * sqrt(3 * sigma2_rot); // rotation magnitude
     theta_0 = (*var_uni)() * pi;   // rotation vector random direction
     phi_0 = (*var_uni)() * 2 * pi;
+	costheta_0 = (*var_uni)() * 2.0 - 1.0;
+	sintheta_0 = sin(acos(costheta_0));
 
-    dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
-    dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
-    dphi_r[p].z = dphi * cos(theta_0);
+    dphi_r[p].x = dphi * sintheta_0 * cos(phi_0);
+    dphi_r[p].y = dphi * sintheta_0 * sin(phi_0);
+    dphi_r[p].z = dphi * costheta_0;
 
 	sigma2w_rot = (kb * T / I0) * (1 - exp(-2 * gamma_rot * dt / I0));
 	dw = (*var_nor)() * sqrt(3 * sigma2w_rot); // rotation angular velocity change magnitude
 	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
 	phi_0 = (*var_uni)() * 2 * pi;
 
-	dw_r[p].x = dw * sin(theta_0) * cos(phi_0);
-	dw_r[p].y = dw * sin(theta_0) * sin(phi_0);
-	dw_r[p].z = dw * cos(theta_0);
+	dw_r[p].x = dw * sintheta_0 * cos(phi_0);
+	dw_r[p].y = dw * sintheta_0 * sin(phi_0);
+	dw_r[p].z = dw * costheta_0;
 }
 
 void ff_model_update_dT(void)
