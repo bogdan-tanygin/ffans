@@ -1390,7 +1390,7 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of position change
     // [Langevin equation + Stokes' law]
-    sigma2 = D * (2 * dt + (M0 / (2 * gamma)) * (- 3 + 4 * exp(- gamma * dt / M0) - exp(- 2 * gamma * dt / M0)));
+	sigma2 = 2 * D * (dt + (M0 / (2 * gamma)) * (-3 + 4 * exp(-gamma * dt / M0) - exp(-2 * gamma * dt / M0)));
     dx = (*var_nor)() * sqrt(sigma2);
     dy = (*var_nor)() * sqrt(sigma2);
     dz = (*var_nor)() * sqrt(sigma2);
@@ -1410,7 +1410,7 @@ void ff_model_effective_random_motion_update(long p)
 
     // instantiation of rotation of the magnetization direction
     // [Euler-Langevin equation + Stokes' law]
-	sigma2_rot = D_rot * (2 * dt + (I0 / (2 * gamma_rot)) * (- 3 + 4 * exp(- gamma_rot * dt / I0) - exp(- 2 * gamma_rot * dt / I0)));
+	sigma2_rot = 2 * D_rot * (dt + (I0 / (2 * gamma_rot)) * (-3 + 4 * exp(-gamma_rot * dt / I0) - exp(-2 * gamma_rot * dt / I0)));
     dphi = (*var_nor)() * sqrt(3 * sigma2_rot); // rotation magnitude
     theta_0 = (*var_uni)() * pi;   // rotation vector random direction
     phi_0 = (*var_uni)() * 2 * pi;
