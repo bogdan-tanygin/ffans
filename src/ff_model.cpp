@@ -1367,7 +1367,7 @@ cont2:
 // Update of the random motion
 void ff_model_effective_random_motion_update(long p)
 {
-    double theta_0, phi_0; // random direction of the torque 
+    double theta_0, phi_0, sintheta_0, costheta_0; // random direction of the torque 
     double dx, dy, dz, dvx, dvy, dvz, dphi, dw; // instantiated displacements for time dt * k_bm_inst_max
     double D, D_rot, gamma, gamma_rot;
     double gamma_oleic = 0, gamma_car = 0; // oleic vs. carrier liquid
@@ -1414,19 +1414,21 @@ void ff_model_effective_random_motion_update(long p)
     dphi = (*var_nor)() * sqrt(3 * sigma2_rot); // rotation magnitude
     theta_0 = (*var_uni)() * pi;   // rotation vector random direction
     phi_0 = (*var_uni)() * 2 * pi;
+	costheta_0 = (*var_uni)() * 2.0 - 1.0;
+	sintheta_0 = sin(acos(costheta_0));
 
-    dphi_r[p].x = dphi * sin(theta_0) * cos(phi_0);
-    dphi_r[p].y = dphi * sin(theta_0) * sin(phi_0);
-    dphi_r[p].z = dphi * cos(theta_0);
+    dphi_r[p].x = dphi * sintheta_0 * cos(phi_0);
+    dphi_r[p].y = dphi * sintheta_0 * sin(phi_0);
+    dphi_r[p].z = dphi * costheta_0;
 
 	sigma2w_rot = (kb * T / I0) * (1 - exp(-2 * gamma_rot * dt / I0));
 	dw = (*var_nor)() * sqrt(3 * sigma2w_rot); // rotation angular velocity change magnitude
 	theta_0 = (*var_uni)() * pi;   // rotation vector random direction
 	phi_0 = (*var_uni)() * 2 * pi;
 
-	dw_r[p].x = dw * sin(theta_0) * cos(phi_0);
-	dw_r[p].y = dw * sin(theta_0) * sin(phi_0);
-	dw_r[p].z = dw * cos(theta_0);
+	dw_r[p].x = dw * sintheta_0 * cos(phi_0);
+	dw_r[p].y = dw * sintheta_0 * sin(phi_0);
+	dw_r[p].z = dw * costheta_0;
 }
 
 void ff_model_update_dT(void)
