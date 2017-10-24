@@ -89,3 +89,5 @@ int ff_model_check_walls(long);
 double ff_model_G_steric(long p, long ps);
 double ff_model_G_london(long p, long ps);
 double ff_model_G_zeeman(long p);
+
+double ff_Temperature(double temp_from0, double temp_to0, double step_from0, double step_to0, double step0);
