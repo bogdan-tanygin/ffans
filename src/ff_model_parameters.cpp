@@ -130,6 +130,15 @@ int AnalysisStep = 1;
 double* array_eta_car;
 int n_eta_car;
 
+//Parameters dependence from time
+bool isParamFromTime = 0;
+double eta_from = 0;
+double eta_to = 1;
+int step_from = 0;
+int step_to = 1;
+double temp_from = 0;
+double temp_to = 1;
+
 void ParamInfo()
 {
 	fstream file1 = fstream("info2.txt");

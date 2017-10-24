@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 500 // number of the particles
+#define pN 10 // number of the particles
 extern double gl_scale;
 extern int isAutoSetPosition;
 // Math constants
@@ -118,3 +118,12 @@ extern double distances;
 
 extern double* array_eta_car;
 extern int n_eta_car;
+
+//Parameters dependence from time
+extern bool isParamFromTime;
+extern double eta_from;
+extern double eta_to;
+extern int step_from;
+extern int step_to;
+extern double temp_from;
+extern double temp_to;

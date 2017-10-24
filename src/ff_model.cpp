@@ -556,7 +556,11 @@ void ff_model_next_step(void)
     t_temp = T + ta0;
     if (t_temp > 90) t_temp = 90;
     if (t_temp < 20) t_temp = 20;
-    ro_oleic = 902.0 - 0.62 * T;
+
+	if(isParamFromTime) T = ff_Temperature(temp_from, temp_to, step_from, step_to, step);
+	cout << T << endl;
+   
+	ro_oleic = 902.0 - 0.62 * T;
 	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
 	//eta_car0 = 6 * pow(10,7)* pow(T, -4.26);//Lagrange
 	if (!isEtaCarSet)
@@ -1209,6 +1213,14 @@ void ff_model_init(void)
     BmanZ = iniGet("ExperimentalConditions","BmanZ");
 	distances = iniGet("SimulationSetup", "distances");
 	AnalysisStep = iniGet("SimulationSetup", "AnalysisStep");
+	//////////////////////////
+	isParamFromTime = (int)iniGet("ParamFromTime","isParamFromTime");
+	eta_from = iniGet("ParamFromTime", "eta_from");
+	eta_to = iniGet("ParamFromTime", "eta_to");
+	step_from = (int)iniGet("ParamFromTime", "step_from");
+	step_to = (int)iniGet("ParamFromTime", "step_to");
+	temp_from = iniGet("ParamFromTime", "temp_from");
+	temp_to = iniGet("ParamFromTime", "temp_to");
 	////////////////////
 	FILE* CSVres = fopen("Savg.csv", "w");
 	fclose(CSVres);
@@ -1731,3 +1743,9 @@ dr_root_theory = sqrt(6 * D * t);
 
 //printf("\n ff_model_brownian_validation: %e %%", 100 * (dr_root_sim - dr_root_theory) / dr_root_theory);
 }*/
+
+//Function temperature(step)
+double ff_Temperature(double temp_from0, double temp_to0, double step_from0, double step_to0, double step0)
+{
+	return temp_to0 + ((temp_from0 - temp_to0) * exp(-((step0 / (step_to0 - step_from0)) * 10)));
+}
