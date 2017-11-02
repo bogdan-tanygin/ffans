@@ -568,6 +568,10 @@ void ff_model_next_step(void)
 		eta_car0 = ff_lagrangeAprox(T, array_eta_car, n_eta_car);
 		isEtaCarSet = true;
 	}
+	if (isParamFromTime)
+	{
+		eta_car0 = ff_viscosity(T-273);
+	}
 
 	if(v_oleic!=0)
 	{
@@ -585,7 +589,6 @@ void ff_model_next_step(void)
 	{
 	eta_car = eta_car0; //Oleic acid = 0 mll
 	}
-
 	//Screen capturing
 	//----------------
 	if(step%ScreenCaptureStep == counterOfPosition*10 && step>=ScreenCaptureStep)
@@ -1748,4 +1751,9 @@ dr_root_theory = sqrt(6 * D * t);
 double ff_Temperature(double temp_from0, double temp_to0, double step_from0, double step_to0, double step0)
 {
 	return temp_to0 + ((temp_from0 - temp_to0) * exp(-((step0 / (step_to0 - step_from0)) * 10)));
+}
+
+double ff_viscosity(double temp_)
+{
+	return 1.4 * exp(-8 * (temp_ - 373) / (100 + temp_ - 373));
 }
