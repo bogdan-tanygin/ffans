@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#define pN 10 // number of the particles
+#define pN 500 // number of the particles
 extern double gl_scale;
 extern int isAutoSetPosition;
 // Math constants
