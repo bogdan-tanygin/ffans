@@ -558,7 +558,8 @@ void ff_model_next_step(void)
     if (t_temp < 20) t_temp = 20;
 
 	if(isParamFromTime) T = ff_Temperature(temp_from, temp_to, step_from, step_to, step);
-	if(!(step % 10000)) cout << "Temperature " << T << endl;
+	if(!(step % 1000))
+		cout << "Step: " << step << endl << "Temperature " << T << endl;
    
 	ro_oleic = 902.0 - 0.62 * T;
 	eta_oleic = (a3_eta_oleic * pow(t_temp, 3)) + (a2_eta_oleic * pow(t_temp, 2)) + (a1_eta_oleic * pow(t_temp, 1)) + a0_eta_oleic;
@@ -572,7 +573,8 @@ void ff_model_next_step(void)
 	{
 		eta_car0 = ff_viscosity(T);
 	}
-	if (!(step % 10000)) cout << "Viscosity " << eta_car0 << endl;
+	if (!(step % 1000)) 
+		cout << "Viscosity " << eta_car0 << endl;
 
 	if(v_oleic!=0)
 	{
@@ -1751,7 +1753,7 @@ dr_root_theory = sqrt(6 * D * t);
 //Function temperature(step)
 double ff_Temperature(double temp_from0, double temp_to0, double step_from0, double step_to0, double step0)
 {
-	return temp_to0 + ((temp_from0 - temp_to0) * exp(-((step0 / (step_to0 - step_from0)) * 10)));
+	return temp_from0 * exp(-(step0 * 0.0000002));
 }
 
 double ff_viscosity(double temp_)
