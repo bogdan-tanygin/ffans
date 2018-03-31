@@ -122,7 +122,7 @@ double BmanY = 0;
 double BmanZ = 0;
 
 //////////////////
-bool isEtaCarSet = false;
+bool isEtaCarSet = true;
 
 ff_vect_t m_tot;
 
@@ -1753,7 +1753,15 @@ dr_root_theory = sqrt(6 * D * t);
 //Function temperature(step)
 double ff_Temperature(double temp_from0, double temp_to0, double step_from0, double step_to0, double step0)
 {
-	return temp_from0 * exp(-(step0 * 0.0000002));
+	if (step0 < step_from0)
+		return temp_from0;
+
+	if (step0 > step_to0)
+		return temp_to0;
+
+	double koef = -log(temp_to0 / temp_from0) / (step_to0 - step_from0);
+
+	return temp_from0 * exp(-((step0 - step_from0) * koef));
 }
 
 double ff_viscosity(double temp_)
