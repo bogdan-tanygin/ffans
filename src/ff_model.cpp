@@ -41,6 +41,8 @@ boost::variate_generator<boost::mt19937&, boost::normal_distribution<> >* var_no
 boost::uniform_01<>* ud;
 boost::variate_generator<boost::mt19937&, boost::uniform_01<> >* var_uni;
 
+// SerSh: one is better to delete all the variables and return only needed in the core code. Just try to compile.
+
 ff_vect_t r[pN + 1];  //particles positions
 double Rp_to_c[pN + 1];
 ff_vect_t m[pN + 1];  //particles magnetic moment direction
@@ -137,6 +139,7 @@ double dt_red = 0; // reducing time indicator for the random translation
 long pN0 = pN;
 double R0_min;
 
+// SerSh: remove
 int ff_model_check_smooth_dr(long p)
 {
     double dr, rmod, dphimag;
@@ -186,6 +189,7 @@ int ff_model_check_smooth_dr(long p)
         return res;
 }
 
+// SerSh: core, keep it
 ff_vect_t ff_model_nonloc_torque(long p)
 {
     register long ps;
@@ -298,6 +302,7 @@ ff_vect_t ff_model_nonloc_torque(long p)
     return ttau;
 }
 
+// SerSh: core, keep it
 ff_vect_t ff_model_nonloc_force(long p)
 {
     register long ps;
@@ -428,11 +433,13 @@ ff_vect_t ff_model_nonloc_force(long p)
             return ttF;
 }
 
+// SerSh: core, keep it
 double ff_model_G_zeeman(long p)
 {
 	return - MUL(Bext(r[p].x, r[p].y, r[p].z), m[p]);
 }
 
+// SerSh: core, keep it
 double ff_model_G_steric(long p, long ps)
 {
     double G_steric = 0;
@@ -462,6 +469,7 @@ double ff_model_G_steric(long p, long ps)
     return G_steric;
 }
 
+// SerSh: core, keep it
 double ff_model_G_london(long p, long ps)
 {
     double G_london = 0;
@@ -489,6 +497,7 @@ double ff_model_G_london(long p, long ps)
     return G_london;
 }
 
+// SerSh: core, keep it
 ff_vect_t ff_model_force(long p)
 {
     ff_vect_t tF;
@@ -509,6 +518,7 @@ ff_vect_t ff_model_force(long p)
     return tF;
 }
 
+// SerSh: core
 ff_vect_t ff_model_torque(long p)
 {
     ff_vect_t ttau;
@@ -535,6 +545,7 @@ ff_vect_t ff_model_torque(long p)
 
 void ff_model_next_step(void)
 { 
+	// SerSh: one is better to delete all the variables and return only needed in the core code. Just try to compile.
     ff_vect_t f, ttau;
     double I, I_min_per;
 	double I_per[3][3][3];
@@ -614,6 +625,7 @@ void ff_model_next_step(void)
 
     Ek = Ek_tr + Ek_rot;
 
+	// SerSh: this is a core section.
     if (time_go)
     {
         step++;
@@ -842,6 +854,8 @@ void ff_model_next_step(void)
                     } // end of loop for dv
 
                 r0.x = r0.y = r0.z = 0;
+                
+                // SerSh: remove this for
 				for (int t1 = 0; t1 <= 2; t1++)
 					for (int t2 = 0; t2 <= 2; t2++)
 						for (int t3 = 0; t3 <= 2; t3++)
@@ -940,13 +954,16 @@ void ff_model_next_step(void)
                     // end for case of interrupted kinetic loops
 t_end:
 
+                   // SerSh: remove slow_steps
                     if (slow_steps > 0) slow_steps--;
                     if (slow_steps%10 == 1) dt *= 2;
     } // time_go
 
+	// SerSh: not needed, UI thread should work in parallel using the same objects.
     ff_mgr_show_next_step();
 }
 
+// SerSh: core
 int ff_model_check_walls(long p)
 {
     int res = 0;
@@ -1045,6 +1062,7 @@ int ff_model_check_walls(long p)
     return res;
 }
 
+// SerSh: optional
 // External heterogeneous field. Source is shifted on X axis. It is normilized on ext. magnetic moment directed along X axis.
 ff_vect_t B_het(double x1, double y1, double z1, int what_shift)
 {
@@ -1074,6 +1092,7 @@ ff_vect_t B_het(double x1, double y1, double z1, int what_shift)
     return B;
 }
 
+// SerSh: optional
 // External inhomogeneous field. The sample is located in the center of the big electromagnet consisting of 2 concentrators.
 // Symmetry: [Infinite-fold symmetry axis inf_z], [Reflection plane (xy)].
 ff_vect_t B_het_bem(ff_vect_t r)
@@ -1089,6 +1108,7 @@ ff_vect_t B_het_bem(ff_vect_t r)
     return B;
 }
 
+// SerSh: optional
 // External inhomogeneous field. The sample is located in the center of the big electromagnet consisting of 2 concentrators.
 // Symmetry: [Infinite-fold symmetry axis inf_z], [Reflection plane (xy)].
 ff_vect_t dBz_het_bem(ff_vect_t r)
@@ -1112,6 +1132,7 @@ ff_vect_t dBz_het_bem(ff_vect_t r)
     return dBz;
 }
 
+// SerSh: core
 ff_vect_t Bext(double x, double y, double z)
 {
     ff_vect_t tBext,r;
@@ -1147,6 +1168,7 @@ ff_vect_t Bext(double x, double y, double z)
     return tBext;
 }
 
+// SerSh: core
 void ff_model_init(void)
 {
     int isAnalysis = ff_paramAnalysis();
@@ -1307,6 +1329,7 @@ again:
                 if (dR <= Rp0[p] + Rp0[tp] + delta_r_init) goto again;
             }
         } // start_ideal
+        // SerSh: remove
         else
         {
             p_prev = 1;
@@ -1364,6 +1387,7 @@ cont2:
     r_brown_valid_0 = r[1];
 }
 
+// SerSh: core
 // Update of the random motion
 void ff_model_effective_random_motion_update(long p)
 {
@@ -1434,6 +1458,7 @@ void ff_model_effective_random_motion_update(long p)
 	dw_r[p].z = dw * costheta_0;
 }
 
+// SerSh: optional, but needed for a debug
 void ff_model_update_dT(void)
 {
     T_basic = (2 / 6.0) * Ek / (kb * pN); // degree of freedom number is 6
@@ -1441,6 +1466,7 @@ void ff_model_update_dT(void)
     k_mean ++;
 }
 
+// SerSh: core
 void ff_model_size_dispersion_init(void)
 {
     double F[14 + 1];
@@ -1540,6 +1566,7 @@ void ff_model_size_dispersion_init(void)
     }
 }
 
+// SerSh: core
 void ff_model_size_dispersion_param_calc(double R0, long p)
 {
     double d0;
