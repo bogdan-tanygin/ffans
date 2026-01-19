@@ -28,8 +28,6 @@ Product is written in C/C++ (physical process simulation) and OpenGL (3D graphic
   year = {2015}
   }
 
-.. image:: https://sites.google.com/site/btanygin/_/rsrc/1430314550490/research/physics/simulation/ferrofluids/ffans-downloads/FFANS-logo192px.png
-
 License
 -------
 Copyright (C) 2006,2011,2013-2017 Dr. Bogdan Tanygin, Mr. Dmytro Matskevych, present repository contributors, and authors specified at the source files beginning.
